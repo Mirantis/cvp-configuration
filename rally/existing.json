@@ -1,0 +1,19 @@
+{
+    "creds": {
+        "openstack": {
+            "admin": {
+                "password": "myadminpass",
+                "tenant_name": "demo",
+                "username": "admin"
+            },
+            "auth_url": "http://example.net:5000/v2.0/",
+            "endpoint": null,
+            "endpoint_type": "public",
+            "https_cacert": "",
+            "https_insecure": false,
+            "profiler_hmac_key": null,
+            "region_name": "RegionOne"
+        }
+    },
+    "type": "ExistingCloud"
+}

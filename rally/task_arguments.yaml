@@ -1,0 +1,73 @@
+---
+# Please, carefully review the list of variables and update their values.
+
+  image_name: "TestVM"
+  flavor_name: "m1.tiny"
+  availability_zone: nova
+  neutron_floating_network: "admin_floating_net" # str, external network for floating IP creation
+  nova_rebuild_to_image_name: "TestVM"
+  nova_rebuild_to_flavor_name: "m1.small"
+  block_migration: true
+  volume_type: "volumes_lvm"
+
+#============================
+# The variables below should not be changed if you are doing base line testing. Please, change it for customer specific tests only.
+
+# Conditions of an execution:
+  number_of_concurrent_scenarios: 1 # how many scenarios will be run at the same time
+  iterations: 1
+  users_per_tenant: 1
+  number_of_tenants: 1
+  sla_failure_rate_max: 0 # benchmark scenario will not be successful if more than 0% iterations failed
+
+# Parameters for Authenticate
+  number_of_times_to_validate: 1 # to ensure validation of token
+
+# Parameters for Cinder, size in GB
+  cinder_volume_size: 1
+  cinder_volume_size_before_benchmarking: 1 #  will be executed before scenario iteration starts
+  cinder_volume_min_size: 1
+  cinder_volume_max_size: 5
+  cinder_allow_snapshot: false # when set to True, allows snapshot of a volume when the volume is attached to an instance
+  cinder_allow_upload: false # when set to True volume that is attached to an instance could be uploaded to image
+  cinder_detailed_info: true # true if detailed information should be listed
+  cinder_read_only_volume: true # The value to indicate whether to update volume to read-only access mode
+  cinder_volume_min_extend_size: 6
+  cinder_volume_max_extend_size: 10
+  cinder_nested_cloning_level: 5 # argument for nested cloning volume to new volume or snapshot to anew one
+  cinder_quotas_params: { snapshots: -1, volumes: -1}
+
+# Parameters for Glance
+  glance_image_location: "https://download.cirros-cloud.net/0.3.5/cirros-0.3.5-i386-disk.img"
+  glance_number_nova_servers_to_boot: 2
+  glance_images_per_tenant_before_benchmarking: 4
+
+# Parameters for Heat
+  stack_change_by_delta: 1 # the number of instances the stack is expected to change by
+  stacks_per_tenant_before_benchmarking: 2 # Stack generator allows to generate arbitrary number of stacks for each tenant before test scenarios.
+  resources_per_stack_before_benchmarking: 10 # defines number of resources that will be created inside each stack
+  # After test execution the stacks will be automatically removed from heat
+  num_instances_in_stack: 2
+
+# Parameters for Swift
+  swift_objects_per_container: 5 # number of objects to upload
+  swift_containers_per_tenant: 2 # will be executed before benchmarking
+
+# Parameters for Cinder, Nova
+  servers_per_tenant_before_benchmarking: 2
+  do_delete: true  # if True, a snapshot and a volume will be deleted after creation, deletes image and volume after uploading if True
+
+# Parameters for Nova
+  force_delete: false # True if force_delete should be used
+  nova_confirm_resize: true # True if need to confirm resize else revert resize
+  nova_number_of_instances_to_boot: 2
+  nova_security_group_count: 5
+  nova_rules_per_security_group: 10
+  nova_detailed_info: True
+  flavor_specification: {"ram": 500, "vcpus": 1, "disk": 1, "extra_specs": { "quota:disk_read_bytes_sec": 10240 } }
+  nova_secgroup_quota: { security_group: -1, security_group_rule: -1 }
+
+# Parameters for Neutron (-1 means unlimited)
+  neutron_quotas_params: { floatingip: -1, network: -1, subnet: -1, port: -1, router: -1, security_group: -1 }
+  neutron_ports_per_network: 10
+  neutron_subnets_per_network: 2

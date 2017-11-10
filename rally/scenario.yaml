@@ -1,0 +1,16 @@
+---
+  GlanceImages.list_images:
+    - 
+      runner:
+        type: "constant"
+        times: {{iterations}}
+        concurrency: {{number_of_concurrent_scenarios}}
+      context:
+        users:
+          tenants: {{number_of_tenants}}
+          users_per_tenant: {{users_per_tenant}}
+        images:
+          image_url: {{glance_image_location}}
+          image_type: "qcow2"
+          image_container: "bare"
+          images_per_tenant: {{glance_images_per_tenant_before_benchmarking}}
