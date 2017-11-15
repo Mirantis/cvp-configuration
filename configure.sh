@@ -123,13 +123,35 @@ sed -i 's/publicURL/'$TEMPEST_ENDPOINT_TYPE'/g' $current_path/cvp-configuration/
 cat $current_path/cvp-configuration/tempest_full.conf
 }
 
+quick_configuration () {
+current_path=$(pwd)
+#image
+glance image-list | grep "\bTest2VM\b" 2>&1 >/dev/null || {
+    if [ -n "${PROXY}" ]; then
+      export http_proxy=$PROXY
+    fi
+    ls $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img || wget http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img
+    unset http_proxy
+    echo "TODO: add md5check here"
+    echo "should be ee1eca47dc88f4879d8a229cc70a07c6"
+    md5sum $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img
+    glance image-create --name=Test2VM --visibility=public --container-format=bare --disk-format=qcow2 < $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img
+}
+IMAGE_REF2=$(glance image-list | grep 'Test2VM' | awk '{print $2}')
+sed -i 's/${IMAGE_REF2}/'$IMAGE_REF2'/g' $current_path/cvp-configuration/tempest/tempest_ext.conf
+sed -i 's/publicURL/'$TEMPEST_ENDPOINT_TYPE'/g' $current_path/cvp-configuration/tempest/tempest_ext.conf
+cat $current_path/cvp-configuration/tempest/tempest_ext.conf
+}
+
 check_variables
 rally_configuration
 if [ -n "${TEMPEST_ENDPOINT}" ]; then
     tempest_configuration
-    collecting_openstack_data
-    create_tempest_config
-    rally verify configure-verifier --override /home/rally/cvp-configuration/tempest_full.conf
+    #collecting_openstack_data
+    #create_tempest_config
+    quick_configuration
+    rally verify configure-verifier --extend /home/rally/cvp-configuration/tempest/tempest_ext.conf
+    #rally verify configure-verifier --override /home/rally/cvp-configuration/tempest_full.conf
 fi
 set -e
 
