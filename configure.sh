@@ -138,6 +138,21 @@ glance image-list | grep "\bTest2VM\b" 2>&1 >/dev/null || {
     glance image-create --name=Test2VM --visibility=public --container-format=bare --disk-format=qcow2 < $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img
 }
 IMAGE_REF2=$(glance image-list | grep 'Test2VM' | awk '{print $2}')
+#IMAGE_NAME=$(glance image-list | grep 'Test2VM' | awk '{print $4}')
+
+#nova flavor-list | grep tiny 2>&1 >/dev/null || {
+#    nova flavor-create --is-public true m1.tiny auto 128 1 1
+#}
+#FLAVOR_REF=$(nova flavor-list | grep '\bm1.tiny\b' | awk '{print $2}')
+#FLAVOR_NAME=$(nova flavor-list | grep '\bm1.tiny\b' | awk '{print $4}')
+
+#sed -i 's/${IMAGE_REF2}/'$IMAGE_NAME'/g' $current_path/testing-stuff/rally/rally_scenarios.json
+#sed -i 's/${FLAVOR_REF}/'$FLAVOR_NAME'/g' $current_path/testing-stuff/rally/rally_scenarios.json
+#sed -i 's/${IMAGE_REF2}/'$IMAGE_NAME'/g' $current_path/testing-stuff/rally/rally_scenarios_full.json
+#sed -i 's/${FLAVOR_REF}/'$FLAVOR_NAME'/g' $current_path/testing-stuff/rally/rally_scenarios_full.json
+#sed -i 's/${IMAGE_REF2}/'$IMAGE_NAME'/g' $current_path/testing-stuff/rally/rally_scenarios_many_VM.json
+#sed -i 's/${FLAVOR_REF}/'$FLAVOR_NAME'/g' $current_path/testing-stuff/rally/rally_scenarios_many_VM.json
+
 sed -i 's/${IMAGE_REF2}/'$IMAGE_REF2'/g' $current_path/cvp-configuration/tempest/tempest_ext.conf
 sed -i 's/publicURL/'$TEMPEST_ENDPOINT_TYPE'/g' $current_path/cvp-configuration/tempest/tempest_ext.conf
 cat $current_path/cvp-configuration/tempest/tempest_ext.conf
@@ -149,9 +164,9 @@ if [ -n "${TEMPEST_ENDPOINT}" ]; then
     tempest_configuration
     #collecting_openstack_data
     #create_tempest_config
+    #rally verify configure-verifier --override /home/rally/cvp-configuration/tempest_full.conf
     quick_configuration
     rally verify configure-verifier --extend /home/rally/cvp-configuration/tempest/tempest_ext.conf
-    #rally verify configure-verifier --override /home/rally/cvp-configuration/tempest_full.conf
 fi
 set -e
 

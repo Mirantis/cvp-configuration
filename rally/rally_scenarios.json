@@ -1,5 +1,5 @@
 {% set flavor_name = flavor_name or "m1.tiny" %}
-{% set image_name = image_name or "TestVM" %}
+{% set image_name = image_name or "Test2VM" %}
 {% set volume_type = volume_type or "default" %}
 {% set availability_zone = "nova" %}
 {% set concurrency = 1 %}
@@ -8,7 +8,23 @@
 {% set users = 2 %}
 {% set tenants = 3 %}
 {% set rbd_image = "/home/rally/cvp-configuration/cirros-0.3.4-x86_64-disk.img" %}
+{% set heat_template = "/home/rally/cvp-configuration/rally/default.yaml.template" %}
 {
+"KeystoneBasic.authenticate_user_and_validate_token": [
+        {
+            "args": {},
+            "runner": {
+                "type": "constant",
+                "times": {{times}},
+                "concurrency": {{concurrency}}
+            },
+            "sla": {
+                "failure_rate": {
+                    "max": 0
+                }
+            }
+        }
+    ],
   "NovaServers.boot_and_associate_floating_ip": [
     {
       "runner": {
@@ -51,7 +67,7 @@
       }
     }
   ],
-  "NovaServers.boot_and_delete_server": [
+  "NovaServers.boot_and_list_server": [
     {
       "args": {
         "flavor": {
@@ -60,7 +76,7 @@
       "image": {
         "name": "{{image_name}}"
       },
-      "force_delete": false,
+      "detailed": true,
       "auto_assign_nic": true,
       "availability_zone": "{{availability_zone}}"
       },
@@ -372,7 +388,7 @@
     "HeatStacks.create_and_delete_stack": [
         {
             "args": {
-               "template_path": "/home/rally/cvp-configuration/rally/default.yaml.template"
+               "template_path": "{{heat_template}}"
             },
             "runner": {
                 "type": "constant",

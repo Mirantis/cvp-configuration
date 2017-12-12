@@ -1,4 +1,5 @@
 tempest.api.compute.servers.test_novnc.NoVNCConsoleTestJSON.test_novnc[id-c640fdff-8ab4-45a4-a5d8-7e6146cbd0dc]: See https://bugs.launchpad.net/nova/+bug/1669468.
+tempest.api.compute.admin.test_servers_on_multinodes.ServersOnMultiNodesTest.test_create_servers_on_same_host[id-26a9d5df-6890-45f2-abc4-a659290cb130]: SameHostFilter is not included into nova.conf
 designate_tempest_plugin.tests.api.admin.test_quotas.QuotasAdminTest.test_delete_quotas[id-33e0affb-5d66-4216-881c-f101a779851a,smoke]: admin token is disabled for designate
 designate_tempest_plugin.tests.api.admin.test_quotas.QuotasAdminTest.test_show_quotas[id-ed42f367-e5ba-40d7-a08d-366ad787d21c,smoke]: admin token is disabled for designate
 designate_tempest_plugin.tests.api.admin.test_quotas.QuotasAdminTest.test_update_quotas[id-4f2b65b7-c4e1-489c-9047-755e42ba0985,smoke]: admin token is disabled for designate
@@ -59,6 +60,12 @@ tempest.api.object_storage.test_object_services.PublicObjectTest.test_access_pub
 tempest.api.object_storage.test_object_services.PublicObjectTest.test_access_public_object_with_another_user_creds[id-54e2a2fe-42dc-491b-8270-8e4217dd4cdc]: not compatible with ceph
 tempest.api.object_storage.test_object_slo.ObjectSloTest.test_delete_large_object[id-87b6dfa1-abe9-404d-8bf0-6c3751e6aa77]: not compatible with ceph
 tempest.api.object_storage.test_object_version.ContainerTest.test_versioned_container[id-a151e158-dcbf-4a1f-a1e7-46cd65895a6f]: not compatible with ceph
+tempest.api.orchestration.stacks.test_neutron_resources.NeutronResourcesTestJSON.test_created_router_interface[id-89f605bd-153e-43ee-a0ed-9919b63423c5,network]: Not compatible with Contrail
+tempest.api.orchestration.stacks.test_neutron_resources.NeutronResourcesTestJSON.test_created_router[id-96af4c7f-5069-44bc-bdcf-c0390f8a67d1,network]: Not compatible with Contrail
+tempest.api.orchestration.stacks.test_neutron_resources.NeutronResourcesTestJSON.test_created_resources[id-f9e2664c-bc44-4eef-98b6-495e4f9d74b3]: Not compatible with Contrail
+tempest.api.orchestration.stacks.test_neutron_resources.NeutronResourcesTestJSON.test_created_subnet[id-e8f84b96-f9d7-4684-ad5f-340203e9f2c2,network]: Not compatible with Contrail
+tempest.api.orchestration.stacks.test_neutron_resources.NeutronResourcesTestJSON.test_created_network[id-c572b915-edb1-4e90-b196-c7199a6848c0,network]: Not compatible with Contrail
+tempest.api.orchestration.stacks.test_neutron_resources.NeutronResourcesTestJSON.test_created_server[compute,id-75d85316-4ac2-4c0e-a1a9-edd2148fc10e,network]: Not compatible with Contrail
 tempest.api.network.admin.test_agent_management.AgentManagementTestJSON.test_list_agent[id-9c80f04d-11f3-44a4-8738-ed2f879b0ff4]: Agents are not in use in Contrail.
 tempest.api.network.admin.test_agent_management.AgentManagementTestJSON.test_list_agents_non_admin[id-e335be47-b9a1-46fd-be30-0874c0b751e6]: Agents are not in use in Contrail.
 tempest.api.network.admin.test_agent_management.AgentManagementTestJSON.test_show_agent[id-869bc8e8-0fda-4a30-9b71-f8a7cf58ca9f]: Agents are not in use in Contrail.
@@ -93,7 +100,7 @@ tempest.api.network.test_ports.PortsIpV6TestJSON.test_update_port_with_two_secur
 tempest.api.network.test_ports.PortsTestJSON.test_create_update_port_with_second_ip[id-63aeadd4-3b49-427f-a3b1-19ca81f06270]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1604772.
 tempest.api.network.test_ports.PortsTestJSON.test_update_port_with_security_group_and_extra_attributes[id-58091b66-4ff4-4cc1-a549-05d60c7acd1a]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1604923.
 tempest.api.network.test_ports.PortsTestJSON.test_update_port_with_two_security_groups_and_extra_attributes[id-edf6766d-3d40-4621-bc6e-2521a44c257d]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1604923.
-tempest.api.network.test_routers.RoutersIpV6Test.test_update_router_set_gateway[id-6cc285d8-46bf-4f36-9b1a-783e3008ba79]:Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/r3.1/+bug/1604929.
+tempest.api.network.test_routers.RoutersIpV6Test.test_update_router_set_gateway[id-6cc285d8-46bf-4f36-9b1a-783e3008ba79]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/r3.1/+bug/1604929.
 tempest.api.network.test_routers.RoutersTest.test_update_router_set_gateway[id-6cc285d8-46bf-4f36-9b1a-783e3008ba79]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/r3.1/+bug/1604929.
 tempest.api.network.test_security_groups_negative.NegativeSecGroupIPv6Test.test_create_security_group_rule_wrong_ip_prefix_version[id-7607439c-af73-499e-bf64-f687fd12a842,negative]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1604935.
 tempest.scenario.test_network_basic_ops.TestNetworkBasicOps.test_network_basic_ops[compute,id-f323b3ba-82f8-4db7-8ea6-6a895869ec49,network,smoke]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1330903.
