@@ -158,6 +158,14 @@ sed -i 's/publicURL/'$TEMPEST_ENDPOINT_TYPE'/g' $current_path/cvp-configuration/
 cat $current_path/cvp-configuration/tempest/tempest_ext.conf
 }
 
+if [ "$1" == "reconfigure" ]; then
+  echo "This is reconfiguration"
+  rally verify configure-verifier --reconfigure
+  rally verify configure-verifier --extend /home/rally/cvp-configuration/tempest/tempest_ext.conf
+  rally verify configure-verifier --show
+  exit 0
+fi
+
 check_variables
 rally_configuration
 if [ -n "${TEMPEST_ENDPOINT}" ]; then
