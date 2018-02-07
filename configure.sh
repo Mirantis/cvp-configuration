@@ -22,6 +22,10 @@ check_variables () {
 }
 
 rally_configuration () {
+  rally_version=$(rally version 2>&1)
+  if [ "$rally_version" == "0.9.0" ] || [ "$rally_version" == "0.9.1" ]; then
+    pip install ansible==2.3.2.0
+  fi
   sub_name=`date "+%H_%M_%S"`
   rally deployment create --fromenv --name=tempest_$sub_name
   rally deployment config
