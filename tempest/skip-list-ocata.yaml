@@ -1,0 +1,117 @@
+tempest.api.compute.servers.test_novnc.NoVNCConsoleTestJSON.test_novnc[id-c640fdff-8ab4-45a4-a5d8-7e6146cbd0dc]: See https://bugs.launchpad.net/nova/+bug/1669468.
+tempest.api.compute.admin.test_servers_on_multinodes.ServersOnMultiNodesTest.test_create_servers_on_same_host[id-26a9d5df-6890-45f2-abc4-a659290cb130]: SameHostFilter is not included into nova.conf
+designate_tempest_plugin.tests.api.admin.test_quotas.QuotasAdminTest.test_delete_quotas[id-33e0affb-5d66-4216-881c-f101a779851a,smoke]: admin token is disabled for designate
+designate_tempest_plugin.tests.api.admin.test_quotas.QuotasAdminTest.test_show_quotas[id-ed42f367-e5ba-40d7-a08d-366ad787d21c,smoke]: admin token is disabled for designate
+designate_tempest_plugin.tests.api.admin.test_quotas.QuotasAdminTest.test_update_quotas[id-4f2b65b7-c4e1-489c-9047-755e42ba0985,smoke]: admin token is disabled for designate
+designate_tempest_plugin.tests.api.v1.test_domains.DnsDomainsTest.test_create_update_get_domain[id-29f76dd4-2456-4e42-b0ca-bbffcc6bbf59,smoke]: sometimes may fail because of race condition
+designate_tempest_plugin.tests.api.v2.test_pool.PoolAdminTest.test_list_pools_dot_json_fails[id-41ad6a84-00ce-4a04-9fd5-b7c15c31e2db,smoke]: not applicable
+designate_tempest_plugin.tests.api.v2.test_tld.TldAdminTest.test_list_tlds_dot_json_fails[id-8116dcf5-a329-47d1-90be-5ff32f299c53,smoke]: not applicable
+designate_tempest_plugin.tests.api.v2.test_zones.ZonesTest.test_list_zones_dot_json_fails[id-925192f2-0ed8-4591-8fe7-a9fa028f90a0,smoke]: not applicable
+designate_tempest_plugin.tests.api.v2.test_tsigkey.TsigkeyAdminTest.test_list_tsigkeys_dot_json_fails[id-4bdc20ef-96f9-47f6-a1aa-275159af326b]: not applicable
+designate_tempest_plugin.tests.api.v2.test_zones_imports.ZonesImportTest.test_create_zone_import[id-2e2d907d-0609-405b-9c96-3cb2b87e3dce,smoke]: error on tempest side
+tempest.api.object_storage.test_account_bulk.BulkTest.test_bulk_delete[id-c075e682-0d2a-43b2-808d-4116200d736d]: not compatible with ceph
+tempest.api.object_storage.test_account_bulk.BulkTest.test_bulk_delete_by_POST[id-dbea2bcb-efbb-4674-ac8a-a5a0e33d1d79]: not compatible with ceph
+tempest.api.object_storage.test_account_bulk.BulkTest.test_extract_archive[id-a407de51-1983-47cc-9f14-47c2b059413c]: not compatible with ceph
+tempest.api.object_storage.test_account_quotas_negative.AccountQuotasNegativeTest.test_user_modify_quota[id-d1dc5076-555e-4e6d-9697-28f1fe976324,negative]: not compatible with ceph
+tempest.api.object_storage.test_account_services.AccountTest.test_list_containers[id-3499406a-ae53-4f8c-b43a-133d4dc6fe3f,smoke]: not compatible with ceph
+tempest.api.object_storage.test_account_services.AccountTest.test_list_containers_with_end_marker[id-5ca164e4-7bde-43fa-bafb-913b53b9e786]: not compatible with ceph
+tempest.api.object_storage.test_account_services.AccountTest.test_list_containers_with_format_json[id-1c7efa35-e8a2-4b0b-b5ff-862c7fd83704]: not compatible with ceph
+tempest.api.object_storage.test_account_services.AccountTest.test_list_containers_with_format_xml[id-4477b609-1ca6-4d4b-b25d-ad3f01086089]: not compatible with ceph
+tempest.api.object_storage.test_account_services.AccountTest.test_list_containers_with_limit[id-5cfa4ab2-4373-48dd-a41f-a532b12b08b2]: not compatible with ceph
+tempest.api.object_storage.test_account_services.AccountTest.test_list_containers_with_limit_and_end_marker[id-888a3f0e-7214-4806-8e50-5e0c9a69bb5e]: not compatible with ceph
+tempest.api.object_storage.test_account_services.AccountTest.test_list_containers_with_limit_and_marker[id-f7064ae8-dbcc-48da-b594-82feef6ea5af]: not compatible with ceph
+tempest.api.object_storage.test_account_services.AccountTest.test_list_containers_with_limit_and_marker_and_end_marker[id-8cf98d9c-e3a0-4e44-971b-c87656fdddbd]: not compatible with ceph
+tempest.api.object_storage.test_account_services.AccountTest.test_list_containers_with_marker[id-638f876d-6a43-482a-bbb3-0840bca101c6]: not compatible with ceph
+tempest.api.object_storage.test_account_services.AccountTest.test_list_containers_with_marker_and_end_marker[id-ac8502c2-d4e4-4f68-85a6-40befea2ef5e]: not compatible with ceph
+tempest.api.object_storage.test_account_services.AccountTest.test_list_containers_with_prefix[id-365e6fc7-1cfe-463b-a37c-8bd08d47b6aa]: not compatible with ceph
+tempest.api.object_storage.test_account_services.AccountTest.test_list_containers_reverse_order[id-b1811cff-d1ed-4c15-a52e-efd8de41cf34]: skipped until bug resolved http://tracker.ceph.com/issues/21554
+tempest.api.object_storage.test_account_services_negative.AccountNegativeTest.test_list_containers_with_non_authorized_user[id-070e6aca-6152-4867-868d-1118d68fb38c,negative]: not compatible with ceph
+tempest.api.object_storage.test_container_acl.ObjectTestACLs.test_read_object_with_rights[id-a3270f3f-7640-4944-8448-c7ea783ea5b6]: not compatible with ceph
+tempest.api.object_storage.test_container_acl.ObjectTestACLs.test_write_object_with_rights[id-aa58bfa5-40d9-4bc3-82b4-d07f4a9e392a]: not compatible with ceph
+tempest.api.object_storage.test_container_acl_negative.ObjectACLsNegativeTest.test_delete_object_with_non_authorized_user[id-7343ac3d-cfed-4198-9bb0-00149741a492,negative]: not compatible with ceph
+tempest.api.object_storage.test_container_acl_negative.ObjectACLsNegativeTest.test_delete_object_without_write_rights[id-b4e366f8-f185-47ab-b789-df4416f9ecdb,negative]: not compatible with ceph
+tempest.api.object_storage.test_container_acl_negative.ObjectACLsNegativeTest.test_read_object_with_non_authorized_user[id-abf63359-be52-4feb-87dd-447689fc77fd,negative]: not compatible with ceph
+tempest.api.object_storage.test_container_acl_negative.ObjectACLsNegativeTest.test_read_object_without_rights[id-9ed01334-01e9-41ea-87ea-e6f465582823,negative]: not compatible with ceph
+tempest.api.object_storage.test_container_acl_negative.ObjectACLsNegativeTest.test_write_object_with_non_authorized_user[id-63d84e37-55a6-42e2-9e5f-276e60e26a00,negative]: not compatible with ceph
+tempest.api.object_storage.test_container_acl_negative.ObjectACLsNegativeTest.test_write_object_without_rights[id-a3a585a7-d8cf-4b65-a1a0-edc2b1204f85,negative]: not compatible with ceph
+tempest.api.object_storage.test_container_acl_negative.ObjectACLsNegativeTest.test_write_object_without_write_rights[id-8ba512ad-aa6e-444e-b882-2906a0ea2052,negative]: not compatible with ceph
+tempest.api.object_storage.test_container_quotas.ContainerQuotasTest.test_upload_large_object[id-22eeeb2b-3668-4160-baef-44790f65a5a0,smoke]: not compatible with ceph
+tempest.api.object_storage.test_container_quotas.ContainerQuotasTest.test_upload_too_many_objects[id-3a387039-697a-44fc-a9c0-935de31f426b,smoke]: not compatible with ceph
+tempest.api.object_storage.test_container_services.ContainerTest.test_list_container_contents_with_end_marker[id-55b4fa5c-e12e-4ca9-8fcf-a79afe118522]: known issue with rgw http://tracker.ceph.com/issues/18977
+tempest.api.object_storage.test_container_services_negative.ContainerNegativeTest.test_create_container_metadata_exceeds_overall_metadata_count[id-ac666539-d566-4f02-8ceb-58e968dfb732,negative]: not compatible with ceph
+tempest.api.object_storage.test_container_services_negative.ContainerNegativeTest.test_create_container_metadata_name_exceeds_max_length[id-41e645bf-2e68-4f84-bf7b-c71aa5cd76ce,negative]: not compatible with ceph
+tempest.api.object_storage.test_container_services_negative.ContainerNegativeTest.test_create_container_metadata_value_exceeds_max_length[id-81e36922-326b-4b7c-8155-3bbceecd7a82,negative]: not compatible with ceph
+tempest.api.object_storage.test_container_services_negative.ContainerNegativeTest.test_create_container_name_exceeds_max_length[id-30686921-4bed-4764-a038-40d741ed4e78,negative]: not compatible with ceph
+tempest.api.object_storage.test_container_services_negative.ContainerNegativeTest.test_delete_non_empty_container[id-42da116e-1e8c-4c96-9e06-2f13884ed2b1,negative]: not compatible with ceph
+tempest.api.object_storage.test_container_services_negative.ContainerNegativeTest.test_delete_with_nonexistent_container_name[id-65387dbf-a0e2-4aac-9ddc-16eb3f1f69ba,negative]: not compatible with ceph
+tempest.api.object_storage.test_container_services_negative.ContainerNegativeTest.test_get_metadata_headers_with_invalid_container_name[id-1a95ab2e-b712-4a98-8a4d-8ce21b7557d6,negative]: not compatible with ceph
+tempest.api.object_storage.test_container_services_negative.ContainerNegativeTest.test_list_all_container_objects_on_deleted_container[id-86b2ab08-92d5-493d-acd2-85f0c848819e,negative]: not compatible with ceph
+tempest.api.object_storage.test_container_services_negative.ContainerNegativeTest.test_list_all_container_objects_with_nonexistent_container[id-14331d21-1e81-420a-beea-19cb5e5207f5,negative]: not compatible with ceph
+tempest.api.object_storage.test_container_services_negative.ContainerNegativeTest.test_update_metadata_with_nonexistent_container_name[id-125a24fa-90a7-4cfc-b604-44e49d788390,negative]: not compatible with ceph
+tempest.api.object_storage.test_container_staticweb.StaticWebTest.test_web_index[id-c1f055ab-621d-4a6a-831f-846fcb578b8b]: not compatible with ceph
+tempest.api.object_storage.test_container_staticweb.StaticWebTest.test_web_listing_css[id-bc37ec94-43c8-4990-842e-0e5e02fc8926]: not compatible with ceph
+tempest.api.object_storage.test_container_sync_middleware.ContainerSyncMiddlewareTest.test_container_synchronization[id-ea4645a1-d147-4976-82f7-e5a7a3065f80,slow]: not compatible with ceph
+tempest.api.object_storage.test_crossdomain.CrossdomainTest.test_get_crossdomain_policy[id-d1b8b031-b622-4010-82f9-ff78a9e915c7]: not compatible with ceph
+tempest.api.object_storage.test_healthcheck.HealthcheckTest.test_get_healthcheck[id-db5723b1-f25c-49a9-bfeb-7b5640caf337]: not compatible with ceph
+tempest.api.object_storage.test_object_formpost.ObjectFormPostTest.test_post_object_using_form[id-80fac02b-6e54-4f7b-be0d-a965b5cbef76]: not compatible with ceph
+tempest.api.object_storage.test_object_formpost_negative.ObjectFormPostNegativeTest.test_post_object_using_form_expired[id-d3fb3c4d-e627-48ce-9379-a1631f21336d,negative]: not compatible with ceph
+tempest.api.object_storage.test_object_formpost_negative.ObjectFormPostNegativeTest.test_post_object_using_form_invalid_signature[id-b277257f-113c-4499-b8d1-5fead79f7360]: not compatible with ceph
+tempest.api.object_storage.test_object_services.PublicObjectTest.test_access_public_container_object_without_using_creds[id-07c9cf95-c0d4-4b49-b9c8-0ef2c9b27193]: not compatible with ceph
+tempest.api.object_storage.test_object_services.PublicObjectTest.test_access_public_object_with_another_user_creds[id-54e2a2fe-42dc-491b-8270-8e4217dd4cdc]: not compatible with ceph
+tempest.api.object_storage.test_object_slo.ObjectSloTest.test_delete_large_object[id-87b6dfa1-abe9-404d-8bf0-6c3751e6aa77]: not compatible with ceph
+tempest.api.object_storage.test_object_version.ContainerTest.test_versioned_container[id-a151e158-dcbf-4a1f-a1e7-46cd65895a6f]: not compatible with ceph
+tempest.api.orchestration.stacks.test_neutron_resources.NeutronResourcesTestJSON.test_created_router_interface[id-89f605bd-153e-43ee-a0ed-9919b63423c5,network]: Not compatible with Contrail
+tempest.api.orchestration.stacks.test_neutron_resources.NeutronResourcesTestJSON.test_created_router[id-96af4c7f-5069-44bc-bdcf-c0390f8a67d1,network]: Not compatible with Contrail
+tempest.api.orchestration.stacks.test_neutron_resources.NeutronResourcesTestJSON.test_created_resources[id-f9e2664c-bc44-4eef-98b6-495e4f9d74b3]: Not compatible with Contrail
+tempest.api.orchestration.stacks.test_neutron_resources.NeutronResourcesTestJSON.test_created_subnet[id-e8f84b96-f9d7-4684-ad5f-340203e9f2c2,network]: Not compatible with Contrail
+tempest.api.orchestration.stacks.test_neutron_resources.NeutronResourcesTestJSON.test_created_network[id-c572b915-edb1-4e90-b196-c7199a6848c0,network]: Not compatible with Contrail
+tempest.api.orchestration.stacks.test_neutron_resources.NeutronResourcesTestJSON.test_created_server[compute,id-75d85316-4ac2-4c0e-a1a9-edd2148fc10e,network]: Not compatible with Contrail
+tempest.api.network.admin.test_agent_management.AgentManagementTestJSON.test_list_agent[id-9c80f04d-11f3-44a4-8738-ed2f879b0ff4]: Agents are not in use in Contrail.
+tempest.api.network.admin.test_agent_management.AgentManagementTestJSON.test_list_agents_non_admin[id-e335be47-b9a1-46fd-be30-0874c0b751e6]: Agents are not in use in Contrail.
+tempest.api.network.admin.test_agent_management.AgentManagementTestJSON.test_show_agent[id-869bc8e8-0fda-4a30-9b71-f8a7cf58ca9f]: Agents are not in use in Contrail.
+tempest.api.network.admin.test_agent_management.AgentManagementTestJSON.test_update_agent_description[id-68a94a14-1243-46e6-83bf-157627e31556]: Agents are not in use in Contrail.
+tempest.api.network.admin.test_agent_management.AgentManagementTestJSON.test_update_agent_status[id-371dfc5b-55b9-4cb5-ac82-c40eadaac941]: Agents are not in use in Contrail.
+tempest.api.network.admin.test_external_networks_negative.ExternalNetworksAdminNegativeTestJSON.test_create_port_with_precreated_floatingip_as_fixed_ip[id-d402ae6c-0be0-4d8e-833b-a738895d98d0,negative]: Contrail specific problem. See https://bugs.launchpad.net/opencontrail/+bug/1488447.
+tempest.api.network.admin.test_negative_quotas.QuotasNegativeTest.test_network_quota_exceeding[id-644f4e1b-1bf9-4af0-9fd8-eb56ac0f51cf]: quota_driver parameter in /etc/neutron/neutron.conf is not neutron.db.quota_db.DbQuotaDriver
+tempest.api.network.test_routers_negative.RoutersNegativeIpV6Test.test_add_router_interfaces_on_overlapping_subnets_returns_400[id-957751a3-3c68-4fa2-93b6-eb52ea10db6e,negative]: Contrail specific problem. See https://bugs.launchpad.net/opencontrail/+bug/1489361.
+tempest.api.network.test_routers_negative.RoutersNegativeTest.test_add_router_interfaces_on_overlapping_subnets_returns_400[id-957751a3-3c68-4fa2-93b6-eb52ea10db6e,negative]: Contrail specific problem. See https://bugs.launchpad.net/opencontrail/+bug/1489361.
+tempest.api.network.test_dhcp_ipv6.NetworksTestDHCPv6.test_dhcpv6_64_subnets[id-4256c61d-c538-41ea-9147-3c450c36669e]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1604564.
+tempest.api.network.test_dhcp_ipv6.NetworksTestDHCPv6.test_dhcpv6_invalid_options[id-81f18ef6-95b5-4584-9966-10d480b7496a]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1514684.
+tempest.api.network.test_dhcp_ipv6.NetworksTestDHCPv6.test_dhcpv6_stateless_eui64[id-e5517e62-6f16-430d-a672-f80875493d4c]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1604564.
+tempest.api.network.test_dhcp_ipv6.NetworksTestDHCPv6.test_dhcpv6_stateless_no_ra[id-ae2f4a5d-03ff-4c42-a3b0-ce2fcb7ea832]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1604564.
+tempest.api.network.test_dhcp_ipv6.NetworksTestDHCPv6.test_dhcpv6_two_subnets[id-4544adf7-bb5f-4bdc-b769-b3e77026cef2]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1596917.
+tempest.api.network.test_floating_ips_negative.FloatingIPNegativeTestJSON.test_associate_floatingip_port_ext_net_unreachable[id-6b3b8797-6d43-4191-985c-c48b773eb429,negative]: Contrail specific problem. https://bugs.launchpad.net/juniperopenstack/+bug/1476935.
+tempest.api.network.test_floating_ips_negative.FloatingIPNegativeTestJSON.test_create_floatingip_with_port_ext_net_unreachable[id-22996ea8-4a81-4b27-b6e1-fa5df92fa5e8,negative]: Contrail specific problem. https://bugs.launchpad.net/juniperopenstack/+bug/1476935.
+tempest.api.network.test_networks.NetworksIpV6Test.test_create_update_network_description[id-c72c1c0c-2193-4aca-ccc4-b1442640bbbb]: See https://bugs.launchpad.net/juniperopenstack/+bug/1685940
+tempest.api.network.test_networks.NetworksTest.test_create_update_network_description[id-c72c1c0c-2193-4aca-ccc4-b1442640bbbb]: See https://bugs.launchpad.net/juniperopenstack/+bug/1685940
+tempest.api.network.test_networks.NetworksIpV6Test.test_create_list_subnet_with_no_gw64_one_network[id-a9653883-b2a4-469b-8c3c-4518430a7e55]: See https://bugs.launchpad.net/juniperopenstack/+bug/1514689.
+tempest.api.network.test_networks.NetworksIpV6Test.test_update_subnet_gw_dns_host_routes_dhcp[id-3d3852eb-3009-49ec-97ac-5ce83b73010a]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1476951.
+tempest.api.network.test_networks.NetworksIpV6TestAttrs.test_create_delete_slaac_subnet_with_ports[id-88554555-ebf8-41ef-9300-4926d45e06e9]: See https://bugs.launchpad.net/juniperopenstack/+bug/1654177
+tempest.api.network.test_networks.NetworksIpV6TestAttrs.test_create_delete_stateless_subnet_with_ports[id-2de6ab5a-fcf0-4144-9813-f91a940291f1]: See https://bugs.launchpad.net/juniperopenstack/+bug/1654177
+tempest.api.network.test_networks.NetworksIpV6TestAttrs.test_create_delete_subnet_with_v6_attributes_slaac[id-176b030f-a923-4040-a755-9dc94329e60c]: See https://bugs.launchpad.net/juniperopenstack/+bug/1654179.
+tempest.api.network.test_networks.NetworksIpV6TestAttrs.test_create_delete_subnet_with_v6_attributes_stateful[id-da40cd1b-a833-4354-9a85-cd9b8a3b74ca]: See https://bugs.launchpad.net/juniperopenstack/+bug/1654179.
+tempest.api.network.test_networks.NetworksIpV6TestAttrs.test_create_delete_subnet_with_v6_attributes_stateless[id-7d410310-8c86-4902-adf9-865d08e31adb]: See https://bugs.launchpad.net/juniperopenstack/+bug/1654179.
+tempest.api.network.test_networks.NetworksIpV6TestAttrs.test_create_list_subnet_with_no_gw64_one_network[id-a9653883-b2a4-469b-8c3c-4518430a7e55]: See https://bugs.launchpad.net/juniperopenstack/+bug/1514689.
+tempest.api.network.test_networks.NetworksIpV6TestAttrs.test_update_subnet_gw_dns_host_routes_dhcp[id-3d3852eb-3009-49ec-97ac-5ce83b73010a]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1476951.
+tempest.api.network.test_networks.NetworksTest.test_update_subnet_gw_dns_host_routes_dhcp[id-3d3852eb-3009-49ec-97ac-5ce83b73010a]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1476951.
+tempest.api.network.test_ports.PortsIpV6TestJSON.test_create_update_port_with_second_ip[id-63aeadd4-3b49-427f-a3b1-19ca81f06270]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1604772.
+tempest.api.network.test_ports.PortsIpV6TestJSON.test_update_port_with_security_group_and_extra_attributes[id-58091b66-4ff4-4cc1-a549-05d60c7acd1a]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1604923.
+tempest.api.network.test_ports.PortsIpV6TestJSON.test_update_port_with_two_security_groups_and_extra_attributes[id-edf6766d-3d40-4621-bc6e-2521a44c257d]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1604923.
+tempest.api.network.test_ports.PortsTestJSON.test_create_update_port_with_second_ip[id-63aeadd4-3b49-427f-a3b1-19ca81f06270]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1604772.
+tempest.api.network.test_ports.PortsTestJSON.test_update_port_with_security_group_and_extra_attributes[id-58091b66-4ff4-4cc1-a549-05d60c7acd1a]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1604923.
+tempest.api.network.test_ports.PortsTestJSON.test_update_port_with_two_security_groups_and_extra_attributes[id-edf6766d-3d40-4621-bc6e-2521a44c257d]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1604923.
+tempest.api.network.test_routers.RoutersIpV6Test.test_update_router_set_gateway[id-6cc285d8-46bf-4f36-9b1a-783e3008ba79]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/r3.1/+bug/1604929.
+tempest.api.network.test_routers.RoutersTest.test_update_router_set_gateway[id-6cc285d8-46bf-4f36-9b1a-783e3008ba79]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/r3.1/+bug/1604929.
+tempest.api.network.test_security_groups_negative.NegativeSecGroupIPv6Test.test_create_security_group_rule_wrong_ip_prefix_version[id-7607439c-af73-499e-bf64-f687fd12a842,negative]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1604935.
+tempest.scenario.test_network_basic_ops.TestNetworkBasicOps.test_network_basic_ops[compute,id-f323b3ba-82f8-4db7-8ea6-6a895869ec49,network,smoke]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1330903.
+tempest.scenario.test_network_basic_ops.TestNetworkBasicOps.test_port_security_macspoofing_port[compute,id-7c0bb1a2-d053-49a4-98f9-ca1a1d849f63,network]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1632961.
+tempest.scenario.test_network_v6.TestGettingAddress.test_dualnet_multi_prefix_slaac[compute,id-9178ad42-10e4-47e9-8987-e02b170cc5cd,network]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1604568.
+tempest.scenario.test_network_v6.TestGettingAddress.test_dhcp6_stateless_from_os[compute,id-d7e1f858-187c-45a6-89c9-bdafde619a9f,network,slow]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1604568.
+tempest.scenario.test_network_v6.TestGettingAddress.test_dualnet_dhcp6_stateless_from_os[compute,id-76f26acd-9688-42b4-bc3e-cd134c4cb09e,network,slow]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1604568.
+tempest.scenario.test_network_v6.TestGettingAddress.test_dualnet_multi_prefix_dhcpv6_stateless[compute,id-cf1c4425-766b-45b8-be35-e2959728eb00,network]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1604568.
+tempest.scenario.test_network_v6.TestGettingAddress.test_dualnet_slaac_from_os[compute,id-b6399d76-4438-4658-bcf5-0d6c8584fde2,network,slow]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1604568.
+tempest.scenario.test_network_v6.TestGettingAddress.test_multi_prefix_dhcpv6_stateless[compute,id-7ab23f41-833b-4a16-a7c9-5b42fe6d4123,network,slow]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1604568.
+tempest.scenario.test_network_v6.TestGettingAddress.test_multi_prefix_slaac[compute,id-dec222b1-180c-4098-b8c5-cc1b8342d611,network,slow]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1604568.
+tempest.scenario.test_network_v6.TestGettingAddress.test_slaac_from_os[compute,id-2c92df61-29f0-4eaa-bee3-7c65bef62a43,network,slow]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1604568.
+tempest.scenario.test_security_groups_basic_ops.TestSecurityGroupsBasicOps.test_port_security_disable_security_group[compute,id-7c811dcc-263b-49a3-92d2-1b4d8405f50c,network]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1632961.
+tempest.scenario.test_stamp_pattern.TestStampPattern.test_stamp_pattern[compute,id-10fd234a-515c-41e5-b092-8323060598c5,image,network,volume]: See https://bugs.launchpad.net/nova/+bug/1664793.
