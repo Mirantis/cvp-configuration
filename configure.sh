@@ -88,6 +88,9 @@ if [ -n "${TEMPEST_REPO}" ]; then
     tempest_configuration
     quick_configuration
     rally verify configure-verifier --extend /home/rally/cvp-configuration/tempest/tempest_ext.conf
+    # Add 2 additional tempest tests (live migration to all nodes + ssh to all nodes)
+    # TBD
+    #cat tempest/test_extension.py >> repo/tempest/scenario/test_server_multinode.py
 fi
 set -e
 
