@@ -20,6 +20,7 @@ rally_configuration () {
   rally_version=$(rally version 2>&1)
   if [ "$rally_version" == "0.9.0" ] || [ "$rally_version" == "0.9.1" ]; then
     pip install ansible==2.3.2.0
+    sed -i '270s/,/}#,/g' /usr/local/lib/python2.7/dist-packages/rally/plugins/openstack/wrappers/network.py
   fi
   sub_name=`date "+%H_%M_%S"`
   rally deployment create --fromenv --name=tempest_$sub_name
