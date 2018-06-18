@@ -40,7 +40,7 @@ tempest_configuration () {
 quick_configuration () {
 current_path=$(pwd)
 #image
-glance image-list | grep "\bTest2VM\b" 2>&1 >/dev/null || {
+glance image-list | grep "\btestvm\b" 2>&1 >/dev/null || {
     if [ -n "${PROXY}" ]; then
       export http_proxy=$PROXY
     fi
@@ -48,9 +48,9 @@ glance image-list | grep "\bTest2VM\b" 2>&1 >/dev/null || {
     unset http_proxy
     echo "MD5 should be ee1eca47dc88f4879d8a229cc70a07c6"
     md5sum $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img
-    glance image-create --name=Test2VM --visibility=public --container-format=bare --disk-format=qcow2 < $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img
+    glance image-create --name=testvm --visibility=public --container-format=bare --disk-format=qcow2 < $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img
 }
-IMAGE_REF2=$(glance image-list | grep 'Test2VM' | awk '{print $2}')
+IMAGE_REF2=$(glance image-list | grep 'testvm' | awk '{print $2}')
 #flavor for rally
 nova flavor-list | grep tiny 2>&1 >/dev/null || {
     echo "Let's create m1.tiny flavor"
@@ -63,8 +63,8 @@ if [ $shared_count -gt 1 ]; then
 fi
 if [ $shared_count -eq 0 ]; then
   echo "Let's create shared fixed net"
-  neutron net-create --shared fixed
-  neutron subnet-create --name fixed-subnet --gateway 192.168.0.1 --allocation-pool start=192.168.0.2,end=192.168.0.254 --ip-version 4 fixed 192.168.0.0/24
+  neutron net-create --shared tempest-net
+  neutron subnet-create --name tempest-subnet --gateway 192.168.0.1 --allocation-pool start=192.168.0.2,end=192.168.0.254 --ip-version 4 tempest-net 192.168.0.0/24
 fi
 FIXED_NET=$(neutron net-list -c name -c shared | grep True | awk '{print $2}' | tail -n 1)
 echo "Fixed net is: $FIXED_NET"
