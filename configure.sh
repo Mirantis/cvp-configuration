@@ -14,10 +14,13 @@ check_variables () {
       exit 1
     fi
   done
+  ip=$(echo ${OS_AUTH_URL} | sed -e 's/[^/]*\/\/\([^@]*@\)\?\([^:/]*\).*/\2/')
+  export no_proxy=$ip
 }
 
 rally_configuration () {
   rally_version=$(rally version 2>&1)
+  # will be removed when we switch to Rally 0.9.2+
   if [ "$rally_version" == "0.9.0" ] || [ "$rally_version" == "0.9.1" ]; then
     pip install ansible==2.3.2.0
     sed -i '270s/,/}#,/g' /usr/local/lib/python2.7/dist-packages/rally/plugins/openstack/wrappers/network.py
@@ -27,14 +30,29 @@ rally_configuration () {
   rally deployment config
 }
 
+additional_tempest_plugins (){
+if [ -n "${PROXY}" ]; then
+  export https_proxy=$PROXY
+fi
+rally verify add-verifier-ext --source https://github.com/openstack/telemetry-tempest-plugin
+rally verify add-verifier-ext --source https://github.com/openstack/heat-tempest-plugin
+unset https_proxy
+}
+
 tempest_configuration () {
   sub_name=`date "+%H_%M_%S"`
-  if [ -n "${PROXY}" ]; then
-    export https_proxy=$PROXY
+  if [ -n "${OFFLINE}" ]; then
+    rally verify create-verifier --name tempest_verifier_$sub_name --type tempest --source $TEMPEST_REPO --system-wide --version $tempest_version
+    cd /var/lib/
+  else
+    if [ -n "${PROXY}" ]; then
+      export https_proxy=$PROXY
+    fi
+    rally verify create-verifier --name tempest_verifier_$sub_name --type tempest --source $TEMPEST_REPO --version $tempest_version
+    unset https_proxy
   fi
-  rally verify create-verifier --name tempest_verifier_$sub_name --type tempest --source $TEMPEST_REPO --version $tempest_version
-  unset https_proxy
   rally verify configure-verifier --show
+  additional_tempest_plugins
 }
 
 quick_configuration () {
@@ -78,7 +96,7 @@ cat $current_path/cvp-configuration/tempest/tempest_ext.conf
 if [ "$1" == "reconfigure" ]; then
   echo "This is reconfiguration"
   rally verify configure-verifier --reconfigure
-  rally verify configure-verifier --extend /home/rally/cvp-configuration/tempest/tempest_ext.conf
+  rally verify configure-verifier --extend $current_path/cvp-configuration/tempest/tempest_ext.conf
   rally verify configure-verifier --show
   exit 0
 fi
@@ -88,11 +106,11 @@ rally_configuration
 if [ -n "${TEMPEST_REPO}" ]; then
     tempest_configuration
     quick_configuration
-    rally verify configure-verifier --extend /home/rally/cvp-configuration/tempest/tempest_ext.conf
+    rally verify configure-verifier --extend $current_path/cvp-configuration/tempest/tempest_ext.conf
     # Add 2 additional tempest tests (live migration to all nodes + ssh to all nodes)
     # TBD
     #cat tempest/test_extension.py >> repo/tempest/scenario/test_server_multinode.py
 fi
 set -e
 
-echo "Job is done!"
+echo "Configuration is done!"
