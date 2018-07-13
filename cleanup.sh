@@ -10,19 +10,22 @@ for i in `openstack user list | grep $mask | awk '{print $2}'`; do openstack use
 echo "Delete roles"
 for i in `openstack role list | grep $mask | awk '{print $2}'`; do openstack role delete $i; echo deleted $i; done
 
+#echo "Delete projects"
+#for i in `openstack project list | grep $mask | awk '{print $2}'`; do openstack project delete $i; echo deleted $i; done
+
 echo "Delete servers"
 for i in `openstack server list --all | grep $mask | awk '{print $2}'`; do openstack server delete $i; echo deleted $i; done
 
-echo "Delete snapshot"
-for i in `cinder snapshot-list --all | grep $mask | awk '{print $2}'`; do cinder snapshot-reset-state $i; echo snapshot reset state is done for $i; done
-for i in `cinder snapshot-list --all | grep $mask | awk '{print $2}'`; do cinder snapshot-delete $i; echo deleted $i; done
+echo "Reset snapshot state and delete"
+for i in `openstack volume snapshot list --all | grep $mask | awk '{print $2}'`; do openstack snapshot set --state available $i; echo snapshot reset state is done for $i; done
+for i in `openstack volume snapshot list --all | grep $mask | awk '{print $2}'`; do openstack snapshot set --state available $i; echo deleted $i; done
 
-echo "Delete volumes"
-for i in `openstack volume list --all | grep $mask | awk '{print $2}'`; do cinder reset-state $i --state available; echo reset state is done for $i; done
+echo "Reset volume state and delete"
+for i in `openstack volume list --all | grep $mask | awk '{print $2}'`; do openstack volume set --state available $i; echo reset state is done for $i; done
 for i in `openstack volume list --all | grep $mask | awk '{print $2}'`; do openstack volume delete $i; echo deleted $i; done
 
 echo "Delete volume types"
-for i in `cinder type-list | grep $mask | awk '{print $2}'`; do cinder type-delete $i; done
+for i in `openstack volume type list | grep $mask | awk '{print $2}'`; do openstack volume type delete $i; done
 
 echo "Delete images"
 for i in `openstack image list | grep $mask | awk '{print $2}'`; do openstack image delete $i; echo deleted $i; done
@@ -34,19 +37,19 @@ echo "Delete keypairs"
 for i in `openstack keypair list | grep $mask | awk '{print $2}'`; do openstack keypair delete $i; echo deleted $i; done
 
 echo "Delete ports"
-for i in `neutron port-list --all | grep $mask | awk '{print $2}'`; do neutron port-delete $i; done
+for i in `openstack port list | grep $mask | awk '{print $2}'`; do openstack port delete $i; done
 
 echo "Delete Router ports (experimental)"
 neutron router-list|grep $mask|awk '{print $2}'|while read line; do echo $line; neutron router-port-list $line|grep subnet_id|awk '{print $11}'|sed 's/^\"//;s/\",//'|while read interface; do neutron router-interface-delete $line $interface; done; done
 
 echo "Delete subnets"
-for i in `neutron subnet-list --all | grep $mask | awk '{print $2}'`; do neutron subnet-delete $i; done
+for i in `openstack subnet list | grep $mask | awk '{print $2}'`; do openstack subnet delete $i; done
 
 echo "Delete nets"
-for i in `neutron net-list --all | grep $mask | awk '{print $2}'`; do neutron net-delete $i; done
+for i in `openstack network list | grep $mask | awk '{print $2}'`; do openstack network delete $i; done
 
 echo "Delete routers"
-for i in `neutron router-list --all | grep $mask | awk '{print $2}'`; do neutron router-delete $i; done
+for i in `openstack router list | grep $mask | awk '{print $2}'`; do openstack router delete $i; done
 
 echo "Delete regions"
 for i in `openstack region list | grep $mask | awk '{print $2}'`; do openstack region delete $i; echo deleted $i; done
