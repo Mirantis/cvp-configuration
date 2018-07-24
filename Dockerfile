@@ -4,6 +4,8 @@ SHELL ["/bin/bash", "-xec"]
 
 USER root
 
+RUN apt-get update; apt-get install -y inetutils-ping
+
 WORKDIR /var/lib/
 
 RUN mkdir -p cvp-configuration
