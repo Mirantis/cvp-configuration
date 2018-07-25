@@ -1,4 +1,4 @@
-FROM xrally/xrally-openstack:0.10.1
+FROM xrally/xrally-openstack:0.11.1
 
 SHELL ["/bin/bash", "-xec"]
 
@@ -15,11 +15,11 @@ RUN git clone https://github.com/openstack/tempest && \
     popd;
 
 RUN git clone https://github.com/openstack/telemetry-tempest-plugin && \
-    pushd telemetry-tempest-plugin; pip install -r requirements.txt; \
+    pushd telemetry-tempest-plugin; git checkout 7a4bff728fbd8629ec211669264ab645aa921e2b; pip install -r requirements.txt; \
     popd;
 
 RUN git clone https://github.com/openstack/heat-tempest-plugin && \
-    pushd heat-tempest-plugin; git checkout 0.1.0; pip install -r requirements.txt; \
+    pushd heat-tempest-plugin; git checkout 12b770e923060f5ef41358c37390a25be56634f0; pip install -r requirements.txt; \
     popd;
 
 COPY rally/ /var/lib/cvp-configuration/rally

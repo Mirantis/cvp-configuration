@@ -30,29 +30,25 @@ rally_configuration () {
   rally deployment config
 }
 
-additional_tempest_plugins (){
-if [ -n "${PROXY}" ]; then
-  export https_proxy=$PROXY
-fi
-rally verify add-verifier-ext --source https://github.com/openstack/telemetry-tempest-plugin
-rally verify add-verifier-ext --source https://github.com/openstack/heat-tempest-plugin
-unset https_proxy
-}
-
 tempest_configuration () {
   sub_name=`date "+%H_%M_%S"`
-  if [ -n "${OFFLINE}" ]; then
+  # default tempest version is now 17.2.0
+  tempest_version='17.2.0'
+  if [ "$PROXY" == "offline" ]; then
     rally verify create-verifier --name tempest_verifier_$sub_name --type tempest --source $TEMPEST_REPO --system-wide --version $tempest_version
-    cd /var/lib/
+    rally verify add-verifier-ext --source /var/lib/telemetry-tempest-plugin
+    rally verify add-verifier-ext --source /var/lib/heat-tempest-plugin
   else
     if [ -n "${PROXY}" ]; then
       export https_proxy=$PROXY
     fi
     rally verify create-verifier --name tempest_verifier_$sub_name --type tempest --source $TEMPEST_REPO --version $tempest_version
+    rally verify add-verifier-ext --source https://github.com/openstack/telemetry-tempest-plugin
+    rally verify add-verifier-ext --source https://github.com/openstack/heat-tempest-plugin
     unset https_proxy
   fi
-  rally verify configure-verifier --show
-  additional_tempest_plugins
+  # supress tempest.conf display in console
+  #rally verify configure-verifier --show
 }
 
 quick_configuration () {
@@ -90,7 +86,9 @@ echo "Fixed net is: $FIXED_NET"
 sed -i 's/${IMAGE_REF2}/'$IMAGE_REF2'/g' $current_path/cvp-configuration/tempest/tempest_ext.conf
 sed -i 's/${FIXED_NET}/'$FIXED_NET'/g' $current_path/cvp-configuration/tempest/tempest_ext.conf
 sed -i 's/publicURL/'$TEMPEST_ENDPOINT_TYPE'/g' $current_path/cvp-configuration/tempest/tempest_ext.conf
-cat $current_path/cvp-configuration/tempest/tempest_ext.conf
+#supress tempest.conf display in console
+#cat $current_path/cvp-configuration/tempest/tempest_ext.conf
+cp $current_path/cvp-configuration/tempest/boot_config_none_env.yaml /home/rally/boot_config_none_env.yaml
 }
 
 if [ "$1" == "reconfigure" ]; then
@@ -107,6 +105,7 @@ if [ -n "${TEMPEST_REPO}" ]; then
     tempest_configuration
     quick_configuration
     rally verify configure-verifier --extend $current_path/cvp-configuration/tempest/tempest_ext.conf
+    rally verify configure-verifier --show
     # Add 2 additional tempest tests (live migration to all nodes + ssh to all nodes)
     # TBD
     #cat tempest/test_extension.py >> repo/tempest/scenario/test_server_multinode.py
