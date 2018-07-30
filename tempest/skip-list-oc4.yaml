@@ -23,3 +23,10 @@ tempest.api.network.admin.test_agent_management.AgentManagementTestJSON.test_lis
 tempest.api.network.admin.test_agent_management.AgentManagementTestJSON.test_show_agent[id-869bc8e8-0fda-4a30-9b71-f8a7cf58ca9f]: Agents are not in use in Contrail.
 tempest.api.network.admin.test_agent_management.AgentManagementTestJSON.test_update_agent_description[id-68a94a14-1243-46e6-83bf-157627e31556]: Agents are not in use in Contrail.
 tempest.api.network.admin.test_agent_management.AgentManagementTestJSON.test_update_agent_status[id-371dfc5b-55b9-4cb5-ac82-c40eadaac941]: Agents are not in use in Contrail.
+heat_tempest_plugin.tests.functional.test_create_update_neutron_port.UpdatePortTest.test_update_with_mac_address[id-df1bf0fb-115e-42f3-b6cc-e12b5d506c98]: Contrail specific problem. Mac address cannot be changed for existing port.
+heat_tempest_plugin.tests.functional.test_create_update_neutron_subnet.UpdateSubnetTest.test_update_allocation_pools[id-af43fc6d-58ba-4b5f-bd68-07b29f0a96bc]: Contrail limitation.
+heat_tempest_plugin.tests.functional.test_create_update_neutron_subnet.UpdateSubnetTest.test_update_allocation_pools_to_empty[id-2f1d3b04-2183-4e50-8aa3-fa0fbff5c861]: Contrail limitation.
+heat_tempest_plugin.tests.functional.test_create_update_neutron_subnet.UpdateSubnetTest.test_update_gateway_ip[id-ffb3eaf8-044b-4229-99f9-5fd983ccc9d9]: Contrail limitation.
+heat_tempest_plugin.tests.functional.test_create_update_neutron_subnet.UpdateSubnetTest.test_update_gateway_ip_to_empty[id-e7b37a6b-e883-4c0c-b6a3-9ece1843e902]: Contrail limitation.
+heat_tempest_plugin.tests.functional.test_create_update_neutron_subnet.UpdateSubnetTest.test_update_to_no_allocation_pools[id-6ec51150-6f83-4179-9faa-a3aee91ea150]: Contrail limitation.
+heat_tempest_plugin.tests.functional.test_create_update_neutron_subnet.UpdateSubnetTest.test_update_to_no_gateway_ip[id-373bab03-1f66-4883-b1de-2ecc39efe17e]: Contrail limitation.

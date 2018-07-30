@@ -104,8 +104,13 @@ rally_configuration
 if [ -n "${TEMPEST_REPO}" ]; then
     tempest_configuration
     quick_configuration
+    # If Opencontrail is deployed, use this command
+    #cat $current_path/cvp-configuration/tempest/skip-list-oc4.yaml >> $current_path/cvp-configuration/tempest/skip-list-pike.yaml
     rally verify configure-verifier --extend $current_path/cvp-configuration/tempest/tempest_ext.conf
     rally verify configure-verifier --show
+    # If Barbican tempest plugin is installed, use this
+    # mkdir /etc/tempest
+    # rally verify configure-verifier --show | tail -170 > /etc/tempest/tempest.conf
     # Add 2 additional tempest tests (live migration to all nodes + ssh to all nodes)
     # TBD
     #cat tempest/test_extension.py >> repo/tempest/scenario/test_server_multinode.py
