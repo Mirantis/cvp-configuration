@@ -1,10 +1,8 @@
 barbican_tempest_plugin.tests.scenario.test_image_signing.ImageSigningSnapshotTest.test_signed_image_upload_boot_snapshot[compute,id-f0603dfd-8b2c-44e2-8b0f-d65c87aab257,image]: Will be verified manually.
 barbican_tempest_plugin.tests.scenario.test_image_signing.ImageSigningTest.test_signed_image_upload_and_boot[compute,id-4343df3c-5553-40ea-8705-0cce73b297a9,image]: Will be verified manually.
 barbican_tempest_plugin.tests.scenario.test_image_signing.ImageSigningTest.test_signed_image_upload_boot_failure[compute,id-74f022d6-a6ef-4458-96b7-541deadacf99,image]: Will be verified manually.
-heat_tempest_plugin.tests.scenario.test_autoscaling_lbv2.AutoscalingLoadBalancerv2Test.test_autoscaling_loadbalancer_neutron[id-89459930-aa61-4557-989b-3429d3b3b612]: Not applicabl
-e for mcp deployments.
-heat_tempest_plugin.tests.scenario.test_volumes.VolumeBackupRestoreIntegrationTest.test_cinder_volume_create_backup_restore[id-c3416735-87bf-4478-85c5-b3823819eb19]: Not applicable
- for mcp deployments.
+heat_tempest_plugin.tests.scenario.test_autoscaling_lbv2.AutoscalingLoadBalancerv2Test.test_autoscaling_loadbalancer_neutron[id-89459930-aa61-4557-989b-3429d3b3b612]: Not applicable for mcp deployments.
+heat_tempest_plugin.tests.scenario.test_volumes.VolumeBackupRestoreIntegrationTest.test_cinder_volume_create_backup_restore[id-c3416735-87bf-4478-85c5-b3823819eb19]: Not applicable for mcp deployments.
 heat_tempest_plugin.tests.scenario.test_server_software_config.SoftwareConfigIntegrationTest.test_server_software_config[id-fb2afe23-d1a8-45fc-bf8d-b18fc8412972]: Not applicable.
 heat_tempest_plugin.tests.functional.test_event_sinks.ZaqarEventSinkTest.test_events[id-d0b72695-e97d-4aa1-bfaf-31c14b09ac87]: Zaqar is not presented in deployment.
 heat_tempest_plugin.tests.functional.test_os_wait_condition.OSWaitCondition.test_create_stack_with_multi_signal_waitcondition[id-cc54ca6e-b91d-4ddd-80cc-24a886dfaaa0]: No applicable for mcp deployment.

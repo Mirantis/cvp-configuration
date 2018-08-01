@@ -53,9 +53,13 @@ tempest_configuration () {
 
 quick_configuration () {
 current_path=$(pwd)
+# Remove this if you use local gerrit cvp-configuration repo
+if [ "$PROXY" == "offline" ]; then
+  current_path=/var/lib
+fi
 #image
 glance image-list | grep "\btestvm\b" 2>&1 >/dev/null || {
-    if [ -n "${PROXY}" ]; then
+    if [ -n "${PROXY}" ] && [ "$PROXY" -ne "offline" ]; then
       export http_proxy=$PROXY
     fi
     ls $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img || wget http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img -O $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img
