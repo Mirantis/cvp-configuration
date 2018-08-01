@@ -110,7 +110,7 @@ if [ -n "${TEMPEST_REPO}" ]; then
     rally verify configure-verifier --show
     # If Barbican tempest plugin is installed, use this
     # mkdir /etc/tempest
-    # rally verify configure-verifier --show | tail -170 > /etc/tempest/tempest.conf
+    # rally verify configure-verifier --show | grep -v "rally.api" > /etc/tempest/tempest.conf
     # Add 2 additional tempest tests (live migration to all nodes + ssh to all nodes)
     # TBD
     #cat tempest/test_extension.py >> repo/tempest/scenario/test_server_multinode.py

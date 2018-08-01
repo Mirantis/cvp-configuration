@@ -1,10 +1,10 @@
-FROM xrally/xrally-openstack:0.11.1
+FROM xrally/xrally-openstack:0.10.1
 
 SHELL ["/bin/bash", "-xec"]
 
 USER root
 
-RUN apt-get update; apt-get install -y inetutils-ping
+RUN apt-get update; apt-get install -y inetutils-ping curl wget
 
 WORKDIR /var/lib/
 
