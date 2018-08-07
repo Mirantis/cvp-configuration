@@ -81,8 +81,8 @@ if [ $shared_count -gt 1 ]; then
 fi
 if [ $shared_count -eq 0 ]; then
   echo "Let's create shared fixed net"
-  neutron net-create --shared tempest-net
-  neutron subnet-create --name tempest-subnet --gateway 192.168.0.1 --allocation-pool start=192.168.0.2,end=192.168.0.254 --ip-version 4 tempest-net 192.168.0.0/24
+  neutron net-create --shared fixed-net
+  neutron subnet-create --name fixed-subnet --gateway 192.168.0.1 --allocation-pool start=192.168.0.2,end=192.168.0.254 --ip-version 4 fixed-net 192.168.0.0/24
 fi
 FIXED_NET=$(neutron net-list -c name -c shared | grep True | awk '{print $2}' | tail -n 1)
 echo "Fixed net is: $FIXED_NET"
