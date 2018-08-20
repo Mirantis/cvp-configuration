@@ -1,0 +1,76 @@
+# LOGGING PART. USE IT BY DEFAULT.
+logging:
+    version: 1
+    disable_existing_loggers: true
+    formatters:
+        simple:
+            format: "%(asctime)s - %(levelname)s - %(message)s"
+            datefmt: "%H:%M:%S"
+    handlers:
+        console:
+            level: INFO
+            class: logging.StreamHandler
+            formatter: simple
+            stream: "ext://sys.stdout"
+        log_file:
+            level: DEBUG
+            class: logging.FileHandler
+            formatter: simple
+            filename: null
+    loggers:
+        cmd:     {"level": "DEBUG", "handlers": ["console", "log_file"]}
+        storage: {"level": "DEBUG", "handlers": ["console", "log_file"]}
+        rpc:     {"level": "DEBUG", "handlers": ["console", "log_file"]}
+        cephlib: {"level": "DEBUG", "handlers": ["console", "log_file"]}
+        collect: {"level": "DEBUG", "handlers": ["console", "log_file"]}
+        agent:   {"level": "DEBUG", "handlers": ["console", "log_file"]}
+        wally:   {"level": "DEBUG", "handlers": ["console", "log_file"]}
+
+# default parameters copied from default.yaml
+# to avoid including useless parameters for particular load test
+collect_info: true
+var_dir_root: /tmp/perf_tests
+settings_dir: ~/.wally
+connect_timeout: 30
+max_time_diff_ms: 5000
+rpc_log_level: DEBUG
+default_test_local_folder: "/tmp/wally_{name}_{uuid}"
+keep_raw_files: false  # don't change this value, keep is not supported atm
+download_rpc_logs: true
+results_storage: /tmp/disk_perf_reports
+ceph_opts: nodeep-scrub, noscrub
+
+# default optional roles
+default_dev_roles:
+    - role=testnode:
+        - type=cpu: client_cpu
+        - type=block: client_disk
+        - type=eth: client_net
+        - type=weth: client_net
+
+# predefined nodes or VM's to benchmark Ceph on them
+nodes:
+    "ssh://<SSH_USER>@<INSTANCE_IP>::<PRIV_KEY>": testnode
+    "ssh://<SSH_USER>@<INSTANCE_IP>::<PRIV_KEY>": testnode
+    "ssh://<SSH_USER>@<INSTANCE_IP>::<PRIV_KEY>": testnode
+
+# system-cpu, block-io, net-io sensors are used by default
+sensors:
+    online: true
+    roles_mapping:
+        testnode: system-cpu, system-ram, perprocess-cpu, perprocess-ram, block-io, net-io
+
+# tests to run on VM's
+# use_system_fio set to true to launch fio
+# that was installed manually on testnodes
+# use_sudo for sudo rights
+# as not always it has access to mounted drive
+tests:
+    - fio:
+        load: ceph
+        use_system_fio: true
+        use_sudo: true
+        params:
+            FILENAME: /mnt/fio
+            FILESIZE: 400G
+
