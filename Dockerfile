@@ -1,33 +1,25 @@
-FROM xrally/xrally-openstack:0.10.1
+FROM docker-dev-virtual.docker.mirantis.net/mirantis/cicd/ci-tempest:pike
+
+RUN apt-get update && apt-get install --yes sudo python python-pip vim git-core build-essential libssl-dev libffi-dev python-dev
+
+ARG RALLY_VERSION="0.10.1"
 
 SHELL ["/bin/bash", "-xec"]
 
 USER root
 
-RUN apt-get update; apt-get install -y inetutils-ping curl wget
-
 WORKDIR /var/lib/
+
+RUN pip install --constraint /var/lib/openstack_requirements/upper-constraints.txt rally==$RALLY_VERSION
 
 RUN mkdir -p cvp-configuration
 
-RUN git clone https://github.com/openstack/tempest && \
-    pushd tempest; git checkout 17.2.0; pip install -r requirements.txt; \
-    popd;
+COPY . /var/lib/cvp-configuration/
+RUN mkdir /home/rally
 
-RUN git clone https://github.com/openstack/telemetry-tempest-plugin && \
-    pushd telemetry-tempest-plugin; git checkout 7a4bff728fbd8629ec211669264ab645aa921e2b; pip install -r requirements.txt; \
-    popd;
-
-RUN git clone https://github.com/openstack/heat-tempest-plugin && \
-    pushd heat-tempest-plugin; git checkout 12b770e923060f5ef41358c37390a25be56634f0; pip install -r requirements.txt; \
-    popd;
-
-RUN pip install --force-reinstall python-cinderclient==3.2.0
-
-COPY rally/ /var/lib/cvp-configuration/rally
-COPY tempest/ /var/lib/cvp-configuration/tempest
-COPY cleanup.sh  /var/lib/cvp-configuration/cleanup.sh
-COPY configure.sh /var/lib/cvp-configuration/configure.sh
+RUN mkdir .rally && \
+    echo "connection = \"sqlite:////home/rally/.rally/rally.db\"" > .rally/rally.conf &&\
+    rally db recreate
 
 WORKDIR /home/rally
 
