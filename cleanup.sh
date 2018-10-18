@@ -1,12 +1,40 @@
 #!/bin/bash
 export OS_INTERFACE='admin'
 mask='rally_\|tempest_\|tempest-'
+dry_run=false
+clean_projects=false
+
+function show_help {
+    printf "Resource cleaning script\nMask is: %s\n\t-h, -?\tShow this help\n\t-t\tDry run mode, no cleaning done\n\t-P\tForce cleaning of projects\n" ${mask}
+}
+
+OPTIND=1 # Reset in case getopts has been used previously in the shell.
+while getopts "h?:tP" opt; do
+    case "$opt" in
+    h|\?)
+        show_help
+        exit 0
+        ;;
+    t)  dry_run=true
+        printf "Running in dry-run mode\n"
+        ;;
+    P)  clean_projects=true
+        printf "Project cleanning enabled\n"
+        ;;
+    esac
+done
+
+shift $((OPTIND-1))
+[ "${1:-}" = "--" ] && shift
 
 ### Execute collected commands and flush the temp file
 function _clean_and_flush {
+    if [ "$dry_run" = true ] ; then
+        return 0
+    fi
     if [ -s ${cmds} ]; then
         echo "Processing $(cat ${cmds} | wc -l) commands"
-        cat ${cmds} | openstack
+        #cat ${cmds} | openstack
         truncate -s 0 ${cmds}
     fi
 }
@@ -47,8 +75,8 @@ function _clean_servers {
 function _clean_snapshots {
     snapshots=( $(openstack volume snapshot list --all -c ID -c Name -f value | grep ${mask} | cut -d' ' -f1) )
     echo "-> ${#snapshots[@]} snapshots containing '${mask}' found"
-    printf "%s\n" ${snapshots[@]} | xargs -I{} echo snapshot set --state available {} >>${cmds}
-    printf "%s\n" ${snapshots[@]} | xargs -I{} echo snapshot delete {} >>${cmds}
+    printf "%s\n" ${snapshots[@]} | xargs -I{} echo volume snapshot set --state available {} >>${cmds}
+    printf "%s\n" ${snapshots[@]} | xargs -I{} echo volume snapshot delete {} >>${cmds}
     _clean_and_flush
 }
 
@@ -70,7 +98,7 @@ function _clean_volume_types {
 
 ### Images
 function _clean_images {
-    images=( $(openstack image list --name ${mask} -c ID -f value) )
+    images=( $(openstack image list -c ID -c Name -f value | grep ${mask} | cut -d' ' -f1) )
     echo "-> ${#images[@]} images containing '${mask}' found"
     printf "%s\n" ${images[@]} | xargs -I{} echo image delete {} >>${cmds}
     _clean_and_flush
@@ -173,6 +201,7 @@ function _clean_containers {
 ###################
 # temp file for commands
 cmds=$(mktemp)
+trap "rm -f ${cmds}" EXIT
 echo "Using tempfile: '${cmds}'"
 
 # Consider cleaning contrail resources carefully
@@ -195,7 +224,9 @@ _clean_containers
 
 # project cleaning disabled by default
 # Coz cleaning Contrail with no projects is a hard task
-#_clean_projects
+if [ "$clean_projects" = true ]; then
+    _clean_projects
+fi
 
 # remove temp file
 rm ${cmds}
