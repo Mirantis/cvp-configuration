@@ -3,6 +3,7 @@ export OS_INTERFACE='admin'
 mask='rally_\|tempest_\|tempest-'
 dry_run=false
 clean_projects=false
+make_servers_active=false
 
 function show_help {
     printf "Resource cleaning script\nMask is: %s\n\t-h, -?\tShow this help\n\t-t\tDry run mode, no cleaning done\n\t-P\tForce cleaning of projects\n" ${mask}
@@ -17,6 +18,9 @@ while getopts "h?:tP" opt; do
         ;;
     t)  dry_run=true
         printf "Running in dry-run mode\n"
+        ;;
+    S)  make_servers_active=true
+        printf "Servers will be set to ACTIVE before deletion\n"
         ;;
     P)  clean_projects=true
         printf "Project cleanning enabled\n"
@@ -34,7 +38,7 @@ function _clean_and_flush {
     fi
     if [ -s ${cmds} ]; then
         echo "Processing $(cat ${cmds} | wc -l) commands"
-        #cat ${cmds} | openstack
+        cat ${cmds} | openstack
         truncate -s 0 ${cmds}
     fi
 }
@@ -67,6 +71,9 @@ function _clean_projects {
 function _clean_servers {
     servers=( $(openstack server list --name ${mask} -c ID -f value) )
     echo "-> ${#servers[@]} servers containing '${mask}' found"
+    if [ "$make_servers_active" = true ]; then
+        printf "%s\n" ${servers[@]} | xargs -I{} echo server set --state active {} >>${cmds}
+    fi
     printf "%s\n" ${servers[@]} | xargs -I{} echo server delete {} >>${cmds}
     _clean_and_flush
 }
