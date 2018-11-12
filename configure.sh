@@ -45,6 +45,7 @@ tempest_configuration () {
     if [ -n "${PROXY}" ]; then
       export https_proxy=$PROXY
     fi
+    apt-get update; apt-get install -y iputils-ping curl wget
     rally verify create-verifier --name tempest_verifier_$sub_name --type tempest --source $TEMPEST_REPO --version $tempest_version
     rally verify add-verifier-ext --source https://github.com/openstack/telemetry-tempest-plugin
     rally verify add-verifier-ext --source https://github.com/openstack/heat-tempest-plugin
