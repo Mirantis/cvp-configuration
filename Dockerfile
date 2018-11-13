@@ -4,7 +4,7 @@ SHELL ["/bin/bash", "-xec"]
 
 USER root
 
-RUN apt-get update; apt-get install -y inetutils-ping curl wget
+RUN apt-get update; apt-get install -y iputils-ping curl wget
 
 WORKDIR /var/lib/
 
