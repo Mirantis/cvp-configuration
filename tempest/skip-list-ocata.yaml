@@ -60,6 +60,12 @@ tempest.api.object_storage.test_object_services.PublicObjectTest.test_access_pub
 tempest.api.object_storage.test_object_services.PublicObjectTest.test_access_public_object_with_another_user_creds[id-54e2a2fe-42dc-491b-8270-8e4217dd4cdc]: not compatible with ceph
 tempest.api.object_storage.test_object_slo.ObjectSloTest.test_delete_large_object[id-87b6dfa1-abe9-404d-8bf0-6c3751e6aa77]: not compatible with ceph
 tempest.api.object_storage.test_object_version.ContainerTest.test_versioned_container[id-a151e158-dcbf-4a1f-a1e7-46cd65895a6f]: not compatible with ceph
+tempest.api.orchestration.stacks.test_neutron_resources.NeutronResourcesTestJSON.test_created_router_interface[id-89f605bd-153e-43ee-a0ed-9919b63423c5,network]: Not compatible with Contrail
+tempest.api.orchestration.stacks.test_neutron_resources.NeutronResourcesTestJSON.test_created_router[id-96af4c7f-5069-44bc-bdcf-c0390f8a67d1,network]: Not compatible with Contrail
+tempest.api.orchestration.stacks.test_neutron_resources.NeutronResourcesTestJSON.test_created_resources[id-f9e2664c-bc44-4eef-98b6-495e4f9d74b3]: Not compatible with Contrail
+tempest.api.orchestration.stacks.test_neutron_resources.NeutronResourcesTestJSON.test_created_subnet[id-e8f84b96-f9d7-4684-ad5f-340203e9f2c2,network]: Not compatible with Contrail
+tempest.api.orchestration.stacks.test_neutron_resources.NeutronResourcesTestJSON.test_created_network[id-c572b915-edb1-4e90-b196-c7199a6848c0,network]: Not compatible with Contrail
+tempest.api.orchestration.stacks.test_neutron_resources.NeutronResourcesTestJSON.test_created_server[compute,id-75d85316-4ac2-4c0e-a1a9-edd2148fc10e,network]: Not compatible with Contrail
 tempest.api.network.admin.test_agent_management.AgentManagementTestJSON.test_list_agent[id-9c80f04d-11f3-44a4-8738-ed2f879b0ff4]: Agents are not in use in Contrail.
 tempest.api.network.admin.test_agent_management.AgentManagementTestJSON.test_list_agents_non_admin[id-e335be47-b9a1-46fd-be30-0874c0b751e6]: Agents are not in use in Contrail.
 tempest.api.network.admin.test_agent_management.AgentManagementTestJSON.test_show_agent[id-869bc8e8-0fda-4a30-9b71-f8a7cf58ca9f]: Agents are not in use in Contrail.
@@ -109,3 +115,15 @@ tempest.scenario.test_network_v6.TestGettingAddress.test_multi_prefix_slaac[comp
 tempest.scenario.test_network_v6.TestGettingAddress.test_slaac_from_os[compute,id-2c92df61-29f0-4eaa-bee3-7c65bef62a43,network,slow]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1604568.
 tempest.scenario.test_security_groups_basic_ops.TestSecurityGroupsBasicOps.test_port_security_disable_security_group[compute,id-7c811dcc-263b-49a3-92d2-1b4d8405f50c,network]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1632961.
 tempest.scenario.test_stamp_pattern.TestStampPattern.test_stamp_pattern[compute,id-10fd234a-515c-41e5-b092-8323060598c5,image,network,volume]: See https://bugs.launchpad.net/nova/+bug/1664793.
+tempest.scenario.test_volume_boot_pattern.TestVolumeBootPattern.test_volume_boot_pattern[compute,id-557cd2c2-4eb8-4dce-98be-f86765ff311b,image,smoke,volume]: FIP net is not configured
+tempest.scenario.test_volume_boot_pattern.TestVolumeBootPatternV2.test_volume_boot_pattern[compute,id-557cd2c2-4eb8-4dce-98be-f86765ff311b,image,smoke,volume]: FIP net is not configured
+tempest.api.compute.floating_ips.test_floating_ips_actions.FloatingIPsTestJSON.test_allocate_floating_ip[id-f7bfb946-297e-41b8-9e8c-aba8e9bb5194,network]: FIP net is not configured
+tempest.api.compute.floating_ips.test_floating_ips_actions.FloatingIPsTestJSON.test_associate_already_associated_floating_ip[id-6edef4b2-aaf1-4abc-bbe3-993e2561e0fe,network]: FIP net is not configured
+tempest.api.compute.floating_ips.test_floating_ips_actions.FloatingIPsTestJSON.test_associate_disassociate_floating_ip[id-307efa27-dc6f-48a0-8cd2-162ce3ef0b52,network]: FIP net is not configured
+tempest.api.compute.floating_ips.test_floating_ips_actions.FloatingIPsTestJSON.test_delete_floating_ip[id-de45e989-b5ca-4a9b-916b-04a52e7bbb8b,network]: FIP net is not configured
+tempest.api.compute.floating_ips.test_list_floating_ips.FloatingIPDetailsTestJSON.test_get_floating_ip_details[id-eef497e0-8ff7-43c8-85ef-558440574f84,network]: FIP net is not configured
+tempest.api.compute.floating_ips.test_list_floating_ips.FloatingIPDetailsTestJSON.test_list_floating_ip_pools[id-df389fc8-56f5-43cc-b290-20eda39854d3,network]: FIP net is not configured
+tempest.api.compute.floating_ips.test_list_floating_ips.FloatingIPDetailsTestJSON.test_list_floating_ips[id-16db31c3-fb85-40c9-bbe2-8cf7b67ff99f,network]: FIP net is not configured
+tempest.api.compute.servers.test_server_rescue.ServerRescueTestJSON.test_rescue_unrescue_instance[id-fd032140-714c-42e4-a8fd-adcd8df06be6]: FIP net is not configured
+tempest.api.compute.servers.test_server_rescue.ServerRescueTestJSON.test_rescued_vm_add_remove_security_group[id-affca41f-7195-492d-8065-e09eee245404]: FIP net is not configured
+tempest.api.compute.servers.test_server_rescue.ServerRescueTestJSON.test_rescued_vm_associate_dissociate_floating_ip[id-4842e0cf-e87d-4d9d-b61f-f4791da3cacc]: FIP net is not configured

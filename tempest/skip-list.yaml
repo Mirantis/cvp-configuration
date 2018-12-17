@@ -60,6 +60,12 @@ tempest.api.object_storage.test_object_services.PublicObjectTest.test_access_pub
 tempest.api.object_storage.test_object_services.PublicObjectTest.test_access_public_object_with_another_user_creds[id-54e2a2fe-42dc-491b-8270-8e4217dd4cdc]: not compatible with ceph
 tempest.api.object_storage.test_object_slo.ObjectSloTest.test_delete_large_object[id-87b6dfa1-abe9-404d-8bf0-6c3751e6aa77]: not compatible with ceph
 tempest.api.object_storage.test_object_version.ContainerTest.test_versioned_container[id-a151e158-dcbf-4a1f-a1e7-46cd65895a6f]: not compatible with ceph
+tempest.api.orchestration.stacks.test_neutron_resources.NeutronResourcesTestJSON.test_created_router_interface[id-89f605bd-153e-43ee-a0ed-9919b63423c5,network]: Not compatible with Contrail
+tempest.api.orchestration.stacks.test_neutron_resources.NeutronResourcesTestJSON.test_created_router[id-96af4c7f-5069-44bc-bdcf-c0390f8a67d1,network]: Not compatible with Contrail
+tempest.api.orchestration.stacks.test_neutron_resources.NeutronResourcesTestJSON.test_created_resources[id-f9e2664c-bc44-4eef-98b6-495e4f9d74b3]: Not compatible with Contrail
+tempest.api.orchestration.stacks.test_neutron_resources.NeutronResourcesTestJSON.test_created_subnet[id-e8f84b96-f9d7-4684-ad5f-340203e9f2c2,network]: Not compatible with Contrail
+tempest.api.orchestration.stacks.test_neutron_resources.NeutronResourcesTestJSON.test_created_network[id-c572b915-edb1-4e90-b196-c7199a6848c0,network]: Not compatible with Contrail
+tempest.api.orchestration.stacks.test_neutron_resources.NeutronResourcesTestJSON.test_created_server[compute,id-75d85316-4ac2-4c0e-a1a9-edd2148fc10e,network]: Not compatible with Contrail
 tempest.api.network.admin.test_agent_management.AgentManagementTestJSON.test_list_agent[id-9c80f04d-11f3-44a4-8738-ed2f879b0ff4]: Agents are not in use in Contrail.
 tempest.api.network.admin.test_agent_management.AgentManagementTestJSON.test_list_agents_non_admin[id-e335be47-b9a1-46fd-be30-0874c0b751e6]: Agents are not in use in Contrail.
 tempest.api.network.admin.test_agent_management.AgentManagementTestJSON.test_show_agent[id-869bc8e8-0fda-4a30-9b71-f8a7cf58ca9f]: Agents are not in use in Contrail.

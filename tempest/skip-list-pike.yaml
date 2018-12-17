@@ -3,11 +3,12 @@ barbican_tempest_plugin.tests.scenario.test_image_signing.ImageSigningTest.test_
 barbican_tempest_plugin.tests.scenario.test_image_signing.ImageSigningTest.test_signed_image_upload_boot_failure[compute,id-74f022d6-a6ef-4458-96b7-541deadacf99,image]: Will be verified manually.
 heat_tempest_plugin.tests.scenario.test_autoscaling_lbv2.AutoscalingLoadBalancerv2Test.test_autoscaling_loadbalancer_neutron[id-89459930-aa61-4557-989b-3429d3b3b612]: Not applicable for mcp deployments.
 heat_tempest_plugin.tests.scenario.test_volumes.VolumeBackupRestoreIntegrationTest.test_cinder_volume_create_backup_restore[id-c3416735-87bf-4478-85c5-b3823819eb19]: Not applicable for mcp deployments.
+heat_tempest_plugin.tests.scenario.test_server_software_config.SoftwareConfigIntegrationTest.test_server_software_config[id-fb2afe23-d1a8-45fc-bf8d-b18fc8412972]: Not applicable.
 heat_tempest_plugin.tests.functional.test_event_sinks.ZaqarEventSinkTest.test_events[id-d0b72695-e97d-4aa1-bfaf-31c14b09ac87]: Zaqar is not presented in deployment.
+heat_tempest_plugin.tests.functional.test_os_wait_condition.OSWaitCondition.test_create_stack_with_multi_signal_waitcondition[id-cc54ca6e-b91d-4ddd-80cc-24a886dfaaa0]: No applicable for mcp deployment.
+heat_tempest_plugin.tests.functional.test_software_config.ParallelDeploymentsTest.test_deployments_metadata[id-8ee231ff-f80a-4a17-a860-5cda87e18ad0]: Not applicable for mcp deployment.
 heat_tempest_plugin.tests.functional.test_software_config.ZaqarSignalTransportTest.test_signal_queues[id-3af97ced-bead-4629-b78a-97762719e990]: Zaqar is not presented in deployment.
 heat_tempest_plugin.tests.functional.test_waitcondition.ZaqarWaitConditionTest.test_signal_queues[id-90183f0d-9929-43a6-8fb6-b81003824c6d]: Zaqar is not presented in deployment.
-heat_tempest_plugin.tests.functional.test_os_wait_condition.OSWaitCondition.test_create_stack_with_multi_signal_waitcondition[id-cc54ca6e-b91d-4ddd-80cc-24a886dfaaa0]: No applicable for mcp deployment.
-heat_tempest_plugin.tests.scenario.test_server_software_config.SoftwareConfigIntegrationTest.test_server_software_config[id-fb2afe23-d1a8-45fc-bf8d-b18fc8412972]: Not applicable.
 heat_tempest_plugin.tests.scenario.test_server_cfn_init.CfnInitIntegrationTest.test_server_cfn_init[id-3f7726fc-a41b-40ca-ab38-51e2973f146a]: Not applicable for mcp deployment.
 heat_tempest_plugin.tests.scenario.test_server_signal.ServerSignalIntegrationTest.test_server_signal_userdata_format_raw[id-8da0f6cc-60e6-4298-9e54-e1f905c5552a]: Not applicable for mcp deployment.
 heat_tempest_plugin.tests.scenario.test_server_signal.ServerSignalIntegrationTest.test_server_signal_userdata_format_software_config[id-3d753d42-7c16-4a0e-8f73-875881826626]: Not applicable for mcp deployment.
