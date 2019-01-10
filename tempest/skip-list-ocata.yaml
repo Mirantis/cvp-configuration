@@ -1,14 +1,5 @@
 tempest.api.compute.servers.test_novnc.NoVNCConsoleTestJSON.test_novnc[id-c640fdff-8ab4-45a4-a5d8-7e6146cbd0dc]: See https://bugs.launchpad.net/nova/+bug/1669468.
 tempest.api.compute.admin.test_servers_on_multinodes.ServersOnMultiNodesTest.test_create_servers_on_same_host[id-26a9d5df-6890-45f2-abc4-a659290cb130]: SameHostFilter is not included into nova.conf
-designate_tempest_plugin.tests.api.admin.test_quotas.QuotasAdminTest.test_delete_quotas[id-33e0affb-5d66-4216-881c-f101a779851a,smoke]: admin token is disabled for designate
-designate_tempest_plugin.tests.api.admin.test_quotas.QuotasAdminTest.test_show_quotas[id-ed42f367-e5ba-40d7-a08d-366ad787d21c,smoke]: admin token is disabled for designate
-designate_tempest_plugin.tests.api.admin.test_quotas.QuotasAdminTest.test_update_quotas[id-4f2b65b7-c4e1-489c-9047-755e42ba0985,smoke]: admin token is disabled for designate
-designate_tempest_plugin.tests.api.v1.test_domains.DnsDomainsTest.test_create_update_get_domain[id-29f76dd4-2456-4e42-b0ca-bbffcc6bbf59,smoke]: sometimes may fail because of race condition
-designate_tempest_plugin.tests.api.v2.test_pool.PoolAdminTest.test_list_pools_dot_json_fails[id-41ad6a84-00ce-4a04-9fd5-b7c15c31e2db,smoke]: not applicable
-designate_tempest_plugin.tests.api.v2.test_tld.TldAdminTest.test_list_tlds_dot_json_fails[id-8116dcf5-a329-47d1-90be-5ff32f299c53,smoke]: not applicable
-designate_tempest_plugin.tests.api.v2.test_zones.ZonesTest.test_list_zones_dot_json_fails[id-925192f2-0ed8-4591-8fe7-a9fa028f90a0,smoke]: not applicable
-designate_tempest_plugin.tests.api.v2.test_tsigkey.TsigkeyAdminTest.test_list_tsigkeys_dot_json_fails[id-4bdc20ef-96f9-47f6-a1aa-275159af326b]: not applicable
-designate_tempest_plugin.tests.api.v2.test_zones_imports.ZonesImportTest.test_create_zone_import[id-2e2d907d-0609-405b-9c96-3cb2b87e3dce,smoke]: error on tempest side
 tempest.api.object_storage.test_account_bulk.BulkTest.test_bulk_delete[id-c075e682-0d2a-43b2-808d-4116200d736d]: not compatible with ceph
 tempest.api.object_storage.test_account_bulk.BulkTest.test_bulk_delete_by_POST[id-dbea2bcb-efbb-4674-ac8a-a5a0e33d1d79]: not compatible with ceph
 tempest.api.object_storage.test_account_bulk.BulkTest.test_extract_archive[id-a407de51-1983-47cc-9f14-47c2b059413c]: not compatible with ceph
