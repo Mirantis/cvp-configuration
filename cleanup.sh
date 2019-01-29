@@ -5,12 +5,21 @@ dry_run=false
 clean_projects=false
 make_servers_active=false
 
+stack_batch_size=10
+# granularity values: days,hours,minutes,seconds
+stack_granularity=days
+stack_granularity_value=1
+
 function show_help {
-    printf "Resource cleaning script\nMask is: %s\n\t-h, -?\tShow this help\n\t-t\tDry run mode, no cleaning done\n\t-P\tForce cleaning of projects\n" ${mask}
+    printf "Resource cleaning script\nMask is: %s\n\t-h, -?\tShow this help\n" ${mask}
+    printf "\t-t\tDry run mode, no cleaning done\n"
+    printf "\t-P\tForce cleaning of projects\n"
+    printf "\t-S\tSet servers to ACTIVE before deletion (bare metal reqiured)\n"
+    printf "\t-F\tForce purge deleted stacks. Batch size: %s, >%s %s\n" ${stack_batch_size} ${stack_granularity_value} ${stack_granularity}
 }
 
 OPTIND=1 # Reset in case getopts has been used previously in the shell.
-while getopts "h?:tP" opt; do
+while getopts "h?:tSPF" opt; do
     case "$opt" in
     h|\?)
         show_help
@@ -24,6 +33,9 @@ while getopts "h?:tP" opt; do
         ;;
     P)  clean_projects=true
         printf "Project cleanning enabled\n"
+        ;;
+    F)  purge_deleted_stacks=true
+        printf "Purging stacks deleted >$stack_granularity_value $stack_granularity ago enabled, batch size %s\n" $stack_batch_size
         ;;
     esac
 done
@@ -188,11 +200,14 @@ function _clean_stacks {
     # 73      "software_configs:global_index": "rule:deny_everybody",
     # After this you will be able to use --all option
 
-    stacks=( $(openstack stack list --deleted --nested --hidden -c ID -c Name -f value | grep ${mask} | cut -d' ' -f1) )
+    stacks=( $(openstack stack list --nested --hidden -c ID -c "Stack Name" -f value | grep ${mask} | cut -d' ' -f1) )
     echo "-> ${#stacks[@]} stacks containing '${mask}' found"
     printf "%s\n" ${stacks[@]} | xargs -I{} echo stack check {} >>${cmds}
     printf "%s\n" ${stacks[@]} | xargs -I{} echo stack delete -y {} >>${cmds}
     _clean_and_flush
+    if [ "$purge_deleted_stacks" = true ]; then
+        heat-manage purge_deleted -g ${stack_granularity} -b ${stack_batch_size} ${stack_granularity_value} | wc -l | xargs -I{} echo "-> Purged {} stacks"
+    fi
 }
 
 ### Containers
