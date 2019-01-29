@@ -1,6 +1,6 @@
 #!/bin/bash
 export OS_INTERFACE='admin'
-mask='rally_\|tempest_\|tempest-'
+mask='s_rally\|rally_\|tempest_\|tempest-'
 dry_run=false
 clean_projects=false
 make_servers_active=false
@@ -69,7 +69,7 @@ function _clean_projects {
 
 ### Servers
 function _clean_servers {
-    servers=( $(openstack server list --name ${mask} -c ID -f value) )
+    servers=( $(openstack server list -c ID -c Name -f value --all | grep "${mask}" | cut -d' ' -f1) )
     echo "-> ${#servers[@]} servers containing '${mask}' found"
     if [ "$make_servers_active" = true ]; then
         printf "%s\n" ${servers[@]} | xargs -I{} echo server set --state active {} >>${cmds}
