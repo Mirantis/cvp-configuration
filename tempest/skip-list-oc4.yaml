@@ -1,4 +1,17 @@
-heat_tempest_plugin.tests.functional.test_lbaasv2.LoadBalancerv2Test.test_create_update_loadbalancer[id-2f4a476c-cba7-448b-a7c1-85f7284f0293]: Wrong check for Contrail deployments. Will be verified manually.
+tempest.api.compute.floating_ips.test_floating_ips_actions_negative.FloatingIPsNegativeTestJSON.test_delete_nonexistent_floating_ip[id-ae1c55a8-552b-44d4-bfb6-2a115a15d0ba,negative]: PROD-28104
+tempest.api.network.admin.test_external_network_extension.ExternalNetworksTestJSON.test_delete_external_networks_with_floating_ip[id-82068503-2cf2-4ed4-b3be-ecb89432e4bb]: PROD-28104
+tempest.api.network.test_security_groups_negative.NegativeSecGroupTest.test_create_duplicate_security_group_rule_fails[id-8fde898f-ce88-493b-adc9-4e4692879fc5,negative]: PROD-27918
+tempest.api.network.test_security_groups_negative.NegativeSecGroupIPv6Test.test_create_duplicate_security_group_rule_fails[id-8fde898f-ce88-493b-adc9-4e4692879fc5,negative]: PROD-27918
+tempest.api.network.admin.test_negative_quotas.QuotasNegativeTest.test_network_quota_exceeding[id-644f4e1b-1bf9-4af0-9fd8-eb56ac0f51cf,negative]: PROD-27912
+tempest.api.network.admin.test_quotas.QuotasTest.test_quotas[id-2390f766-836d-40ef-9aeb-e810d78207fb]: Wrong check in Tempest test for Contrail environments.
+tempest.api.network.test_routers_negative.RoutersNegativeTest.test_router_remove_interface_in_use_returns_409[id-04df80f9-224d-47f5-837a-bf23e33d1c20,negative]: PROD-27918
+tempest.api.network.test_routers_negative.RoutersNegativeIpV6Test.test_router_remove_interface_in_use_returns_409[id-04df80f9-224d-47f5-837a-bf23e33d1c20,negative]: PROD-27918
+tempest.api.network.test_routers_negative.RoutersNegativeTest.test_update_non_existent_router_returns_404[id-b23d1569-8b0c-4169-8d4b-6abd34fad5c7,negative]: PROD-27918
+tempest.api.network.test_routers_negative.RoutersNegativeIpV6Test.test_update_non_existent_router_returns_404[id-b23d1569-8b0c-4169-8d4b-6abd34fad5c7,negative]: PROD-27918
+tempest.api.network.test_routers_negative.RoutersNegativeTest.test_delete_non_existent_router_returns_404[id-c7edc5ad-d09d-41e6-a344-5c0c31e2e3e4,negative]: PROD-27918
+tempest.api.network.test_routers_negative.RoutersNegativeTest.test_show_non_existent_router_returns_404[id-c2a70d72-8826-43a7-8208-0209e6360c47,negative]: PROD-27918
+tempest.api.network.test_routers_negative.RoutersNegativeIpV6Test.test_show_non_existent_router_returns_404[id-c2a70d72-8826-43a7-8208-0209e6360c47,negative]: PROD-27918
+tempest.api.network.test_routers_negative.RoutersNegativeIpV6Test.test_delete_non_existent_router_returns_404[id-c7edc5ad-d09d-41e6-a344-5c0c31e2e3e4,negative]: PROD-27918
 tempest.api.network.test_allowed_address_pair.AllowedAddressPairIpV6TestJSON.test_update_port_with_cidr_address_pair[id-4d6d178f-34f6-4bff-a01c-0a2f8fe909e4]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1514778.
 tempest.api.network.test_allowed_address_pair.AllowedAddressPairTestJSON.test_update_port_with_cidr_address_pair[id-4d6d178f-34f6-4bff-a01c-0a2f8fe909e4]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1514778.
 tempest.api.network.test_dhcp_ipv6.NetworksTestDHCPv6.test_dhcpv6_two_subnets[id-4544adf7-bb5f-4bdc-b769-b3e77026cef2]: Contrail specific problem. See https://bugs.launchpad.net/juniperopenstack/+bug/1596917.
@@ -9,7 +22,6 @@ tempest.api.network.test_ports.PortsTestJSON.test_update_port_with_two_security_
 tempest.api.network.test_routers.RoutersIpV6Test.test_router_interface_port_update_with_fixed_ip[id-96522edf-b4b5-45d9-8443-fa11c26e6eff]: Contrail issue.
 tempest.api.network.test_routers.RoutersTest.test_router_interface_port_update_with_fixed_ip[id-96522edf-b4b5-45d9-8443-fa11c26e6eff]: Contrail issue.
 tempest.scenario.test_network_basic_ops.TestNetworkBasicOps.test_port_security_macspoofing_port[compute,id-7c0bb1a2-d053-49a4-98f9-ca1a1d849f63,network,slow]: Contrail issue. See https://bugs.launchpad.net/juniperopenstack/+bug/1632961.
-heat_tempest_plugin.tests.functional.test_create_update_neutron_port.UpdatePortTest.test_update_remove_ip[id-8e37933b-345c-4ce5-a523-e67bdf198d73]: Contrail specific problem.
 heat_tempest_plugin.tests.functional.test_create_update_neutron_port.UpdatePortTest.test_update_with_mac_address[id-df1bf0fb-115e-42f3-b6cc-e12b5d506c98]: Contrail specific problem. Mac address cannot be changed for existing port.
 heat_tempest_plugin.tests.functional.test_create_update_neutron_subnet.UpdateSubnetTest.test_update_allocation_pools[id-af43fc6d-58ba-4b5f-bd68-07b29f0a96bc]: Contrail limitation.
 heat_tempest_plugin.tests.functional.test_create_update_neutron_subnet.UpdateSubnetTest.test_update_allocation_pools_to_empty[id-2f1d3b04-2183-4e50-8aa3-fa0fbff5c861]: Contrail limitation.

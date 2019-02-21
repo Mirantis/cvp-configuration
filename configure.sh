@@ -19,12 +19,7 @@ check_variables () {
 }
 
 rally_configuration () {
-  rally_version=$(rally version 2>&1)
-  # will be removed when we switch to Rally 0.9.2+
-  if [ "$rally_version" == "0.9.0" ] || [ "$rally_version" == "0.9.1" ]; then
-    pip install ansible==2.3.2.0
-    sed -i '270s/,/}#,/g' /usr/local/lib/python2.7/dist-packages/rally/plugins/openstack/wrappers/network.py
-  fi
+  pip install --force-reinstall python-glanceclient==2.11
   sub_name=`date "+%H_%M_%S"`
   rally deployment create --fromenv --name=tempest_$sub_name
   rally deployment config
@@ -32,14 +27,14 @@ rally_configuration () {
 
 tempest_configuration () {
   sub_name=`date "+%H_%M_%S"`
-  # default tempest version is 17.2.0 now, unless
+  # default tempest version is 18.0.0 now, unless
   # it is explicitly defined in pipelines
   if [ "$tempest_version" == "" ]; then
-      tempest_version='17.2.0'
+      tempest_version='18.0.0'
   fi
   if [ "$PROXY" == "offline" ]; then
     rally verify create-verifier --name tempest_verifier_$sub_name --type tempest --source $TEMPEST_REPO --system-wide --version $tempest_version
-    rally verify add-verifier-ext --source /var/lib/telemetry-tempest-plugin
+    #rally verify add-verifier-ext --source /var/lib/telemetry-tempest-plugin
     rally verify add-verifier-ext --source /var/lib/heat-tempest-plugin
   else
     if [ -n "${PROXY}" ]; then
@@ -47,8 +42,8 @@ tempest_configuration () {
     fi
     apt-get update; apt-get install -y iputils-ping curl wget
     rally verify create-verifier --name tempest_verifier_$sub_name --type tempest --source $TEMPEST_REPO --version $tempest_version
-    rally verify add-verifier-ext --version 7a4bff728fbd8629ec211669264ab645aa921e2b --source https://github.com/openstack/telemetry-tempest-plugin
-    rally verify add-verifier-ext --version 12b770e923060f5ef41358c37390a25be56634f0 --source https://github.com/openstack/heat-tempest-plugin
+    #rally verify add-verifier-ext --version 7a4bff728fbd8629ec211669264ab645aa921e2b --source https://github.com/openstack/telemetry-tempest-plugin
+    rally verify add-verifier-ext --version 0.2.0 --source https://github.com/openstack/heat-tempest-plugin
     pip install --force-reinstall python-cinderclient==3.2.0
     unset https_proxy
   fi
@@ -118,13 +113,16 @@ rally_configuration
 if [ -n "${TEMPEST_REPO}" ]; then
     tempest_configuration
     quick_configuration
+    # If you do not have fip network, use this command
+    #cat $current_path/cvp-configuration/tempest/skip-list-fip-only.yaml >> $current_path/cvp-configuration/tempest/skip-list-queens.yaml
     # If Opencontrail is deployed, use this command
-    #cat $current_path/cvp-configuration/tempest/skip-list-oc4.yaml >> $current_path/cvp-configuration/tempest/skip-list-pike.yaml
+    #cat $current_path/cvp-configuration/tempest/skip-list-oc4.yaml >> $current_path/cvp-configuration/tempest/skip-list-queens.yaml
+    cat $current_path/cvp-configuration/tempest/skip-list-heat.yaml >> $current_path/cvp-configuration/tempest/skip-list-queens.yaml
     rally verify configure-verifier --extend $current_path/cvp-configuration/tempest/tempest_ext.conf
     rally verify configure-verifier --show
     # If Barbican tempest plugin is installed, use this
-    # mkdir /etc/tempest
-    # rally verify configure-verifier --show | grep -v "rally.api" > /etc/tempest/tempest.conf
+    #mkdir /etc/tempest
+    #rally verify configure-verifier --show | grep -v "rally.api" > /etc/tempest/tempest.conf
     # Add 2 additional tempest tests (live migration to all nodes + ssh to all nodes)
     # TBD
     #cat tempest/test_extension.py >> repo/tempest/scenario/test_server_multinode.py
