@@ -34,8 +34,8 @@ additional_tempest_plugins (){
 if [ -n "${PROXY}" ]; then
   export https_proxy=$PROXY
 fi
-rally verify add-verifier-ext --source https://github.com/openstack/telemetry-tempest-plugin
-rally verify add-verifier-ext --source https://github.com/openstack/heat-tempest-plugin
+#rally verify add-verifier-ext --source https://github.com/openstack/telemetry-tempest-plugin
+rally verify add-verifier-ext --version 0.1.0 --source https://github.com/openstack/heat-tempest-plugin
 unset https_proxy
 }
 
@@ -51,8 +51,10 @@ tempest_configuration () {
     rally verify create-verifier --name tempest_verifier_$sub_name --type tempest --source $TEMPEST_REPO --version $tempest_version
     unset https_proxy
   fi
-  rally verify configure-verifier --show
+  # supress tempest.conf display in console
+  #rally verify configure-verifier --show
   additional_tempest_plugins
+  pip install --force-reinstall python-cinderclient==3.2.0
 }
 
 quick_configuration () {
