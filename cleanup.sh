@@ -5,7 +5,7 @@ dry_run=false
 clean_projects=false
 make_servers_active=false
 
-stack_batch_size=10
+batch_size=10
 # granularity values: days,hours,minutes,seconds
 stack_granularity=days
 stack_granularity_value=1
@@ -14,12 +14,13 @@ function show_help {
     printf "Resource cleaning script\nMask is: %s\n\t-h, -?\tShow this help\n" ${mask}
     printf "\t-t\tDry run mode, no cleaning done\n"
     printf "\t-P\tForce cleaning of projects\n"
+    printf "\t-s\tUse single thread of 'openstack' client for cleanup\n"
     printf "\t-S\tSet servers to ACTIVE before deletion (bare metal reqiured)\n"
-    printf "\t-F\tForce purge deleted stacks. Batch size: %s, >%s %s\n" ${stack_batch_size} ${stack_granularity_value} ${stack_granularity}
+    printf "\t-F\tForce purge deleted stacks. Batch size: %s, >%s %s\n" ${batch_size} ${stack_granularity_value} ${stack_granularity}
 }
 
 OPTIND=1 # Reset in case getopts has been used previously in the shell.
-while getopts "h?:tSPF" opt; do
+while getopts "h?:tsSPF" opt; do
     case "$opt" in
     h|\?)
         show_help
@@ -27,6 +28,9 @@ while getopts "h?:tSPF" opt; do
         ;;
     t)  dry_run=true
         printf "Running in dry-run mode\n"
+        ;;
+    s)  serial=true
+        printf "Single threaded mode enabled\n"
         ;;
     S)  make_servers_active=true
         printf "Servers will be set to ACTIVE before deletion\n"
@@ -49,9 +53,16 @@ function _clean_and_flush {
         return 0
     fi
     if [ -s ${cmds} ]; then
-        echo "Processing $(cat ${cmds} | wc -l) commands"
-        cat ${cmds} | openstack
-        truncate -s 0 ${cmds}
+        if [ "${serial}" = true ] ; then
+            echo "... processing $(cat ${cmds} | wc -l) commands, worker threads ${batch_size}"
+            cat ${cmds} | tr '\n' '\0' | xargs -v -P ${batch_size} -n 1 -0 openstack
+            #cat ${cmds} | openstack
+            truncate -s 0 ${cmds}
+        else
+            echo "... processing $(cat ${cmds} | wc -l) commands"
+            cat ${cmds} | openstack
+            truncate -s 0 ${cmds}
+        fi
     fi
 }
 
@@ -125,11 +136,16 @@ function _clean_images {
 
 ### Sec groups
 function _clean_sec_groups {
-# openstack project list -c ID -c Name -f value | grep rally | cut -d' ' -f1 | xargs -I{} /bin/bash -c "openstack security group list | grep {}"
     projects=( $(openstack project list -c ID -c Name -f value | grep ${mask} | cut -d' ' -f1) )
     sgroups=( $(printf "%s\n" ${projects[@]} | xargs -I{} /bin/bash -c "openstack security group list -c ID -c Project -f value | grep {} | cut -d' ' -f1") )
     echo "-> ${#sgroups[@]} security groups for project containing '${mask}' found"
     printf "%s\n" ${sgroups[@]} | xargs -I{} echo security group delete {} >>${cmds}
+    _clean_and_flush
+
+    # Additional step to cleanup 'hanged' groups
+    sgroups_raw=( $(openstack security group list -c ID -c Name -f value | grep ${mask} | cut -d' ' -f1) )
+    echo "-> ${#sgroups_raw[@]} security groups for '${mask}' found"
+    printf "%s\n" ${sgroups_raw[@]} | xargs -I{} echo security group delete {} >>${cmds}
     _clean_and_flush
 }
 
@@ -148,20 +164,27 @@ function _clean_routers_and_networks {
         echo "-> No routers containing '${mask}' found"
     else
         echo "-> ${#routers[@]} routers containing '${mask}' found"
-        echo "...unsetting gateways"
-        printf "%s\n" ${routers[@]} | xargs -I{} echo router unset --external-gateway {} | openstack
+        echo "... unsetting gateways"
+        printf "%s\n" ${routers[@]} | xargs -I{} echo router unset --external-gateway {} >>${cmds}
+        _clean_and_flush
+
+        echo "... removing ports"
         for router in ${routers[@]}; do
             r_ports=( $(openstack port list --router ${router} -f value -c ID) )
             if [ ${#r_ports[@]} -eq 0 ]; then
-                echo "...no ports to unplug for ${router}"
+                echo "... no ports to unplug for ${router}"
             else
                 for r_port in ${r_ports[@]}; do
-                    echo "...removing port '${r_port}' from router '${router}'"
-                    openstack router remove port ${router} ${r_port}
+                    echo "... queued removal of port '${r_port}' from router '${router}'"
+                    echo "router remove port ${router} ${r_port}" >>${cmds}
                 done
             fi
         done
+        _clean_and_flush
+
+        echo "... deleting routers"
         printf "%s\n" ${routers[@]} | xargs -I{} echo router delete {} >>${cmds}
+        _clean_and_flush
     fi
 
     networks=( $(openstack network list | grep "${mask}" | cut -d' ' -f2) )
@@ -206,7 +229,7 @@ function _clean_stacks {
     printf "%s\n" ${stacks[@]} | xargs -I{} echo stack delete -y {} >>${cmds}
     _clean_and_flush
     if [ "$purge_deleted_stacks" = true ]; then
-        heat-manage purge_deleted -g ${stack_granularity} -b ${stack_batch_size} ${stack_granularity_value} | wc -l | xargs -I{} echo "-> Purged {} stacks"
+        heat-manage purge_deleted -g ${stack_granularity} -b ${batch_size} ${stack_granularity_value} | wc -l | xargs -I{} echo "-> Purged {} stacks"
     fi
 }
 
