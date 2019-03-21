@@ -1,4 +1,4 @@
-FROM xrally/xrally-openstack:0.10.1
+FROM xrally/xrally-openstack:0.11.2
 
 SHELL ["/bin/bash", "-xec"]
 
@@ -11,18 +11,14 @@ WORKDIR /var/lib/
 RUN mkdir -p cvp-configuration
 
 RUN git clone https://github.com/openstack/tempest && \
-    pushd tempest; git checkout 17.2.0; pip install -r requirements.txt; \
-    popd;
-
-RUN git clone https://github.com/openstack/telemetry-tempest-plugin && \
-    pushd telemetry-tempest-plugin; git checkout 7a4bff728fbd8629ec211669264ab645aa921e2b; pip install -r requirements.txt; \
+    pushd tempest; git checkout 18.0.0; pip install -r requirements.txt; \
     popd;
 
 RUN git clone https://github.com/openstack/heat-tempest-plugin && \
-    pushd heat-tempest-plugin; git checkout 12b770e923060f5ef41358c37390a25be56634f0; pip install -r requirements.txt; \
+    pushd heat-tempest-plugin; git checkout 0.2.0; pip install -r requirements.txt; \
     popd;
 
-RUN pip install --force-reinstall python-cinderclient==3.2.0
+RUN pip install --force-reinstall python-cinderclient==3.2.0 python-glanceclient==2.11
 
 COPY rally/ /var/lib/cvp-configuration/rally
 COPY tempest/ /var/lib/cvp-configuration/tempest
