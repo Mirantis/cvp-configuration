@@ -23,6 +23,8 @@ rally_configuration () {
   sub_name=`date "+%H_%M_%S"`
   rally deployment create --fromenv --name=tempest_$sub_name
   rally deployment config
+  echo "[openstack]" >> /etc/rally/rally.conf
+  echo "pre_newton_neutron=True" >> /etc/rally/rally.conf
 }
 
 tempest_configuration () {
@@ -77,18 +79,26 @@ nova flavor-list | grep tiny 2>&1 >/dev/null || {
 #shared fixed network
 shared_count=`neutron net-list -c name -c shared | grep True | wc -l`
 if [ $shared_count -gt 1 ]; then
-  echo "TOO MANY SHARED NETWORKS! Script will choose just 1 random"
+  echo "TOO MANY SHARED NETWORKS! Script will choose first net in list with fixed-net name"
 fi
 if [ $shared_count -eq 0 ]; then
   echo "Let's create shared fixed net"
   neutron net-create --shared fixed-net
   neutron subnet-create --name fixed-subnet --gateway 192.168.0.1 --allocation-pool start=192.168.0.2,end=192.168.0.254 --ip-version 4 fixed-net 192.168.0.0/24
 fi
-FIXED_NET=$(neutron net-list -c name -c shared | grep True | awk '{print $2}' | tail -n 1)
-echo "Fixed net is: $FIXED_NET"
-#Updating of tempest_full.conf file is skipped/deprecated
+FIXED_NET=$(neutron net-list -c name -c shared | grep "fixed-net" | grep True | awk '{print $2}' | tail -n 1)
+FIXED_NET_ID=$(neutron net-list -c id -c name -c shared | grep "fixed-net" | grep True | awk '{print $2}' | tail -n 1)
+FIXED_SUBNET_ID=$(neutron net-show $FIXED_NET_ID -c subnets | grep subnets | awk '{print $4}')
+FIXED_SUBNET_NAME=$(neutron subnet-show -c name $FIXED_SUBNET_ID | grep name | awk '{print $4}')
+echo "Fixed net name is $FIXED_NET, id is $FIXED_NET_ID"
+echo "Fixed subnet is: $FIXED_SUBNET_ID, name: $FIXED_SUBNET_NAME"
 sed -i 's/${IMAGE_REF2}/'$IMAGE_REF2'/g' $current_path/cvp-configuration/tempest/tempest_ext.conf
+sed -i 's/${FIXED_NET}/'$FIXED_NET_ID'/g' $current_path/cvp-configuration/rally/rally_scenarios.json
+sed -i 's/${FIXED_NET}/'$FIXED_NET_ID'/g' $current_path/cvp-configuration/rally/rally_scenarios_100.json
+sed -i 's/${FIXED_NET}/'$FIXED_NET_ID'/g' $current_path/cvp-configuration/rally/rally_scenarios_fip_and_ubuntu.json
+sed -i 's/${FIXED_NET}/'$FIXED_NET_ID'/g' $current_path/cvp-configuration/rally/rally_scenarios_fip_and_ubuntu_100.json
 sed -i 's/${FIXED_NET}/'$FIXED_NET'/g' $current_path/cvp-configuration/tempest/tempest_ext.conf
+sed -i 's/${FIXED_SUBNET_NAME}/'$FIXED_SUBNET_NAME'/g' $current_path/cvp-configuration/tempest/tempest_ext.conf
 sed -i 's/${OS_USERNAME}/'$OS_USERNAME'/g' $current_path/cvp-configuration/tempest/tempest_ext.conf
 sed -i 's/${OS_TENANT_NAME}/'$OS_TENANT_NAME'/g' $current_path/cvp-configuration/tempest/tempest_ext.conf
 sed -i 's/${OS_REGION_NAME}/'$OS_REGION_NAME'/g' $current_path/cvp-configuration/tempest/tempest_ext.conf
@@ -98,6 +108,7 @@ sed -i 's/publicURL/'$TEMPEST_ENDPOINT_TYPE'/g' $current_path/cvp-configuration/
 #supress tempest.conf display in console
 #cat $current_path/cvp-configuration/tempest/tempest_ext.conf
 cp $current_path/cvp-configuration/tempest/boot_config_none_env.yaml /home/rally/boot_config_none_env.yaml
+cp $current_path/cvp-configuration/cleanup.sh /home/rally/cleanup.sh
 }
 
 if [ "$1" == "reconfigure" ]; then
@@ -110,13 +121,13 @@ fi
 
 check_variables
 rally_configuration
+quick_configuration
 if [ -n "${TEMPEST_REPO}" ]; then
     tempest_configuration
-    quick_configuration
     # If you do not have fip network, use this command
     #cat $current_path/cvp-configuration/tempest/skip-list-fip-only.yaml >> $current_path/cvp-configuration/tempest/skip-list-queens.yaml
     # If Opencontrail is deployed, use this command
-    #cat $current_path/cvp-configuration/tempest/skip-list-oc4.yaml >> $current_path/cvp-configuration/tempest/skip-list-queens.yaml
+    cat $current_path/cvp-configuration/tempest/skip-list-oc4.yaml >> $current_path/cvp-configuration/tempest/skip-list-queens.yaml
     cat $current_path/cvp-configuration/tempest/skip-list-heat.yaml >> $current_path/cvp-configuration/tempest/skip-list-queens.yaml
     rally verify configure-verifier --extend $current_path/cvp-configuration/tempest/tempest_ext.conf
     rally verify configure-verifier --show

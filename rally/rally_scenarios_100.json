@@ -2,11 +2,11 @@
 {% set image_name = image_name or "testvm" %}
 {% set volume_type = volume_type or "default" %}
 {% set availability_zone = "nova" %}
-{% set concurrency = 1 %}
+{% set concurrency = 10 %}
 {% set volume_size = 1 %}
-{% set times = 1 %}
-{% set users = 1 %}
-{% set tenants = 1 %}
+{% set times = 100 %}
+{% set users = 3 %}
+{% set tenants = 3 %}
 {% set rbd_image = "http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img" %}
 {% set heat_template = "/home/rally/source/cvp-configuration/rally/default.yaml.template" %}
 {% set fixed_net = "${FIXED_NET}" %}

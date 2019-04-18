@@ -1,0 +1,136 @@
+{% set flavor_name = flavor_name or "m1.tiny" %}
+{% set flavor_name_ubuntu = flavor_name_ubuntu or "m1.medium" %}
+{% set image_name = image_name or "testvm" %}
+{% set image_name_ubuntu = image_name_ubuntu or "Ubuntu" %}
+{% set availability_zone = "nova" %}
+{% set concurrency = 10 %}
+{% set times = 100 %}
+{% set users = 3 %}
+{% set tenants = 3 %}
+{% set ext_net_id = "<PUT_ID_HERE>" %}
+{% set fixed_net = "${FIXED_NET}" %}
+{% set script_file = script_file or "/home/rally/source/cvp-configuration/rally/instance_test.sh" %}
+{
+  "VMTasks.boot_runcommand_delete": [
+  {
+    "args": {
+      "network_create_args": {},
+      "flavor": {
+        "name": "{{flavor_name_ubuntu}}"
+      },
+      "image": {
+        "name": "{{image_name_ubuntu}}"
+      },
+      "nics": [
+        {"net-id": "{{fixed_net}}"}
+      ],
+      "volume_args": { "size": 10 },
+      "router_create_args": {
+        "external_gateway_info": {"network_id": "{{ext_net_id}}"}
+      },
+      "wait_for_ping": false,
+      "force_delete": false,
+      "command": {
+        "interpreter": "/bin/sh",
+        "script_file": "{{script_file}}"
+      },
+      "username": "ubuntu"
+    },
+    "runner": {
+      "type": "constant",
+      "concurrency": {{concurrency}},
+      "times": {{times}}
+    },
+    "context": {
+      "users": {
+        "users_per_tenant": {{users}},
+        "tenants": {{tenants}}
+      },
+      "api_versions@openstack": { "cinder": {"service_type": "volumev3"} }
+    }
+  }
+  ],
+  "NovaServers.boot_and_associate_floating_ip": [
+  {
+    "runner": {
+      "type": "constant",
+      "concurrency": {{concurrency}},
+      "times": {{times}}
+    },
+    "args": {
+      "flavor": {
+        "name": "{{flavor_name}}"
+      },
+      "image": {
+        "name": "{{image_name}}"
+      },
+      "auto_assign_nic": true,
+      "availability_zone": "{{availability_zone}}"
+    },
+    "context": {
+      "users": {
+        "users_per_tenant": {{users}},
+        "tenants": {{tenants}}
+      },
+      "network": {
+        "router": {
+          "external_gateway_info": {
+            "network_id": "{{ext_net_id}}"
+          }
+        }
+      },
+      "quotas": {
+        "nova": {
+          "instances": -1,
+          "cores": -1,
+          "ram": -1,
+          "floating_ips": -1,
+          "key_pairs": -1,
+          "security_groups": -1,
+          "security_group_rules": -1
+        }
+      }
+    },
+    "sla": { "failure_rate": { "max": 0 } }
+  }
+  ],
+  "NovaServers.boot_and_delete_server": [
+  {
+    "args": {
+      "flavor": {
+        "name": "{{flavor_name_ubuntu}}"
+      },
+      "image": {
+        "name": "{{image_name_ubuntu}}"
+      },
+      "nics": [
+        {"net-id": "{{fixed_net}}"}
+      ],
+      "detailed": true,
+      "availability_zone": "{{availability_zone}}"
+    },
+    "runner": {
+      "type": "constant",
+      "concurrency": {{concurrency}},
+      "times": {{times}}
+    },
+    "context": {
+      "users": {
+        "tenants": {{users}},
+        "users_per_tenant": {{tenants}}
+      },
+      "quotas": {
+        "nova": {
+          "instances": -1,
+          "cores": -1,
+          "ram": -1,
+          "key_pairs": -1,
+          "security_groups": -1,
+          "security_group_rules": -1
+        }
+      }
+    },
+    "sla": { "failure_rate": { "max": 0 } }
+  }
+  ]
+}
