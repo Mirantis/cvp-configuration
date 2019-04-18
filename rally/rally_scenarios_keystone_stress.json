@@ -1,0 +1,408 @@
+{% set concurrency = 10 %}
+{% set ops_times = 100 %}
+{% set validate_times = 1000 %}
+{% set users = 5 %}
+{% set tenants = 10 %}
+
+{% set rps_tiny = 10 %}
+{% set rps_xsmall = 15 %}
+{% set rps_small = 20 %}
+{% set rps_medium = 25 %}
+{% set rps_high = 30 %}
+{% set rps_xhigh = 35 %}
+{% set rps_huge = 40 %}
+
+{% set rps_times = 30000 %}
+
+{
+  "Authenticate.validate_cinder": [
+    {
+      "args": {
+        "repetitions": 2
+      },
+      "runner": {
+        "type": "constant",
+        "times": {{validate_times}},
+        "concurrency": {{concurrency}}
+      },
+      "context": {
+        "users": {
+          "users_per_tenant": {{users}},
+          "tenants": {{tenants}}
+        },
+        "api_versions": {
+          "cinder": {
+            "version": 2,
+            "service_name": "cinderv2",
+  #         "service_type": "volumev2"
+          }
+        }
+      },
+      "sla": {
+        "failure_rate": {
+          "max": 0
+        }
+      }
+    }
+  ],
+  "Authenticate.validate_glance": [
+    {
+      "args": {
+        "repetitions": 2
+      },
+      "runner": {
+        "type": "constant",
+        "times": {{validate_times}},
+        "concurrency": {{concurrency}}
+      },
+      "context": {
+        "users": {
+          "users_per_tenant": {{users}},
+          "tenants": {{tenants}}
+        }
+      },
+      "sla": {
+        "failure_rate": {
+          "max": 0
+        }
+      }
+    }
+  ],
+  "Authenticate.validate_heat": [
+    {
+      "args": {
+        "repetitions": 2
+      },
+      "runner": {
+        "type": "constant",
+        "times": {{validate_times}},
+        "concurrency": {{concurrency}}
+      },
+      "context": {
+        "users": {
+          "users_per_tenant": {{users}},
+          "tenants": {{tenants}}
+        }
+      },
+      "sla": {
+        "failure_rate": {
+          "max": 0
+        }
+      }
+    }
+  ],
+  "Authenticate.validate_nova": [
+    {
+      "args": {
+        "repetitions": 2
+      },
+      "runner": {
+        "type": "constant",
+        "times": {{validate_times}},
+        "concurrency": {{concurrency}}
+      },
+      "context": {
+        "users": {
+          "users_per_tenant": {{users}},
+          "tenants": {{tenants}}
+        }
+      },
+      "sla": {
+        "failure_rate": {
+          "max": 0
+        }
+      }
+    }
+  ],
+  "Authenticate.validate_neutron": [
+    {
+      "args": {
+        "repetitions": 2
+      },
+      "runner": {
+        "type": "constant",
+        "times": {{validate_times}},
+        "concurrency": {{concurrency}}
+      },
+      "context": {
+        "users": {
+          "users_per_tenant": {{users}},
+          "tenants": {{tenants}}
+        }
+      },
+      "sla": {
+        "failure_rate": {
+          "max": 0
+        }
+      }
+    }
+  ],
+  "KeystoneBasic.authenticate_user_and_validate_token": [
+    {
+      "args": {},
+      "context": {
+        "users": {
+          "tenants": {{ tenants }},
+          "users_per_tenant": {{users}}
+        }
+      },
+      "runner": {
+        "type": "rps",
+        "rps": {{rps_tiny}},
+        "times": {{rps_times}}
+      },
+      "sla": {
+        "failure_rate": {
+          "max": 0
+        }
+      }
+    },
+    {
+      "args": {},
+      "context": {
+        "users": {
+          "tenants": {{ tenants }},
+          "users_per_tenant": {{users}}
+        }
+      },
+      "runner": {
+        "type": "rps",
+        "rps": {{rps_xsmall}},
+        "times": {{rps_times}}
+      },
+      "sla": {
+        "failure_rate": {
+          "max": 0
+        }
+      }
+    },
+    {
+      "args": {},
+      "context": {
+        "users": {
+          "tenants": {{ tenants }},
+          "users_per_tenant": {{users}}
+        }
+      },
+      "runner": {
+        "type": "rps",
+        "rps": {{rps_small}},
+        "times": {{rps_times}}
+      },
+      "sla": {
+        "failure_rate": {
+          "max": 0
+        }
+      }
+    },
+    {
+      "args": {},
+      "context": {
+        "users": {
+          "tenants": {{ tenants }},
+          "users_per_tenant": {{users}}
+        }
+      },
+      "runner": {
+        "type": "rps",
+        "rps": {{rps_medium}},
+        "times": {{rps_times}}
+      },
+      "sla": {
+        "failure_rate": {
+          "max": 0
+        }
+      }
+    },
+    {
+      "args": {},
+      "context": {
+        "users": {
+          "tenants": {{ tenants }},
+          "users_per_tenant": {{users}}
+        }
+      },
+      "runner": {
+        "type": "rps",
+        "rps": {{rps_high}},
+        "times": {{rps_times}}
+      },
+      "sla": {
+        "failure_rate": {
+          "max": 0
+        }
+      }
+    },
+    {
+      "args": {},
+      "context": {
+        "users": {
+          "tenants": {{ tenants }},
+          "users_per_tenant": {{users}}
+        }
+      },
+      "runner": {
+        "type": "rps",
+        "rps": {{rps_xhigh}},
+        "times": {{rps_times}}
+      },
+      "sla": {
+        "failure_rate": {
+          "max": 0
+        }
+      }
+    },
+    {
+      "args": {},
+      "context": {
+        "users": {
+          "tenants": {{ tenants }},
+          "users_per_tenant": {{users}}
+        }
+      },
+      "runner": {
+        "type": "rps",
+        "rps": {{rps_huge}},
+        "times": {{rps_times}}
+      },
+      "sla": {
+        "failure_rate": {
+          "max": 0
+        }
+      }
+    }
+  ],
+  "KeystoneBasic.add_and_remove_user_role": [
+  {
+      "runner": {
+        "type": "constant",
+        "times": {{ops_times}},
+        "concurrency": {{concurrency}}
+      },
+      "context": {
+        "users": {
+          "tenants": {{tenants}},
+          "users_per_tenant": {{users}}
+        }
+      },
+      "sla": {
+        "failure_rate": {
+          "max": 0
+        }
+      }
+    }
+  ],
+  "KeystoneBasic.create_tenant_with_users": [
+    {
+      "args": {
+        "users_per_tenant": 10
+      },
+      "runner": {
+        "type": "constant",
+        "concurrency": {{concurrency}},
+        "times": {{ops_times}}
+      },
+       "sla": {
+        "failure_rate": {
+        "max": 0
+        }
+       }
+    }
+     ],
+  "KeystoneBasic.create_add_and_list_user_roles": [
+  {
+      "runner": {
+        "type": "constant",
+        "times": {{ops_times}},
+        "concurrency": {{concurrency}}
+      },
+      "context": {
+        "users": {
+          "tenants": {{tenants}},
+          "users_per_tenant": {{users}}
+        }
+      },
+      "sla": {
+        "failure_rate": {
+          "max": 0
+        }
+      }
+    }
+  ],
+  "KeystoneBasic.create_and_delete_role": [
+  {
+      "runner": {
+        "type": "constant",
+        "times": {{ops_times}},
+        "concurrency": {{concurrency}}
+      },
+      "sla": {
+        "failure_rate": {
+          "max": 0
+        }
+      }
+    }
+  ],
+  "KeystoneBasic.create_and_delete_service": [
+  {
+      "args": {
+        "service_type": "Rally_test_type",
+        "description": "test_description"
+      },
+      "runner": {
+        "type": "constant",
+        "times": {{ops_times}},
+        "concurrency": {{concurrency}}
+      },
+      "sla": {
+        "failure_rate": {
+          "max": 0
+        }
+      }
+    }
+  ],
+  "KeystoneBasic.create_and_list_users": [
+    {
+      "args": {},
+      "runner": {
+        "type": "constant",
+        "times": {{ops_times}},
+        "concurrency": {{concurrency}}
+      },
+      "sla": {
+        "failure_rate": {
+          "max": 0
+        }
+      }
+    }
+  ],
+  "KeystoneBasic.create_update_and_delete_tenant": [
+  {
+      "args": {},
+      "runner": {
+        "type": "constant",
+        "times": {{ops_times}},
+        "concurrency": {{concurrency}}
+      },
+      "sla": {
+        "failure_rate": {
+          "max": 0
+        }
+      }
+    }
+  ],
+  "KeystoneBasic.get_entities": [
+  {
+      "runner": {
+        "type": "constant",
+        "times": {{ops_times}},
+        "concurrency": {{concurrency}}
+      },
+      "sla": {
+        "failure_rate": {
+          "max": 0
+        }
+      }
+    }
+  ]
+}
