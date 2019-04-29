@@ -1,0 +1,2 @@
+resource_registry:
+  "Heat::InstallConfigAgent": "OS::Heat::SoftwareConfig"

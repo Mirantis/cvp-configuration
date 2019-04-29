@@ -12,7 +12,7 @@
 {% set rbd_image = "/home/rally/cvp-configuration/cirros-0.3.4-x86_64-disk.img" %}
 {% set heat_template = "/home/rally/cvp-configuration/rally/default.yaml.template" %}
 {% set ext_net_name = "floating" %}
-{% set script_file = script_file or "cvp-configuration/rally/instance_test.sh" %}
+{% set script_file = script_file or "/home/rally/cvp-configuration/rally/instance_test.sh" %}
 {
 "KeystoneBasic.authenticate_user_and_validate_token": [
         {
@@ -43,7 +43,11 @@
                 "users": {
                     "users_per_tenant": {{users}},
                     "tenants": {{tenants}}
-                }
+                },
+            "api_versions@openstack":
+            {
+            "cinder": {"service_type": "volumev3"}
+            }
             },
             "sla": {
                 "failure_rate": {
@@ -176,6 +180,10 @@
                     "tenants": 1,
                     "users_per_tenant": 1
                 },
+            "api_versions@openstack":
+            {
+                "cinder": {"service_type": "volumev3"}
+            },
                 "network": {}
             }
         }
@@ -320,9 +328,7 @@
           "max": 0
           }
       }
-    }
-  ],
-  "NovaServers.boot_and_delete_server": [
+    },
     {
       "args": {
         "flavor": {
@@ -390,6 +396,10 @@
             "tenants": {{users}},
             "users_per_tenant": {{tenants}}
           },
+            "api_versions@openstack":
+            {
+                "cinder": {"service_type": "volumev3"}
+            },
           "network": {},
           "quotas": {
             "nova": {
@@ -533,6 +543,10 @@
                     "tenants": {{users}},
                     "users_per_tenant": {{tenants}}
                 },
+            "api_versions@openstack":
+            {
+                "cinder": {"service_type": "volumev3"}
+            },
                 "network": {},
                 "quotas": {
                         "cinder": {
@@ -570,7 +584,11 @@
                                 "snapshots": -1,
                                 "volumes": -1
                                 }
-                }
+                },
+            "api_versions@openstack":
+            {
+                "cinder": {"service_type": "volumev3"}
+            }
             },
            "sla": {
                 "failure_rate": {
@@ -606,6 +624,10 @@
                                 "snapshots": -1,
                                 "volumes": -1
                                 }
+                },
+                "api_versions@openstack":
+                {
+                "cinder": {"service_type": "volumev3"}
                 }
             },
            "sla": {
