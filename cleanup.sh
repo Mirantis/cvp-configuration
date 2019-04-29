@@ -4,7 +4,7 @@ mask='s_rally\|rally_\|tempest_\|tempest-'
 dry_run=false
 clean_projects=false
 make_servers_active=false
-
+serial=false
 batch_size=10
 # granularity values: days,hours,minutes,seconds
 stack_granularity=days
@@ -53,14 +53,32 @@ function _clean_and_flush {
         return 0
     fi
     if [ -s ${cmds} ]; then
-        if [ "${serial}" = true ] ; then
+        if [ "${serial}" = false ] ; then
             echo "... processing $(cat ${cmds} | wc -l) commands, worker threads ${batch_size}"
-            cat ${cmds} | tr '\n' '\0' | xargs -v -P ${batch_size} -n 1 -0 openstack
+            cat ${cmds} | tr '\n' '\0' | xargs -P 1 -n 1 -0 openstack
             #cat ${cmds} | openstack
             truncate -s 0 ${cmds}
         else
             echo "... processing $(cat ${cmds} | wc -l) commands"
-            cat ${cmds} | openstack
+            cat ${cmds} | tr '\n' '\0' | xargs -P ${batch_size} -n 1 -0 openstack
+            truncate -s 0 ${cmds}
+        fi
+    fi
+}
+
+function _clean_and_flush_cinder {
+    if [ "$dry_run" = true ] ; then
+        return 0
+    fi
+    if [ -s ${cmds} ]; then
+        if [ "${serial}" = false ] ; then
+            echo "... processing $(cat ${cmds} | wc -l) commands, worker threads ${batch_size}"
+            cat ${cmds} | tr '\n' '\0' | xargs -I{} -P ${batch_size} -n 1 -0 /bin/bash -c 'cinder --os-volume-api-version 3.43 {}'
+            #cat ${cmds} | cinder --os-volume-api-version 3.43
+            truncate -s 0 ${cmds}
+        else
+            echo "... processing $(cat ${cmds} | wc -l) commands"
+            cat ${cmds} | tr '\n' '\0' | xargs -I{} -P 1 -n 1 -0 /bin/bash -c 'cinder --os-volume-api-version 3.43 {}'
             truncate -s 0 ${cmds}
         fi
     fi
@@ -116,6 +134,20 @@ function _clean_volumes {
     printf "%s\n" ${volumes[@]} | xargs -I{} echo volume set --state available {} >>${cmds}
     printf "%s\n" ${volumes[@]} | xargs -I{} echo volume delete {} >>${cmds}
     _clean_and_flush
+}
+
+function _clean_volume_groups {
+    groups=( $(cinder --os-volume-api-version 3.43 group-list --all-tenants 1 | grep ${mask} | awk '{print $2}') )
+    echo "-> ${#groups[@]} groups containing '${mask}' found"
+    printf "%s\n" ${groups[@]} | xargs -I{} echo group-delete {} >>${cmds}
+    _clean_and_flush_cinder
+}
+
+function _clean_volume_group_types {
+    group_types=( $(cinder --os-volume-api-version 3.43 group-type-list | grep ${mask} | awk '{print $2}') )
+    echo "-> ${#group_types[@]} group types containing '${mask}' found"
+    printf "%s\n" ${group_types[@]} | xargs -I{} echo group-type-delete {} >>${cmds}
+    _clean_and_flush_cinder
 }
 
 ### Volume types
@@ -259,6 +291,8 @@ _clean_users
 _clean_roles
 _clean_snapshots
 _clean_volumes
+_clean_volume_groups
+_clean_volume_group_types
 _clean_volume_types
 _clean_images
 _clean_sec_groups
