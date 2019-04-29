@@ -1,6 +1,8 @@
 #!/bin/bash
 export OS_INTERFACE='admin'
 mask='s_rally\|rally_\|tempest_\|tempest-'
+stack_alt=false
+stack_regex='api-[0-9]+-[a-z]+'
 dry_run=false
 clean_projects=false
 make_servers_active=false
@@ -16,11 +18,12 @@ function show_help {
     printf "\t-P\tForce cleaning of projects\n"
     printf "\t-s\tUse single thread of 'openstack' client for cleanup\n"
     printf "\t-S\tSet servers to ACTIVE before deletion (bare metal reqiured)\n"
+    printf "\t-f\tForce stack cleanup with an additional mask of '%s'\n" ${stack_regex}
     printf "\t-F\tForce purge deleted stacks. Batch size: %s, >%s %s\n" ${batch_size} ${stack_granularity_value} ${stack_granularity}
 }
 
 OPTIND=1 # Reset in case getopts has been used previously in the shell.
-while getopts "h?:tsSPF" opt; do
+while getopts "h?:tsSPfF" opt; do
     case "$opt" in
     h|\?)
         show_help
@@ -37,6 +40,9 @@ while getopts "h?:tsSPF" opt; do
         ;;
     P)  clean_projects=true
         printf "Project cleanning enabled\n"
+        ;;
+    f)  stack_alt=true
+        printf "Cleaning stacks using additional mask '%s'\n" ${stack_regex}
         ;;
     F)  purge_deleted_stacks=true
         printf "Purging stacks deleted >$stack_granularity_value $stack_granularity ago enabled, batch size %s\n" $stack_batch_size
@@ -260,6 +266,15 @@ function _clean_stacks {
     printf "%s\n" ${stacks[@]} | xargs -I{} echo stack check {} >>${cmds}
     printf "%s\n" ${stacks[@]} | xargs -I{} echo stack delete -y {} >>${cmds}
     _clean_and_flush
+
+    if [ "$stack_alt" = true ]; then
+        stacks=( $(openstack stack list --nested --hidden -c ID -c "Stack Name" -f value | grep -E ${stack_regex} | cut -d' ' -f1) )
+        echo "-> ${#stacks[@]} stacks containing '${stack_regex}' found"
+        printf "%s\n" ${stacks[@]} | xargs -I{} echo stack check {} >>${cmds}
+        printf "%s\n" ${stacks[@]} | xargs -I{} echo stack delete -y {} >>${cmds}
+        _clean_and_flush
+    fi
+
     if [ "$purge_deleted_stacks" = true ]; then
         heat-manage purge_deleted -g ${stack_granularity} -b ${batch_size} ${stack_granularity_value} | wc -l | xargs -I{} echo "-> Purged {} stacks"
     fi
