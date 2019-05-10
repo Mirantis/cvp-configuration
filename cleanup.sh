@@ -61,12 +61,12 @@ function _clean_and_flush {
     if [ -s ${cmds} ]; then
         if [ "${serial}" = false ] ; then
             echo "... processing $(cat ${cmds} | wc -l) commands, worker threads ${batch_size}"
-            cat ${cmds} | tr '\n' '\0' | xargs -P 1 -n 1 -0 openstack
+            cat ${cmds} | tr '\n' '\0' | xargs -P ${batch_size} -n 1 -0 echo | openstack
             #cat ${cmds} | openstack
             truncate -s 0 ${cmds}
         else
             echo "... processing $(cat ${cmds} | wc -l) commands"
-            cat ${cmds} | tr '\n' '\0' | xargs -P ${batch_size} -n 1 -0 openstack
+            cat ${cmds} | tr '\n' '\0' | xargs -P 1 -n 1 -0 echo | openstack
             truncate -s 0 ${cmds}
         fi
     fi
