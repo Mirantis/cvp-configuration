@@ -19,7 +19,16 @@ check_variables () {
 }
 
 rally_configuration () {
-  pip install --force-reinstall python-glanceclient==2.11
+  if [ "$PROXY" != "offline" ]; then
+    if [ -n "${PROXY}" ]; then
+      export http_proxy=$PROXY
+      export https_proxy=$PROXY
+    fi
+    pip install --force-reinstall python-glanceclient==2.11
+    apt-get update; apt-get install -y iputils-ping curl wget
+    unset http_proxy
+    unset https_proxy
+  fi
   sub_name=`date "+%H_%M_%S"`
   rally deployment create --fromenv --name=tempest_$sub_name
   rally deployment config
@@ -42,7 +51,6 @@ tempest_configuration () {
     if [ -n "${PROXY}" ]; then
       export https_proxy=$PROXY
     fi
-    apt-get update; apt-get install -y iputils-ping curl wget
     rally verify create-verifier --name tempest_verifier_$sub_name --type tempest --source $TEMPEST_REPO --version $tempest_version
     #rally verify add-verifier-ext --version 7a4bff728fbd8629ec211669264ab645aa921e2b --source https://github.com/openstack/telemetry-tempest-plugin
     rally verify add-verifier-ext --version 0.2.0 --source https://github.com/openstack/heat-tempest-plugin
@@ -61,7 +69,7 @@ if [ "$PROXY" == "offline" ]; then
 fi
 #image
 glance image-list | grep "\btestvm\b" 2>&1 >/dev/null || {
-    if [ -n "${PROXY}" ] && [ "$PROXY" -ne "offline" ]; then
+    if [ -n "${PROXY}" ] && [ "$PROXY" != "offline" ]; then
       export http_proxy=$PROXY
     fi
     ls $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img || wget http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img -O $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img
@@ -109,6 +117,7 @@ sed -i 's/publicURL/'$TEMPEST_ENDPOINT_TYPE'/g' $current_path/cvp-configuration/
 #cat $current_path/cvp-configuration/tempest/tempest_ext.conf
 cp $current_path/cvp-configuration/tempest/boot_config_none_env.yaml /home/rally/boot_config_none_env.yaml
 cp $current_path/cvp-configuration/cleanup.sh /home/rally/cleanup.sh
+chmod 755 /home/rally/cleanup.sh
 }
 
 if [ "$1" == "reconfigure" ]; then
