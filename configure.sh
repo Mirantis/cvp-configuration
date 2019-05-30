@@ -30,6 +30,9 @@ rally_configuration () {
     unset https_proxy
   fi
   sub_name=`date "+%H_%M_%S"`
+  # remove dashes from rally user passwords to fit into 32 char limit
+  sed -i 's/uuid4())/uuid4()).replace("-","")/g' /usr/local/lib/python2.7/dist-packages/rally/plugins/openstack/scenarios/keystone/utils.py
+  sed -i 's/uuid4())/uuid4()).replace("-","")/g' /usr/local/lib/python2.7/dist-packages/rally/plugins/openstack/context/keystone/users.py
   rally deployment create --fromenv --name=tempest_$sub_name
   rally deployment config
   echo "[openstack]" >> /etc/rally/rally.conf
@@ -57,6 +60,9 @@ tempest_configuration () {
     pip install --force-reinstall python-cinderclient==3.2.0
     unset https_proxy
   fi
+  # set password length to 32
+  data_utils_path=`find /home/rally/.rally/verification/ -name data_utils.py`
+  sed -i 's/length=15/length=32/g' $data_utils_path
   # supress tempest.conf display in console
   #rally verify configure-verifier --show
 }
