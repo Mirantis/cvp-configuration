@@ -7,9 +7,10 @@
 {% set times = 100 %}
 {% set users = 3 %}
 {% set tenants = 3 %}
-{% set ext_net_id = "<PUT_ID_HERE>" %}
+{% set ext_net_id = "${PUBLIC_NET}" %}
 {% set fixed_net = "${FIXED_NET}" %}
-{% set script_file = script_file or "/home/rally/source/cvp-configuration/rally/instance_test.sh" %}
+{% set script_file = script_file or "/home/rally/instance_test.sh" %}
+{% set block_migration = false %}
 {
   "VMTasks.boot_runcommand_delete": [
   {
@@ -118,6 +119,44 @@
       "users": {
         "tenants": {{users}},
         "users_per_tenant": {{tenants}}
+      },
+      "quotas": {
+        "nova": {
+          "instances": -1,
+          "cores": -1,
+          "ram": -1,
+          "key_pairs": -1,
+          "security_groups": -1,
+          "security_group_rules": -1
+        }
+      }
+    },
+    "sla": { "failure_rate": { "max": 0 } }
+  }
+  ],
+  "NovaServers.boot_and_live_migrate_server": [
+  {
+    "args": {
+      "flavor": {
+        "name": "{{flavor_name}}"
+      },
+      "image": {
+        "name": "{{image_name}}"
+      },
+      "nics": [
+        {"net-id": "{{fixed_net}}"}
+      ],
+      "block_migration": {{block_migration}}
+    },
+    "runner": {
+      "type": "constant",
+      "concurrency": {{concurrency}},
+      "times": {{times}}
+    },
+    "context": {
+      "users": {
+        "users_per_tenant": {{users}},
+        "tenants": {{tenants}}
       },
       "quotas": {
         "nova": {

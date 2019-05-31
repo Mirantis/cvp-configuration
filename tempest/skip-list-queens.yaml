@@ -1,6 +1,2 @@
-tempest.api.compute.servers.test_servers.ServersTestJSON.test_create_server_specify_multibyte_character_name[id-defbaca5-d611-49f5-ae21-56ee25d2db49]: PROD-28077
 tempest.api.compute.servers.test_novnc.NoVNCConsoleTestJSON.test_novnc[id-c640fdff-8ab4-45a4-a5d8-7e6146cbd0dc]: See https://bugs.launchpad.net/nova/+bug/1669468.
 tempest.api.compute.servers.test_attach_interfaces.AttachInterfacesTestJSON.test_create_list_show_delete_interfaces_by_fixed_ip[id-d290c06c-f5b3-11e7-8ec8-002293781009,network]: Tempest test problem. Fixed in Tempest 20.
-tempest.api.compute.admin.test_server_diagnostics_negative.ServerDiagnosticsNegativeV248Test.test_get_server_diagnostics_by_non_admin[id-e84e2234-60d2-42fa-8b30-e2d3049724ac,negative]: cannot be verified. After microversion 2.36 os-networks nova api extension used in this tests is deprecated.
-tempest.api.compute.admin.test_server_diagnostics.ServerDiagnosticsV248Test.test_get_server_diagnostics[id-64d0d48c-dff1-11e6-bf01-fe55135034f3]: cannot be verified. After microversion 2.36 os-networks nova api extension used in this tests is deprecated.
-tempest.api.compute.servers.test_servers.ServerShowV247Test.test_show_server[id-88b0bdb2-494c-11e7-a919-92ebcb67fe33]: cannot be verified. After microversion 2.36 os-networks nova api extension used in this tests is deprecated.

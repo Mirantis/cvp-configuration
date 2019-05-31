@@ -31,8 +31,8 @@ rally_configuration () {
   fi
   sub_name=`date "+%H_%M_%S"`
   # remove dashes from rally user passwords to fit into 32 char limit
-  sed -i 's/uuid4()/uuid4().replace("-","")/g' /usr/local/lib/python2.7/dist-packages/rally/plugins/openstack/scenarios/keystone/utils.py
-  sed -i 's/uuid4()/uuid4().replace("-","")/g' /usr/local/lib/python2.7/dist-packages/rally/plugins/openstack/context/keystone/users.py
+  sed -i 's/uuid4())/uuid4()).replace("-","")/g' /usr/local/lib/python2.7/dist-packages/rally/plugins/openstack/scenarios/keystone/utils.py
+  sed -i 's/uuid4())/uuid4()).replace("-","")/g' /usr/local/lib/python2.7/dist-packages/rally/plugins/openstack/context/keystone/users.py
   rally deployment create --fromenv --name=tempest_$sub_name
   rally deployment config
   echo "[openstack]" >> /etc/rally/rally.conf
@@ -100,10 +100,13 @@ if [ $shared_count -eq 0 ]; then
   neutron net-create --shared fixed-net
   neutron subnet-create --name fixed-subnet --gateway 192.168.0.1 --allocation-pool start=192.168.0.2,end=192.168.0.254 --ip-version 4 fixed-net 192.168.0.0/24
 fi
+# public/floating net
+PUBLIC_NET=$(neutron net-list -c name -c router:external | grep True | awk '{print $2}' | tail -n 1)
 FIXED_NET=$(neutron net-list -c name -c shared | grep "fixed-net" | grep True | awk '{print $2}' | tail -n 1)
 FIXED_NET_ID=$(neutron net-list -c id -c name -c shared | grep "fixed-net" | grep True | awk '{print $2}' | tail -n 1)
 FIXED_SUBNET_ID=$(neutron net-show $FIXED_NET_ID -c subnets | grep subnets | awk '{print $4}')
 FIXED_SUBNET_NAME=$(neutron subnet-show -c name $FIXED_SUBNET_ID | grep name | awk '{print $4}')
+echo "Public net name is $PUBLIC_NET"
 echo "Fixed net name is $FIXED_NET, id is $FIXED_NET_ID"
 echo "Fixed subnet is: $FIXED_SUBNET_ID, name: $FIXED_SUBNET_NAME"
 sed -i 's/${IMAGE_REF2}/'$IMAGE_REF2'/g' $current_path/cvp-configuration/tempest/tempest_ext.conf
@@ -118,10 +121,14 @@ sed -i 's/${OS_TENANT_NAME}/'$OS_TENANT_NAME'/g' $current_path/cvp-configuration
 sed -i 's/${OS_REGION_NAME}/'$OS_REGION_NAME'/g' $current_path/cvp-configuration/tempest/tempest_ext.conf
 sed -i 's|${OS_AUTH_URL}|'"${OS_AUTH_URL}"'|g' $current_path/cvp-configuration/tempest/tempest_ext.conf
 sed -i 's|${OS_PASSWORD}|'"${OS_PASSWORD}"'|g' $current_path/cvp-configuration/tempest/tempest_ext.conf
+sed -i 's|${PUBLIC_NET}|'"${PUBLIC_NET}"'|g' $current_path/cvp-configuration/tempest/tempest_ext.conf
+sed -i 's|${PUBLIC_NET}|'"${PUBLIC_NET}"'|g' $current_path/cvp-configuration/rally/rally_scenarios_fip_and_ubuntu.json
+sed -i 's|${PUBLIC_NET}|'"${PUBLIC_NET}"'|g' $current_path/cvp-configuration/rally/rally_scenarios_fip_and_ubuntu_100.json
 sed -i 's/publicURL/'$TEMPEST_ENDPOINT_TYPE'/g' $current_path/cvp-configuration/tempest/tempest_ext.conf
 #supress tempest.conf display in console
 #cat $current_path/cvp-configuration/tempest/tempest_ext.conf
 cp $current_path/cvp-configuration/tempest/boot_config_none_env.yaml /home/rally/boot_config_none_env.yaml
+cp $current_path/cvp-configuration/rally/instance_test.sh /home/rally/instance_test.sh
 cp $current_path/cvp-configuration/cleanup.sh /home/rally/cleanup.sh
 chmod 755 /home/rally/cleanup.sh
 }
@@ -142,8 +149,8 @@ if [ -n "${TEMPEST_REPO}" ]; then
     # If you do not have fip network, use this command
     #cat $current_path/cvp-configuration/tempest/skip-list-fip-only.yaml >> $current_path/cvp-configuration/tempest/skip-list-queens.yaml
     # If Opencontrail is deployed, use this command
-    cat $current_path/cvp-configuration/tempest/skip-list-oc4.yaml >> $current_path/cvp-configuration/tempest/skip-list-queens.yaml
-    cat $current_path/cvp-configuration/tempest/skip-list-heat.yaml >> $current_path/cvp-configuration/tempest/skip-list-queens.yaml
+    #cat $current_path/cvp-configuration/tempest/skip-list-oc4.yaml >> $current_path/cvp-configuration/tempest/skip-list-queens.yaml
+    #cat $current_path/cvp-configuration/tempest/skip-list-heat.yaml >> $current_path/cvp-configuration/tempest/skip-list-queens.yaml
     rally verify configure-verifier --extend $current_path/cvp-configuration/tempest/tempest_ext.conf
     rally verify configure-verifier --show
     # If Barbican tempest plugin is installed, use this

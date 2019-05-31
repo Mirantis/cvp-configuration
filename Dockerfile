@@ -21,8 +21,9 @@ RUN git clone https://github.com/openstack/heat-tempest-plugin && \
 RUN pip install --force-reinstall python-cinderclient==3.2.0 python-glanceclient==2.11
 
 RUN sed -i 's/length=15/length=32/g' /var/lib/tempest/tempest/lib/common/utils/data_utils.py
-RUN sed -i 's/uuid4()/uuid4().replace("-","")/g' /usr/local/lib/python2.7/dist-packages/rally/plugins/openstack/scenarios/keystone/utils.py
-RUN sed -i 's/uuid4()/uuid4().replace("-","")/g' /usr/local/lib/python2.7/dist-packages/rally/plugins/openstack/context/keystone/users.py
+RUN sed -i 's/length=15/length=32/g' /usr/local/lib/python2.7/dist-packages/tempest/lib/common/utils/data_utils.py
+RUN sed -i 's/uuid4())/uuid4()).replace("-","")/g' /usr/local/lib/python2.7/dist-packages/rally/plugins/openstack/scenarios/keystone/utils.py
+RUN sed -i 's/uuid4())/uuid4()).replace("-","")/g' /usr/local/lib/python2.7/dist-packages/rally/plugins/openstack/context/keystone/users.py
 
 COPY rally/ /var/lib/cvp-configuration/rally
 COPY tempest/ /var/lib/cvp-configuration/tempest

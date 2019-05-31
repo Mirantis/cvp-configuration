@@ -1,6 +1,5 @@
 {% set flavor_name = flavor_name or "m1.tiny" %}
 {% set image_name = image_name or "testvm" %}
-{% set volume_type = volume_type or "default" %}
 {% set availability_zone = "nova" %}
 {% set concurrency = 10 %}
 {% set volume_size = 1 %}
@@ -8,9 +7,8 @@
 {% set users = 3 %}
 {% set tenants = 3 %}
 {% set rbd_image = "http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img" %}
-{% set heat_template = "/home/rally/source/cvp-configuration/rally/default.yaml.template" %}
+{% set heat_template = "/home/rally/boot_config_none_env.yaml" %}
 {% set fixed_net = "${FIXED_NET}" %}
-{% set block_migration = true %}
 {
   "KeystoneBasic.authenticate_user_and_validate_token": [
   {
@@ -157,44 +155,6 @@
     "sla": { "failure_rate": { "max": 0 } }
   }
   ],
-  "NovaServers.boot_and_live_migrate_server": [
-  {
-    "args": {
-      "flavor": {
-        "name": "{{flavor_name}}"
-      },
-      "image": {
-        "name": "{{image_name}}"
-      },
-      "nics": [
-        {"net-id": "{{fixed_net}}"}
-      ],
-      "block_migration": {{block_migration}}
-    },
-    "runner": {
-      "type": "constant",
-      "concurrency": {{concurrency}},
-      "times": {{times}}
-    },
-    "context": {
-      "users": {
-        "users_per_tenant": {{users}},
-        "tenants": {{tenants}}
-      },
-      "quotas": {
-        "nova": {
-          "instances": -1,
-          "cores": -1,
-          "ram": -1,
-          "key_pairs": -1,
-          "security_groups": -1,
-          "security_group_rules": -1
-        }
-      }
-    },
-    "sla": { "failure_rate": { "max": 0 } }
-  }
-  ],
   "NovaServers.boot_and_delete_server": [
   {
     "args": {
@@ -247,7 +207,6 @@
         {"net-id": "{{fixed_net}}"}
       ],
       "volume_size": {{volume_size}},
-      "volume_type": "{{volume_type}}",
       "force_delete": false,
       "availability_zone": "{{availability_zone}}"
     },
