@@ -1,6 +1,14 @@
-tempest.api.compute.servers.test_servers.ServersTestJSON.test_create_server_specify_multibyte_character_name[id-defbaca5-d611-49f5-ae21-56ee25d2db49]: PROD-28077
 tempest.api.compute.servers.test_novnc.NoVNCConsoleTestJSON.test_novnc[id-c640fdff-8ab4-45a4-a5d8-7e6146cbd0dc]: See https://bugs.launchpad.net/nova/+bug/1669468.
 tempest.api.compute.servers.test_attach_interfaces.AttachInterfacesTestJSON.test_create_list_show_delete_interfaces_by_fixed_ip[id-d290c06c-f5b3-11e7-8ec8-002293781009,network]: Tempest test problem. Fixed in Tempest 20.
-tempest.api.compute.admin.test_server_diagnostics_negative.ServerDiagnosticsNegativeV248Test.test_get_server_diagnostics_by_non_admin[id-e84e2234-60d2-42fa-8b30-e2d3049724ac,negative]: cannot be verified. After microversion 2.36 os-networks nova api extension used in this tests is deprecated.
-tempest.api.compute.admin.test_server_diagnostics.ServerDiagnosticsV248Test.test_get_server_diagnostics[id-64d0d48c-dff1-11e6-bf01-fe55135034f3]: cannot be verified. After microversion 2.36 os-networks nova api extension used in this tests is deprecated.
-tempest.api.compute.servers.test_servers.ServerShowV247Test.test_show_server[id-88b0bdb2-494c-11e7-a919-92ebcb67fe33]: cannot be verified. After microversion 2.36 os-networks nova api extension used in this tests is deprecated.
+heat_tempest_plugin.tests.functional.test_nova_server_networks.CreateServerTest.test_create_update_server_with_subnet[id-12185eaa-927f-43f3-a525-0424c4eb9b5d]: PROD-22197
+heat_tempest_plugin.tests.scenario.test_aodh_alarm.AodhAlarmTest.test_alarm[id-fc0f18a6-f65c-4df1-b9c5-e160dea59849]: Not applicable for mcp deployments.
+heat_tempest_plugin.tests.functional.test_event_sinks.ZaqarEventSinkTest.test_events[id-d0b72695-e97d-4aa1-bfaf-31c14b09ac87]: Zaqar is not presented in deployment.
+heat_tempest_plugin.tests.functional.test_software_config.ZaqarSignalTransportTest.test_signal_queues[id-3af97ced-bead-4629-b78a-97762719e990]: Zaqar is not presented in deployment.
+heat_tempest_plugin.tests.functional.test_waitcondition.ZaqarWaitConditionTest.test_signal_queues[id-90183f0d-9929-43a6-8fb6-b81003824c6d]: Zaqar is not presented in deployment.
+heat_tempest_plugin.tests.scenario.test_autoscaling_lbv2.AutoscalingLoadBalancerv2Test.test_autoscaling_loadbalancer_neutron[id-89459930-aa61-4557-989b-3429d3b3b612]: Not applicable for mcp deployments.
+heat_tempest_plugin.tests.scenario.test_volumes.VolumeBackupRestoreIntegrationTest.test_cinder_volume_create_backup_restore[id-c3416735-87bf-4478-85c5-b3823819eb19]: Not applicable for mcp deployments.
+heat_tempest_plugin.tests.functional.test_os_wait_condition.OSWaitCondition.test_create_stack_with_multi_signal_waitcondition[id-cc54ca6e-b91d-4ddd-80cc-24a886dfaaa0]: No applicable for mcp deployment.
+heat_tempest_plugin.tests.scenario.test_server_software_config.SoftwareConfigIntegrationTest.test_server_software_config[id-fb2afe23-d1a8-45fc-bf8d-b18fc8412972]: Not applicable.
+heat_tempest_plugin.tests.scenario.test_server_cfn_init.CfnInitIntegrationTest.test_server_cfn_init[id-3f7726fc-a41b-40ca-ab38-51e2973f146a]: Not applicable for mcp deployment.
+heat_tempest_plugin.tests.scenario.test_server_signal.ServerSignalIntegrationTest.test_server_signal_userdata_format_raw[id-8da0f6cc-60e6-4298-9e54-e1f905c5552a]: Not applicable for mcp deployment.
+heat_tempest_plugin.tests.scenario.test_server_signal.ServerSignalIntegrationTest.test_server_signal_userdata_format_software_config[id-3d753d42-7c16-4a0e-8f73-875881826626]: Not applicable for mcp deployment.
