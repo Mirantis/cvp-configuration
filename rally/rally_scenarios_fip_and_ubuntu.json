@@ -7,7 +7,7 @@
 {% set times = 1 %}
 {% set users = 1 %}
 {% set tenants = 1 %}
-{% set ext_net_id = "${PUBLIC_NET}" %}
+{% set ext_net_id = "EXT_NET_ID" %}
 {% set fixed_net = "${FIXED_NET}" %}
 {% set script_file = script_file or "/home/rally/instance_test.sh" %}
 {% set block_migration = false %}

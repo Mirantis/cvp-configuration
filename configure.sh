@@ -122,12 +122,11 @@ sed -i 's/${OS_REGION_NAME}/'$OS_REGION_NAME'/g' $current_path/cvp-configuration
 sed -i 's|${OS_AUTH_URL}|'"${OS_AUTH_URL}"'|g' $current_path/cvp-configuration/tempest/tempest_ext.conf
 sed -i 's|${OS_PASSWORD}|'"${OS_PASSWORD}"'|g' $current_path/cvp-configuration/tempest/tempest_ext.conf
 sed -i 's|${PUBLIC_NET}|'"${PUBLIC_NET}"'|g' $current_path/cvp-configuration/tempest/tempest_ext.conf
-sed -i 's|${PUBLIC_NET}|'"${PUBLIC_NET}"'|g' $current_path/cvp-configuration/rally/rally_scenarios_fip_and_ubuntu.json
-sed -i 's|${PUBLIC_NET}|'"${PUBLIC_NET}"'|g' $current_path/cvp-configuration/rally/rally_scenarios_fip_and_ubuntu_100.json
 sed -i 's/publicURL/'$TEMPEST_ENDPOINT_TYPE'/g' $current_path/cvp-configuration/tempest/tempest_ext.conf
 #supress tempest.conf display in console
 #cat $current_path/cvp-configuration/tempest/tempest_ext.conf
 cp $current_path/cvp-configuration/tempest/boot_config_none_env.yaml /home/rally/boot_config_none_env.yaml
+cp $current_path/cvp-configuration/rally/default.yaml.template /home/rally/default.yaml.template
 cp $current_path/cvp-configuration/rally/instance_test.sh /home/rally/instance_test.sh
 cp $current_path/cvp-configuration/cleanup.sh /home/rally/cleanup.sh
 chmod 755 /home/rally/cleanup.sh
