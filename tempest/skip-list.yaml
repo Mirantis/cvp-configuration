@@ -1,3 +1,5 @@
+tempest.api.compute.servers.test_novnc.NoVNCConsoleTestJSON.test_novnc[id-c640fdff-8ab4-45a4-a5d8-7e6146cbd0dc]: See https://bugs.launchpad.net/nova/+bug/1669468.
+tempest.api.compute.servers.test_attach_interfaces.AttachInterfacesTestJSON.test_create_list_show_delete_interfaces_by_fixed_ip[id-d290c06c-f5b3-11e7-8ec8-002293781009,network]: Tempest test problem. Fixed in Tempest 20.
 heat_tempest_plugin.tests.functional.test_nova_server_networks.CreateServerTest.test_create_update_server_with_subnet[id-12185eaa-927f-43f3-a525-0424c4eb9b5d]: PROD-22197
 heat_tempest_plugin.tests.scenario.test_aodh_alarm.AodhAlarmTest.test_alarm[id-fc0f18a6-f65c-4df1-b9c5-e160dea59849]: Not applicable for mcp deployments.
 heat_tempest_plugin.tests.functional.test_event_sinks.ZaqarEventSinkTest.test_events[id-d0b72695-e97d-4aa1-bfaf-31c14b09ac87]: Zaqar is not presented in deployment.
