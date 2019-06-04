@@ -59,10 +59,10 @@ tempest_configuration () {
     rally verify add-verifier-ext --version 0.2.0 --source https://github.com/openstack/heat-tempest-plugin
     pip install --force-reinstall python-cinderclient==3.2.0
     unset https_proxy
-    # set password length to 32
-    data_utils_path=`find /home/rally/.rally/verification/ -name data_utils.py`
-    sed -i 's/length=15/length=32/g' $data_utils_path
   fi
+  # set password length to 32
+  data_utils_path=`find /home/rally/.rally/verification/ -name data_utils.py`
+  sed -i 's/length=15/length=32/g' $data_utils_path
   # supress tempest.conf display in console
   #rally verify configure-verifier --show
 }
