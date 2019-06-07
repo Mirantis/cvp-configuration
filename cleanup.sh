@@ -1,6 +1,6 @@
 #!/bin/bash
 export OS_INTERFACE='admin'
-mask='s_rally\|rally_\|tempest_\|tempest-'
+mask='cvp\|s_rally\|rally_\|tempest_\|tempest-'
 stack_alt=false
 stack_regex='api-[0-9]+-[a-z]+'
 dry_run=false
@@ -282,9 +282,16 @@ function _clean_stacks {
 
 ### Containers
 function _clean_containers {
-    containers=( $(openstack container list --all -c ID -c Name -f value | grep ${mask}) )
+    containers=( $(openstack container list --all -c ID -c Name -f value | grep ${mask} | cut -d' ' -f1) )
     echo "-> ${#containers[@]} containers containing '${mask}' found"
     printf "%s\n" ${containers[@]} | xargs -I{} echo container delete {} >>${cmds}
+    _clean_and_flush
+}
+
+function _clean_flavors {
+    flavors=( $(openstack flavor list --all -c ID -c Name -f value | grep ${mask} | cut -d' ' -f1) )
+    echo "-> ${#flavors[@]} flavors containing '${mask}' found"
+    printf "%s\n" ${flavors[@]} | xargs -I{} echo flavor delete {} >>${cmds}
     _clean_and_flush
 }
 
