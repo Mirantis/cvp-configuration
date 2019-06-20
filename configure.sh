@@ -91,14 +91,16 @@ nova flavor-list | grep tiny 2>&1 >/dev/null || {
     nova flavor-create --is-public true m1.tiny auto 128 1 1
 }
 #shared fixed network
-shared_count=`neutron net-list -c name -c shared | grep True | wc -l`
-if [ $shared_count -gt 1 ]; then
-  echo "TOO MANY SHARED NETWORKS! Script will choose first net in list with fixed-net name"
-fi
+shared_count=`neutron net-list -c name -c shared | grep True | grep "fixed-net" | wc -l`
 if [ $shared_count -eq 0 ]; then
   echo "Let's create shared fixed net"
   neutron net-create --shared fixed-net
-  neutron subnet-create --name fixed-subnet --gateway 192.168.0.1 --allocation-pool start=192.168.0.2,end=192.168.0.254 --ip-version 4 fixed-net 192.168.0.0/24
+  FIXED_NET_ID=$(neutron net-list -c id -c name -c shared | grep "fixed-net" | grep True | awk '{print $2}' | tail -n 1)
+  neutron subnet-create --name fixed-subnet --gateway 192.168.0.1 --allocation-pool start=192.168.0.2,end=192.168.0.254 --ip-version 4 $FIXED_NET_ID 192.168.0.0/24
+fi
+fixed_count=`neutron net-list | grep "fixed-net" | wc -l`
+if [ $fixed_count -gt 1 ]; then
+  echo "TOO MANY NETWORKS WITH fixed-net NAME! This may affect tests. Please review your network list."
 fi
 # public/floating net
 PUBLIC_NET=$(neutron net-list -c name -c router:external | grep True | awk '{print $2}' | tail -n 1)
