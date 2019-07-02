@@ -4,7 +4,9 @@ export OS_INTERFACE='admin'
 # local vars
 name_prefix=cvp
 filename=${name_prefix}.manifest
+rcfile=${name_prefix}rc
 huge_pages=false
+logfile=prepare.log
 
 # Project, User, Roles
 project=${name_prefix}.project
@@ -90,7 +92,8 @@ function ol2() { echo $(openstack $1 $2 list -c ID -c Name -f value | grep $3 | 
 function print_manifest() {
     touch ./${filename}
     truncate -s 0 ${filename}
-    printf "\n# Checking and filling manifest: $(pwd)/${filename}\n"
+    printf "\n\n# Checking and filling manifest: $(pwd)/${filename}\n"
+    put project_name ${project}
     put project_id $(ol1 project ${project})
     put user_name ${user}
     put user_id $(ol1 user ${user})
@@ -145,9 +148,34 @@ function print_manifest() {
     put ubuntu16_id $(ol1 image ${ubuntu16})
 }
 
+# create rc file out of current ENV vars
+function putrc() {
+    printf "# Saving ${1} file\n"
+    echo "export OS_IDENTITY_API_VERSION=${OS_IDENTITY_API_VERSION:-3}" >${1}
+    echo "export OS_AUTH_URL=${OS_AUTH_URL}" >>${1}
+    echo "export OS_PROJECT_DOMAIN_NAME=${OS_PROJECT_DOMAIN_NAME}" >>${1}
+    echo "export OS_USER_DOMAIN_NAME=${OS_USER_DOMAIN_NAME}" >>${1}
+    echo "export OS_PROJECT_NAME=${OS_PROJECT_NAME}" >>${1}
+    echo "export OS_TENANT_NAME=${OS_TENANT_NAME}" >>${1}
+    echo "export OS_USERNAME=${OS_USERNAME}" >>${1}
+    echo "export OS_PASSWORD=${OS_PASSWORD}" >>${1}
+    echo "export OS_REGION_NAME=${OS_REGION_NAME}" >>${1}
+    echo "export OS_INTERFACE=${OS_INTERFACE}" >>${1}
+    echo "export OS_ENDPOINT_TYPE=${OS_ENDPOINT_TYPE}" >>${1}
+    echo "export OS_CACERT=${OS_CACERT}" >>${1}
+}
+
+# update ENV vars to newly created project
+function updatesession() {
+    export OS_PROJECT_NAME=${project}
+    export OS_TENANT_NAME=${project}
+    export OS_USERNAME=${admin}
+    export OS_PASSWORD=${password}
+}
+
 function process_cmds() {
     if [ -s ${cmds} ]; then
-        cat ${cmds} | tr '\n' '\0' | xargs -P 1 -n 1 -0 echo | tee /dev/tty | openstack >/dev/nul
+        cat ${cmds} | tr '\n' '\0' | xargs -P 1 -n 1 -0 echo | tee /dev/tty | openstack -v 2>&1 >>${logfile}
         truncate -s 0 ${cmds}
     fi
 }
@@ -311,10 +339,22 @@ cmds=$(mktemp)
 trap "rm -f ${cmds}" EXIT
 echo "Using tempfile: '${cmds}'"
 
-# not dependent stuff
-echo "# Creating basic resources"
+touch ${logfile}
+echo "Using log file: '${logfile}'"
+
+# Create
+echo "# Creating project and users"
 _project
 _users
+process_cmds
+
+echo "# Creating 'rc' and switching"
+putrc "./adminrc"
+updatesession
+putrc "./${rcfile}"
+
+echo "# Creating basic resources"
+# not dependent stuff
 _sg_all
 _sg_icmp
 _sg_ssh
@@ -323,7 +363,7 @@ _flavors
 _volumes
 process_cmds
 
-# sphisticated, step dependent stuff
+# sophisticated, step dependent stuff
 create_keypair
 create_fixed_nets
 
@@ -332,5 +372,7 @@ create_image cirros3
 create_image cirros4
 create_image ubuntu16
 
-### Manifest
+### Manifest and fall back to original rc
 print_manifest
+source "./adminrc"
+printf "\n\nOriginal rc preserved and backed up in 'adminrc'\nNew rc is '${rcfile}'\n"
