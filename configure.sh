@@ -67,6 +67,33 @@ tempest_configuration () {
   #rally verify configure-verifier --show
 }
 
+glance_image() {
+current_path=$(pwd)
+# fetch image with exact name: testvm
+IMAGE_REF2=$(glance image-list | grep '\btestvm\b' | awk '{print $2}')
+if [ "${IMAGE_REF2}" == "" ]; then
+  if [ "$PROXY" != "offline" ]; then
+    if [ -n "${PROXY}" ]; then
+      export http_proxy=$PROXY
+      export https_proxy=$PROXY
+    fi
+    ls $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img || wget http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img -O $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img
+    unset http_proxy
+    unset https_proxy
+  fi
+  if [ -e $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img ]; then
+    echo "MD5 should be ee1eca47dc88f4879d8a229cc70a07c6"
+    md5sum $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img
+    glance image-create --name=testvm --visibility=public --container-format=bare --disk-format=qcow2 < $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img
+    IMAGE_REF2=$(glance image-list | grep '\btestvm\b' | awk '{print $2}')
+  else
+    echo "Cirros image was not downloaded! Some tests may fail"
+    IMAGE_REF2=""
+  fi
+fi
+sed -i 's/${IMAGE_REF2}/'$IMAGE_REF2'/g' $current_path/cvp-configuration/tempest/tempest_ext.conf
+}
+
 quick_configuration () {
 current_path=$(pwd)
 # Remove this if you use local gerrit cvp-configuration repo
@@ -74,17 +101,7 @@ if [ "$PROXY" == "offline" ]; then
   current_path=/var/lib
 fi
 #image
-glance image-list | grep "\btestvm\b" 2>&1 >/dev/null || {
-    if [ -n "${PROXY}" ] && [ "$PROXY" != "offline" ]; then
-      export http_proxy=$PROXY
-    fi
-    ls $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img || wget http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img -O $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img
-    unset http_proxy
-    echo "MD5 should be ee1eca47dc88f4879d8a229cc70a07c6"
-    md5sum $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img
-    glance image-create --name=testvm --visibility=public --container-format=bare --disk-format=qcow2 < $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img
-}
-IMAGE_REF2=$(glance image-list | grep 'testvm' | awk '{print $2}')
+glance_image
 #flavor for rally
 nova flavor-list | grep tiny 2>&1 >/dev/null || {
     echo "Let's create m1.tiny flavor"
@@ -111,7 +128,6 @@ FIXED_SUBNET_NAME=$(neutron subnet-show -c name $FIXED_SUBNET_ID | grep name | a
 echo "Public net name is $PUBLIC_NET"
 echo "Fixed net name is $FIXED_NET, id is $FIXED_NET_ID"
 echo "Fixed subnet is: $FIXED_SUBNET_ID, name: $FIXED_SUBNET_NAME"
-sed -i 's/${IMAGE_REF2}/'$IMAGE_REF2'/g' $current_path/cvp-configuration/tempest/tempest_ext.conf
 sed -i 's/${FIXED_NET}/'$FIXED_NET_ID'/g' $current_path/cvp-configuration/rally/rally_scenarios.json
 sed -i 's/${FIXED_NET}/'$FIXED_NET_ID'/g' $current_path/cvp-configuration/rally/rally_scenarios_100.json
 sed -i 's/${FIXED_NET}/'$FIXED_NET_ID'/g' $current_path/cvp-configuration/rally/rally_scenarios_fip_and_ubuntu.json
