@@ -96,10 +96,6 @@ sed -i 's/${IMAGE_REF2}/'$IMAGE_REF2'/g' $current_path/cvp-configuration/tempest
 
 quick_configuration () {
 current_path=$(pwd)
-# Remove this if you use local gerrit cvp-configuration repo
-if [ "$PROXY" == "offline" ]; then
-  current_path=/var/lib
-fi
 #image
 glance_image
 #flavor for rally
