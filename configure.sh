@@ -154,6 +154,12 @@ if [ "$1" == "reconfigure" ]; then
   exit 0
 fi
 
+echo "========================================================================="
+echo "You are using 2019.2.0 branch of cvp-configuration repo"
+echo "This branch is deprecated and works for 2019.2.0 - 2019.2.4 only."
+echo "This branch will be deleted soon."
+ecgo "Please switch to release/2019.2.0 branch instead."
+echo "========================================================================="
 check_variables
 rally_configuration
 quick_configuration
@@ -176,3 +182,9 @@ fi
 set -e
 
 echo "Configuration is done!"
+echo "========================================================================="
+echo "You are using 2019.2.0 branch of cvp-configuration repo"
+echo "This branch is deprecated and works for 2019.2.0 - 2019.2.4 only."
+echo "This branch will be deleted soon."
+ecgo "Please switch to release/2019.2.0 branch instead."
+echo "========================================================================="
