@@ -12,3 +12,15 @@ heat_tempest_plugin.tests.scenario.test_server_software_config.SoftwareConfigInt
 heat_tempest_plugin.tests.scenario.test_server_cfn_init.CfnInitIntegrationTest.test_server_cfn_init[id-3f7726fc-a41b-40ca-ab38-51e2973f146a]: Not applicable for mcp deployment.
 heat_tempest_plugin.tests.scenario.test_server_signal.ServerSignalIntegrationTest.test_server_signal_userdata_format_raw[id-8da0f6cc-60e6-4298-9e54-e1f905c5552a]: Not applicable for mcp deployment.
 heat_tempest_plugin.tests.scenario.test_server_signal.ServerSignalIntegrationTest.test_server_signal_userdata_format_software_config[id-3d753d42-7c16-4a0e-8f73-875881826626]: Not applicable for mcp deployment.
+tempest.api.object_storage.test_object_version.ContainerTest.test_versioned_container[id-a151e158-dcbf-4a1f-a1e7-46cd65895a6f]: not compatible with ceph
+tempest.api.object_storage.test_healthcheck.HealthcheckTest.test_get_healthcheck[id-db5723b1-f25c-49a9-bfeb-7b5640caf337]: not compatible with ceph
+tempest.api.object_storage.test_container_sync_middleware.ContainerSyncMiddlewareTest.test_container_synchronization[id-ea4645a1-d147-4976-82f7-e5a7a3065f80,slow]: not compatible with ceph
+tempest.api.object_storage.test_crossdomain.CrossdomainTest.test_get_crossdomain_policy[id-d1b8b031-b622-4010-82f9-ff78a9e915c7]: not compatible with ceph
+tempest.api.object_storage.test_container_services_negative.ContainerNegativeTest.test_create_container_metadata_value_exceeds_max_length[id-81e36922-326b-4b7c-8155-3bbceecd7a82,negative]: not compatible with ceph
+tempest.api.object_storage.test_container_services_negative.ContainerNegativeTest.test_create_container_metadata_name_exceeds_max_length[id-41e645bf-2e68-4f84-bf7b-c71aa5cd76ce,negative]: not compatible with ceph
+tempest.api.object_storage.test_container_services_negative.ContainerNegativeTest.test_create_container_metadata_exceeds_overall_metadata_count[id-ac666539-d566-4f02-8ceb-58e968dfb732,negative]: not compatible with ceph
+tempest.api.object_storage.test_container_services.ContainerTest.test_create_container_with_metadata_value[id-e1e8df32-7b22-44e1-aa08-ccfd8d446b58]: not compatible with ceph
+tempest.api.object_storage.test_account_services_negative.AccountNegativeTest.test_list_containers_with_non_authorized_user[id-070e6aca-6152-4867-868d-1118d68fb38c,negative]: not compatible with ceph
+tempest.api.object_storage.test_account_quotas.AccountQuotasTest.test_admin_modify_quota[id-63f51f9f-5f1d-4fc6-b5be-d454d70949d6,smoke]: not compatible with ceph
+tempest.api.object_storage.test_account_quotas.AccountQuotasTest.test_upload_valid_object[id-a22ef352-a342-4587-8f47-3bbdb5b039c4,smoke]: not compatible with ceph
+tempest.api.object_storage.test_account_quotas_negative.AccountQuotasNegativeTest.test_user_modify_quota[id-d1dc5076-555e-4e6d-9697-28f1fe976324,negative]: not compatible with ceph
