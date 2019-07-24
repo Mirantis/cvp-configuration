@@ -1,5 +1,5 @@
 #!/bin/bash
-
+ 
 variables=(
 OS_USERNAME
 OS_PASSWORD
@@ -39,6 +39,20 @@ rally_configuration () {
   echo "pre_newton_neutron=True" >> /etc/rally/rally.conf
 }
 
+update_cacerts () {
+  # configuring certificates file
+  if [ -z ${OS_CACERT+x} ]; then
+    echo '# No OS_CACERT is set, update of crt file skipped'
+  else
+    echo '# Adding custom certificates'
+    ca=( $(find ${1} -name cacert.pem) )
+    for crt in ${ca[@]}; do
+      cat ${OS_CACERT} >>${crt}
+      echo '-> ${crt}'
+    done
+  fi
+}
+
 tempest_configuration () {
   sub_name=`date "+%H_%M_%S"`
   # default tempest version is 18.0.0 now, unless
@@ -50,6 +64,7 @@ tempest_configuration () {
     rally verify create-verifier --name tempest_verifier_$sub_name --type tempest --source $TEMPEST_REPO --system-wide --version $tempest_version
     #rally verify add-verifier-ext --source /var/lib/telemetry-tempest-plugin
     rally verify add-verifier-ext --source /var/lib/heat-tempest-plugin
+    update_cacerts "/usr/local/lib"
   else
     if [ -n "${PROXY}" ]; then
       export https_proxy=$PROXY
@@ -59,10 +74,12 @@ tempest_configuration () {
     rally verify add-verifier-ext --version 0.2.0 --source https://github.com/openstack/heat-tempest-plugin
     pip install --force-reinstall python-cinderclient==3.2.0
     unset https_proxy
+    update_cacerts "/home/rally/.rally/verification"
   fi
   # set password length to 32
   data_utils_path=`find /home/rally/.rally/verification/ -name data_utils.py`
   sed -i 's/length=15/length=32/g' $data_utils_path
+
   # supress tempest.conf display in console
   #rally verify configure-verifier --show
 }
@@ -70,7 +87,8 @@ tempest_configuration () {
 glance_image() {
 current_path=$(pwd)
 # fetch image with exact name: testvm
-IMAGE_REF2=$(glance image-list | grep '\btestvm\b' | awk '{print $2}')
+IMAGE_NAME2=testvm
+IMAGE_REF2=$(glance image-list | grep '\b${IMAGE_NAME2}\b' | awk '{print $2}')
 if [ "${IMAGE_REF2}" == "" ]; then
   if [ "$PROXY" != "offline" ]; then
     if [ -n "${PROXY}" ]; then
@@ -84,14 +102,15 @@ if [ "${IMAGE_REF2}" == "" ]; then
   if [ -e $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img ]; then
     echo "MD5 should be ee1eca47dc88f4879d8a229cc70a07c6"
     md5sum $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img
-    glance image-create --name=testvm --visibility=public --container-format=bare --disk-format=qcow2 < $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img
-    IMAGE_REF2=$(glance image-list | grep '\btestvm\b' | awk '{print $2}')
+    glance image-create --name=${IMAGE_NAME2} --visibility=public --container-format=bare --disk-format=qcow2 < $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img
+    IMAGE_REF2=$(glance image-list | grep '\b${IMAGE_NAME2}\b' | awk '{print $2}')
   else
     echo "Cirros image was not downloaded! Some tests may fail"
     IMAGE_REF2=""
   fi
 fi
 sed -i 's/${IMAGE_REF2}/'$IMAGE_REF2'/g' $current_path/cvp-configuration/tempest/tempest_ext.conf
+sed -i 's/${IMAGE_NAME2}/'$IMAGE_NAME2'/g' $current_path/cvp-configuration/tempest/tempest_ext.conf
 }
 
 quick_configuration () {
