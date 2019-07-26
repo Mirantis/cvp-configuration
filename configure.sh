@@ -88,7 +88,7 @@ glance_image() {
 current_path=$(pwd)
 # fetch image with exact name: testvm
 IMAGE_NAME2=testvm
-IMAGE_REF2=$(glance image-list | grep '\b${IMAGE_NAME2}\b' | awk '{print $2}')
+IMAGE_REF2=$(glance image-list | grep "\b${IMAGE_NAME2}\b" | awk '{print $2}')
 if [ "${IMAGE_REF2}" == "" ]; then
   if [ "$PROXY" != "offline" ]; then
     if [ -n "${PROXY}" ]; then
@@ -103,7 +103,7 @@ if [ "${IMAGE_REF2}" == "" ]; then
     echo "MD5 should be ee1eca47dc88f4879d8a229cc70a07c6"
     md5sum $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img
     glance image-create --name=${IMAGE_NAME2} --visibility=public --container-format=bare --disk-format=qcow2 < $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img
-    IMAGE_REF2=$(glance image-list | grep '\b${IMAGE_NAME2}\b' | awk '{print $2}')
+    IMAGE_REF2=$(glance image-list | grep "\b${IMAGE_NAME2}\b" | awk '{print $2}')
   else
     echo "Cirros image was not downloaded! Some tests may fail"
     IMAGE_REF2=""
