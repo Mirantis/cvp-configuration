@@ -42,13 +42,13 @@ rally_configuration () {
 update_cacerts () {
   # configuring certificates file
   if [ -z ${OS_CACERT+x} ]; then
-    echo '# No OS_CACERT is set, update of crt file skipped'
+    echo "# No OS_CACERT is set, update of crt file skipped"
   else
-    echo '# Adding custom certificates'
+    echo "# Adding custom certificates"
     ca=( $(find ${1} -name cacert.pem) )
     for crt in ${ca[@]}; do
       cat ${OS_CACERT} >>${crt}
-      echo '-> ${crt}'
+      echo "-> ${crt}"
     done
   fi
 }
