@@ -1,5 +1,5 @@
 #!/bin/bash
- 
+
 variables=(
 OS_USERNAME
 OS_PASSWORD
@@ -34,7 +34,6 @@ rally_configuration () {
   sed -i 's/uuid4())/uuid4()).replace("-","")/g' /usr/local/lib/python2.7/dist-packages/rally/plugins/openstack/scenarios/keystone/utils.py
   sed -i 's/uuid4())/uuid4()).replace("-","")/g' /usr/local/lib/python2.7/dist-packages/rally/plugins/openstack/context/keystone/users.py
   rally deployment create --fromenv --name=tempest_$sub_name
-  rally deployment config
   echo "[openstack]" >> /etc/rally/rally.conf
   echo "pre_newton_neutron=True" >> /etc/rally/rally.conf
 }
@@ -169,7 +168,7 @@ if [ "$1" == "reconfigure" ]; then
   echo "This is reconfiguration"
   rally verify configure-verifier --reconfigure
   rally verify configure-verifier --extend $current_path/cvp-configuration/tempest/tempest_ext.conf
-  rally verify configure-verifier --show
+  rally verify configure-verifier
   exit 0
 fi
 
@@ -184,7 +183,7 @@ if [ -n "${TEMPEST_REPO}" ]; then
     #cat $current_path/cvp-configuration/tempest/skip-list-oc4.yaml >> $current_path/cvp-configuration/tempest/skip-list-queens.yaml
     #cat $current_path/cvp-configuration/tempest/skip-list-heat.yaml >> $current_path/cvp-configuration/tempest/skip-list-queens.yaml
     rally verify configure-verifier --extend $current_path/cvp-configuration/tempest/tempest_ext.conf
-    rally verify configure-verifier --show
+    rally verify configure-verifier
     # If Barbican tempest plugin is installed, use this
     #mkdir /etc/tempest
     #rally verify configure-verifier --show | grep -v "rally.api" > /etc/tempest/tempest.conf
