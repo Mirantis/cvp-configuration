@@ -3,6 +3,8 @@ silent=false
 cleaning=false
 all_computes=false
 fill_mode=false
+zone=nova
+use_fqdn=false
 
 tmp_out=$(mktemp)
 trap "rm -f ${tmp_out}" EXIT
@@ -15,6 +17,8 @@ function show_help {
     printf "\t-q\tSilent mode\n"
     printf "\t-a\tEnumeratre all computes\n"
     printf "\t-f\tFill mode\n"
+    printf "\t-z <zone>\tAvailability zone to use on create\n"
+    printf "\t-n\tUse compute's FQDN when setting zone hint\n"
     printf "\nUsage: cmp_check.sh (-a | <compute_hostname>) (-f [<vm_count>|def:1])\n"
     printf "\t<compute_hostname> is a host shortname\n"
     printf "\t<vm_count> is optional. Defaults to 1\n"
@@ -27,7 +31,7 @@ function show_help {
 }
 
 OPTIND=1 # Reset in case getopts has been used previously in the shell.
-while getopts "h?:qdaf" opt; do
+while getopts "h?:qdafz:n" opt; do
     case "$opt" in
     h|\?)
         show_help
@@ -40,6 +44,12 @@ while getopts "h?:qdaf" opt; do
     a)  all_computes=true
         ;;
     f)  fill_mode=true
+        ;;
+    z)  zone=${OPTARG}
+        printf "# Using availability zone of '${zone}'\n"
+        ;;
+    n)  use_fqdn=true
+        printf "# Using FQDN as a compute host name\n"
         ;;
     esac
 done
@@ -74,9 +84,16 @@ fi
 
 function cmp_stats() {
    cmpid=$(openstack hypervisor list --matching ${1} -f value -c ID)
-   vars=( $(openstack hypervisor show ${cmpid} -f shell -c running_vms -c vcpus -c vcpus_used -c memory_mb -c memory_mb_used) )
-   declare ${vars[@]}
-   printf "${1}: vms=%s vcpus=%s/%s ram=%s/%s\n" ${running_vms} ${vcpus_used} ${vcpus} ${memory_mb_used} ${memory_mb}
+   vars=( $(openstack hypervisor show ${cmpid} -f shell -c state -c running_vms -c vcpus -c vcpus_used -c memory_mb -c memory_mb_used) )
+   [ ! 0 -eq $? ] && errors+=("${1}: $(cat ${vars[@]})")
+   if [ ! $state == '"up"' ]; then
+      echo "# Hypervisor fail, state is '${state}'"
+      errors
+      exit 1
+   else
+      declare ${vars[@]}
+      printf "${1}: vms=%s vcpus=%s/%s ram=%s/%s\n" ${running_vms} ${vcpus_used} ${vcpus} ${memory_mb_used} ${memory_mb}
+   fi
 }
 
 function waitfor () {
@@ -98,12 +115,16 @@ function getid() {
 }
 
 function get_all_cmp() {
-   openstack hypervisor list -f value -c "Hypervisor Hostname" | cut -d'.' -f1
+   if [ $use_fqdn == true ]; then
+      openstack hypervisor list -f value -c "Hypervisor Hostname" -c State | grep "up" | sort | cut -d' ' -f1
+   else
+      openstack hypervisor list -f value -c "Hypervisor Hostname" -c State | grep "up" | sort | cut -d'.' -f1
+   fi
 }
 
 function vm_create() {
    [ ! "$silent" = true ] && set -x
-   openstack server create --nic net-id=${fixed_net_left_id} --image ${cirros35_id} --flavor ${flavor_tiny_id} --key-name ${keypair_id} --security-group ${secgroup_all_id} --availability-zone nova:${1} ${2} 2>${tmp_out} >/dev/nul
+   openstack server create --nic net-id=${fixed_net_left_id} --image ${cirros35_id} --flavor ${flavor_tiny_id} --key-name ${keypair_id} --security-group ${secgroup_all_id} --availability-zone ${zone}:${1} ${2} 2>${tmp_out} >/dev/nul
    [ ! 0 -eq $? ] && errors+=("${1}/${2}: $(cat ${tmp_out})")
    set +x
    [ ! "$silent" = true ] && cat ${tmp_out}
@@ -153,9 +174,8 @@ function check_cmp_node() {
    vm_action unpause ${vmid}
    waitfor ${2} ACTIVE
 
-   [ ! "$silent" = true ] && echo "# ... deleting created VM (${vmid})"
-   vm_action delete ${vmid}
-
+   [ ! "$silent" = true ] && echo "# ... deleting created VMs"
+   clean_cmp ${1}
    cmp_stats ${1}
 }
 
@@ -171,22 +191,47 @@ source cvprc
 
 # #### Checking for CMP existence
 if [[ ! ${cmp_name} == "all" ]]; then
-   echo "# Inspecting '${cmp_name}'"
-   # check that such node exists
-   cmpid=$(openstack hypervisor list --matching ${cmp_name} -f value -c ID 2>${tmp_out})
-   [ ! 0 -eq $? ] && errors+=("${cmp_name}: $(cat ${tmp_out})")
-   if [[ -z ${cmpid} ]]; then
-      echo "ERROR: ${cmp_name} not found among hypervisors"
+   echo "# Inspecting '${zone}:${cmp_name}'"
+   cmp_fqdn=$(openstack host list --zone ${zone} -f value -c 'Host Name' -c 'Zone' | grep ${cmp_name} | cut -d' ' -f1 2>${tmp_out})
+   [ ! 0 -eq $? ] && errors+=("${cmp_name}\@${zone}: $(cat ${tmp_out})")
+   if [[ -z ${cmp_fqdn} ]]; then
+      echo "ERROR: ${cmp_name} not found in ${zone}"
       errors
       exit 1
    fi
+   printf "# Found ${cmp_fqdn} in '${zone}' using given name of ${cmp_name}\n"
+   vars=( $(openstack hypervisor show ${cmp_fqdn} -f shell -c id -c state -c hypervisor_hostname) )
+   [ ! 0 -eq $? ] && errors+=("${cmp_name}: $(cat ${tmp_out})")
+   declare ${vars[@]}
+   # check that such node exists
+   if [ -z ${id+x} ]; then
+      # no id
+      echo "ERROR: ${cmp_name} not found among hypervisors"
+      errors
+      exit 1
+   else
+      echo "# ${id}, ${hypervisor_hostname}, status '${state}'"
+      if [ ! ${state} == '"up"' ]; then
+         echo "ERROR: ${hypervisor_hostname} is '${state}'"
+         exit 1
+      else
+         unset id
+         unset hypervisor_hostname
+         unset state
+      fi
+   fi
+
 fi
 
 if [[ ${cmp_name} == all ]]; then
-   echo "# Gathering compute count"
+   echo "# Gathering compute count with state 'up'"
    cmp_nodes=( $(get_all_cmp) )
 else
-   cmp_nodes=( ${cmp_name} )
+   if [ $use_fqdn == true ]; then
+      cmp_nodes=( ${cmp_fqdn} )
+   else
+      cmp_nodes=( ${cmp_name} )
+   fi
 fi
 
 
@@ -201,7 +246,8 @@ if [ $cleaning = true ]; then
 
    # clean them
    for node in ${cmp_nodes[@]}; do
-      clean_cmp ${node}
+      cname=$(echo ${node} | cut -d'.' -f1)
+      clean_cmp ${cname}
    done
    echo "# Done cleaning"
    errors
@@ -217,7 +263,8 @@ if [[ ! ${fill_mode} = true ]]; then
    # check node
    for node in ${cmp_nodes[@]}; do
       echo "# ${node}: checking"
-      check_cmp_node ${node} vm_${node}
+      cname=$(echo ${node} | cut -d'.' -f1)
+      check_cmp_node ${node} vm_${cname}
       echo "# ${node}: done"
    done
    errors
@@ -232,7 +279,8 @@ else
       echo "# ${node}: filling"
       counter=1
       while [[ $counter -lt ${vmcount}+1 ]]; do
-         vmname_c=vm_${node}_$(printf "%02d" ${counter})
+         cname=$(echo ${node} | cut -d'.' -f1)
+         vmname_c=vm_${cname}_$(printf "%02d" ${counter})
          [ ! "$silent" = true ] && echo "# ${node}: creating ${vmname_c}"
          vm_create ${node} ${vmname_c}
          cmp_stats ${node}
