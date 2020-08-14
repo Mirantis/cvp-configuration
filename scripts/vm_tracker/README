@@ -1,0 +1,13 @@
+VM tracking tool
+
+Q: What does it do?
+A: Searches for VMs that are duplicated (VMs with same IDs on different hypervisors), VMs that are misplaced (running on a different hypervisor that what Nova expects), VMs that are lost (existing in libvirt not having an uuid)
+
+Q: How does it work?
+A: By comparing the output of Nova (nova list --all) and virsh (virsh list --all, virsh list --uuid)
+
+Q: How do I use it?
+A: run "collect_data.sh" to gather the data from Nova and libvirt, then run "analyze.py" to get the results.
+
+Q: What does it need to run?
+A: Salt access, bash on the compute node, and a correct hypervisor name pattern set in the analyze.py (check comments in the source before running it).
