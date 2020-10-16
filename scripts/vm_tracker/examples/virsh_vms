@@ -1,0 +1,39 @@
+node-23.mos8.stcs.staging:
+    deec0d97-1030-46c4-851b-25faea3dca93	 1     instance-000034f4              running
+    02426060-53a2-4f22-820a-65a091030108	 2     instance-000034f7              running
+    a1b90fbd-6154-49fa-a1cc-37bac1319c9b	 3     instance-000034fa              running
+    9bd3058d-ac63-4f23-9ea0-c0692eaa8583	 4     instance-00003527              running
+    3d072cc1-1806-4cbb-b181-34d9fe2eb70f	 5     instance-0000352a              running
+    647153da-8a2a-4f96-9359-f784e6fa44d7	 6     instance-0000352d              running
+    4e018215-b93c-4248-a76e-cdf6df1b8bc5	 7     instance-00003530              running
+    c17442fb-a483-4cec-9573-a6eeab65340e	 8     instance-00003533              running
+    875a2980-7902-4932-8cbf-1ac9c09333e3	 9     instance-00003572              running
+    41a40f56-cb88-46cc-8edc-ef2556c73eee	 10    instance-00003578              running
+    ca463411-213d-49a4-8e05-379c7bb39b8c	 11    instance-0000357e              running
+    abf8587d-0839-4b43-9ca4-272a24eb4975	 17    instance-0000359b              running
+    a3eb719e-667f-4790-ab15-640bb4d1ad69	 18    instance-0000359e              running
+    0e563f1e-6ed6-4e6b-b7da-a8c08cf2d466	 20    instance-000035c4              running
+    610b6936-86e8-4e37-87da-c7651abb1e91	 21    instance-000035cd              running
+    ba710427-aeb1-4a06-8f0c-2d642b95bf61	 23    instance-000035d3              running
+    71390d48-5295-4104-9eca-648b36e532d9	 25    instance-000035e2              running
+node-9.mos8.stcs.staging:
+    097ff065-bf8a-4599-aa40-563ae4324a0d	 3     instance-00002f3c              running
+    cdeed13d-9637-4cd7-b2b4-3aa1f9b72744	 4     instance-000033cb              running
+    c0c53ca7-8936-402a-b423-e0cc5978eb42	 5     instance-000034f1              running
+    187795e6-8ace-4904-9c30-64de080085a2	 6     instance-00003539              running
+    9ccd6b45-0bf0-423f-888b-fb15e7605b07	 7     instance-0000354b              running
+    e9e6f097-bb51-4fc7-9b8f-6c211b18f1a9	 8     instance-00003575              running
+    c3681e67-0fdb-43bd-95f5-902805e1389f	 9     instance-0000357b              running
+    efcd0b24-4d81-4677-bd96-995c7acaec11	 10    instance-00003581              running
+    6240c48d-d590-4148-945f-7bccd88a1411	 -     instance-00002d6a              shut off
+    8aea67f6-f23b-44d1-b3cb-a845b43364e1	 -     instance-00002da0              shut off
+node-44.mos8.stcs.staging:
+    d35777d5-8817-4dfb-9759-7b0876585b85	 9     instance-000035a1              running
+    c5eeefcd-a74a-4207-9c14-6f043464302d	 10    instance-000035a4              running
+    8246fd6d-56b6-40f2-9ce9-8090778e7af8	 11    instance-000035a6              running
+    5fbb9011-0c2c-469d-a769-cb47615010d1	 19    instance-000035c1              running
+    f725db6e-6ada-4982-a0dd-7ef71a9826c4	 20    instance-000035c7              running
+    8abb071a-0228-4e48-8451-68a5f2434a57	 21    instance-000035ca              running
+    8b964d89-ec13-4ce2-b5cd-69e41a67688c	 22    instance-000035d6              running
+    bb5dc667-81d3-4d2d-aac1-24612f3c6a3f	 24    instance-000035df              running
+    23aaeb4d-989b-47fc-b0b6-e78f41e27001	 25    instance-000035e5              running

@@ -11,3 +11,19 @@ A: run "collect_data.sh" to gather the data from Nova and libvirt, then run "ana
 
 Q: What does it need to run?
 A: Salt access, bash on the compute node, and a correct hypervisor name pattern set in the analyze.py (check comments in the source before running it).
+
+Q: What is the typical flow to use
+A: On a salt node:
+   - Create isolated folder for the activity, say
+       export cvpoperator=$(pwd | cut -d'/' -f3)
+       mkdir /home/${cvpoperator}/compute_orphans/
+     Copy the scripts to this folder:
+       pushd /home/${cvpoperator}/compute_orphans/; cp /home/${cvpoperator}/cvp-configuration/scripts/vm_tracker/* .
+     Or use the cloned repo one, if your repo is available locally
+   - Run 'bash collect_data.sh'. Check for errors, if any.
+   - Run 'bash gen_del_vms.sh'. Check for errors if any.
+   - Review VMs found. Consider discussing findings with the manager and the client (!)
+   - Use 'bash vm_del.sh <cmp_node> <instance-XXXX>' command to remove VMs
+
+Q: I do not want to run anything until I know what will happen
+A: See examples in the corresponding folder: /home/${cvpoperator}/cvp-configuration/scripts/vm_tracker/examples

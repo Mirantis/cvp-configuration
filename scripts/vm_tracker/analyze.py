@@ -15,6 +15,8 @@ def lookup_far(dc, name):
 lost_vms = {}
 hypervisors = {}
 hypervisor_pattern = "cmp" #Replace with your own pattern, ensure it's unique so it wouldn't mix up with VM names
+print("\n# Using hypervisor pattern of '{}'\n\n".format(hypervisor_pattern))
+print("# Replace it with your own pattern if needed.\n# Ensure it's unique so it wouldn't mix up with VM names.\n\n")
 skip_pattern = "------------"
 current_hv = ""
 vm_pattern = "-"
@@ -26,7 +28,7 @@ with open("virsh_vms", "rt") as f:
         elif hypervisor_pattern in line:
             current_hv = line.replace(":", "")
             if current_hv in hypervisors:
-                print("Duplicate hypervisor %s, exiting" % current_hv)
+                print("Duplicate hypervisor {}, exiting".format(current_hv))
                 break
             else:
                 hypervisors[current_hv] = []
@@ -65,29 +67,29 @@ lsdup = []
 for hv in hypervisors:
    for vm in hypervisors[hv]:
        if not vm['id'] in rev:
-           rev[vm['id']] = [hv+"(%s)"%vm['state']]
+           rev[vm['id']] = [hv+"({})".format(vm['state'])]
        else:
-           rev[vm['id']].append(hv+"(%s)"%vm['state'])
+           rev[vm['id']].append(hv+"({})".format(vm['state']))
 for vm_id in rev:
    if len(rev[vm_id]) > 1:
-       print "Duplicate VM: %s on %s" % (vm_id, rev[vm_id])
+       print("Duplicate VM: {} on {}".format(vm_id, rev[vm_id]))
        lsdup.append(vm_id)
 for hv in hypervisors:
     if hv not in nova_vms and len(hypervisors[hv]) > 0:
         #print "WARN: hypervisor %s exists but nova doesn't know that it has following VMs:" % hv
         for vm in hypervisors[hv]:
             if not lookup_far(nova_vms, vm["id"]):
-                print "Nova doesn't know that vm %s is running on %s" %(vm["id"], hv)
+                print("Nova doesn't know that vm {} is running on {}".format((vm["id"], hv)))
         continue
     for vm in hypervisors[hv]:
         report = ""
         if not lookup_near(nova_vms[hv], vm['id']):
             if vm['id'] in lsdup:
                 continue
-            report += "WARN: VM %s is on hypervisor %s" % (vm['id'], hv)
+            report += "WARN: VM {} is on hypervisor {}".format((vm['id'], hv))
             nova_hvs = lookup_far(nova_vms, vm["id"])
             if nova_hvs:
-                report +=  ", but nova thinks it is running on %s." % (str(nova_hvs))
+                report +=  ", but nova thinks it is running on {}.".format((str(nova_hvs)))
             else:
                 report += ", but nova doesn't know about it."
             report += " VM state is %s " % vm['state']
@@ -99,3 +101,4 @@ for hv in lost_vms:
      print(hv+":")
      for vm in lost_vms[hv]:
          print(vm)
+
