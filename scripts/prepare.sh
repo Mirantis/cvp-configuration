@@ -27,6 +27,7 @@ key=${name_prefix}_testkey
 flavor_t=${name_prefix}.tiny
 flavor_s=${name_prefix}.small
 flavor_m=${name_prefix}.medium
+flavor_h=${name_prefix}.high
 
 # Fixed Networks (2, for testing router interconnection)
 net_left=${name_prefix}.net.1
@@ -41,10 +42,12 @@ router=${name_prefix}.router
 cirros3=${name_prefix}.cirros.35
 cirros4=${name_prefix}.cirros.40
 ubuntu16=${name_prefix}.ubuntu.1604
+ubuntuspt=${name_prefix}.ubuntu.spt
 
 cirros3_link=http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img
 cirros4_link=http://download.cirros-cloud.net/0.4.0/cirros-0.4.0-aarch64-disk.img
 ubuntu16_link=https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img
+ubuntuspt_link=ubuntuspt
 
 # Volume (2GB)
 volume=${name_prefix}.volume
@@ -120,6 +123,8 @@ function print_manifest() {
     put flavor_small_id $(ol1 flavor ${flavor_s})
     put flavor_medium_name ${flavor_m}
     put flavor_medium_id $(ol1 flavor ${flavor_m})
+    put flavor_high_name ${flavor_h}
+    put flavor_high_id $(ol1 flavor ${flavor_h})
 
     # fixed nets
     put fixed_net_left_name ${net_left}
@@ -144,8 +149,10 @@ function print_manifest() {
     put cirros35_id $(ol1 image ${cirros3})
     put cirros40_name ${cirros4}
     put cirros40_id $(ol1 image ${cirros4})
-    put ubuntu16_name ${cirros3}
+    put ubuntu16_name ${ubuntu16}
     put ubuntu16_id $(ol1 image ${ubuntu16})
+    put ubuntuspt_name ${ubuntuspt}
+    put ubuntuspt_id $(ol1 image ${ubuntuspt})
 }
 
 # create rc file out of current ENV vars
@@ -205,6 +212,8 @@ function _sg_all() {
     echo security group rule create --protocol tcp --dst-port 3000 ${sg_all} >>${cmds}
     # http
     echo security group rule create --protocol tcp --dst-port 80 ${sg_all} >>${cmds}
+    # https
+    echo security group rule create --protocol tcp --dst-port 443 ${sg_all} >>${cmds}
 }
 
 function _sg_icmp() {
@@ -241,12 +250,14 @@ function _flavors() {
     # huge paged flavors
     if [ "$huge_pages" = true ]; then
         echo flavor create --id 1 --ram 64 --disk 1 --vcpus 1 ${flavor_t} --property hw:mem_page_size=large >>${cmds}
-        echo flavor create --id 1 --ram 256 --disk 2 --vcpus 1 ${flavor_s} --property hw:mem_page_size=large >>${cmds}
-        echo flavor create --id 1 --ram 2048 --disk 5 --vcpus 2 ${flavor_m} --property hw:mem_page_size=large >>${cmds}
+        echo flavor create --id 2 --ram 256 --disk 2 --vcpus 1 ${flavor_s} --property hw:mem_page_size=large >>${cmds}
+        echo flavor create --id 3 --ram 2048 --disk 10 --vcpus 2 ${flavor_m} --property hw:mem_page_size=large >>${cmds}
+        echo flavor create --id 4 --ram 2048 --disk 20 --vcpus 4 ${flavor_h} --property hw:mem_page_size=large >>${cmds}
     else
-        echo flavor create --ram 64 --disk 1 --vcpus 1 ${flavor_t} >>${cmds}
-        echo flavor create --ram 256 --disk 2 --vcpus 1 ${flavor_s} >>${cmds}
-        echo flavor create --ram 2048 --disk 5 --vcpus 2 ${flavor_m} >>${cmds}
+        echo flavor create --id 1 --ram 64 --disk 1 --vcpus 1 ${flavor_t} >>${cmds}
+        echo flavor create --id 2 --ram 256 --disk 2 --vcpus 1 ${flavor_s} >>${cmds}
+        echo flavor create --id 3 --ram 2048 --disk 10 --vcpus 2 ${flavor_m} >>${cmds}
+        echo flavor create --id 4 --ram 2048 --disk 20 --vcpus 4 ${flavor_h} >>${cmds}
     fi
 }
 
@@ -277,7 +288,7 @@ function create_fixed_nets() {
     process_cmds
 
     # TODO: Search for external net
-    external=ext-net
+    external=public
     echo router set ${router} --external-gateway ${external} >>${cmds}
     process_cmds
 }
@@ -286,7 +297,7 @@ function _get_image() {
     # build vars for name and link
     name="${1}"
     link="${1}_link"
-    which wget >/dev/nul
+    which wget >/dev/null
     if [ $? -ne 0 ]; then
         printf "\nERROR: 'wget' not detected. Download skipped: ${!name}\n"
     else
@@ -304,7 +315,7 @@ function create_image() {
     # Check if image is in the cloud
     echo "# Checking image '${!name}'"
     ids=( $(ol1 image ${!name}) )
-    # if array is not empty, download and upload it
+    # if array is empty, download and upload it
     if [ ${#ids[@]} -eq 0 ]; then
         # check and download
         if [ ! -f ${!name} ]; then
@@ -371,8 +382,11 @@ create_fixed_nets
 create_image cirros3
 create_image cirros4
 create_image ubuntu16
+openstack image create --public --disk-format qcow2 --container-format bare --file ubuntuspt cvp.ubuntu.spt -c id -f value
 
 ### Manifest and fall back to original rc
 print_manifest
+printf ="\n\nSetting quota\n"
+openstack quota set --cores -1 --ram -1 --instances -1 --volumes -1 --gigabytes -1 cvp.project
 source "./adminrc"
 printf "\n\nOriginal rc preserved and backed up in 'adminrc'\nNew rc is '${rcfile}'\n"

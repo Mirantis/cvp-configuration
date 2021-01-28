@@ -308,7 +308,7 @@ echo "Using tempfile: '${cmds}'"
 
 _clean_stacks
 _clean_servers
-
+_clean_flavors
 _clean_users
 _clean_roles
 _clean_snapshots

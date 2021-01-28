@@ -124,14 +124,14 @@ function get_all_cmp() {
 
 function vm_create() {
    [ ! "$silent" = true ] && set -x
-   openstack server create --nic net-id=${fixed_net_left_id} --image ${cirros35_id} --flavor ${flavor_tiny_id} --key-name ${keypair_id} --security-group ${secgroup_all_id} --availability-zone ${zone}:${1} ${2} 2>${tmp_out} >/dev/nul
+   openstack server create --nic net-id=${fixed_net_left_id} --image ${cirros35_id} --flavor ${flavor_tiny_id} --key-name ${keypair_id} --security-group ${secgroup_all_id} --availability-zone ${zone}:${1} ${2} 2>${tmp_out} >/dev/null
    [ ! 0 -eq $? ] && errors+=("${1}/${2}: $(cat ${tmp_out})")
    set +x
    [ ! "$silent" = true ] && cat ${tmp_out}
 }
 
 function vm_action() {
-   openstack server ${1} ${2} 2>${tmp_out} >/dev/nul
+   openstack server ${1} ${2} 2>${tmp_out} >/dev/null
    if [ ! 0 -eq $? ]; then
       errors+=("${cmp_name}: $(cat ${tmp_out})")
    fi
