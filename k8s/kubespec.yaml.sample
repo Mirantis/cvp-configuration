@@ -1,0 +1,7 @@
+---
+existing@kubernetes:
+    server: https://172.16.30.4:443
+    certificate-authority: /artifacts/ca.crt
+    client-certificate: /artifacts/client.crt
+    client-key: /artifacts/client.key
+    tls_insecure: True

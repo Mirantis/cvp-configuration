@@ -1,0 +1,115 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: qa-space
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: qa-pv
+  namespace: qa-space
+  labels:
+    type: local
+spec:
+  storageClassName: volumes-nvme
+  capacity:
+    storage: 50Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/tmp/artifacts"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: qa-pvc
+  namespace: qa-space
+spec:
+  storageClassName: volumes-nvme
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: qa-pod
+  namespace: qa-space
+spec:
+  containers:
+  - command:
+    - /bin/sleep
+    - infinity
+    env:
+    - name: LANG
+      value: C.UTF-8
+    - name: OS_IDENTITY_API_VERSION
+      value: "3"
+    - name: OS_AUTH_URL
+      valueFrom:
+        secretKeyRef:
+          key: OS_AUTH_URL
+          name: keystone-keystone-admin
+    - name: OS_REGION_NAME
+      valueFrom:
+        secretKeyRef:
+          key: OS_REGION_NAME
+          name: keystone-keystone-admin
+    - name: OS_INTERFACE
+      valueFrom:
+        secretKeyRef:
+          key: OS_INTERFACE
+          name: keystone-keystone-admin
+    - name: OS_ENDPOINT_TYPE
+      valueFrom:
+        secretKeyRef:
+          key: OS_INTERFACE
+          name: keystone-keystone-admin
+    - name: OS_PROJECT_DOMAIN_NAME
+      valueFrom:
+        secretKeyRef:
+          key: OS_PROJECT_DOMAIN_NAME
+          name: keystone-keystone-admin
+    - name: OS_PROJECT_NAME
+      valueFrom:
+        secretKeyRef:
+          key: OS_PROJECT_NAME
+          name: keystone-keystone-admin
+    - name: OS_USER_DOMAIN_NAME
+      valueFrom:
+        secretKeyRef:
+          key: OS_USER_DOMAIN_NAME
+          name: keystone-keystone-admin
+    - name: OS_USERNAME
+      valueFrom:
+        secretKeyRef:
+          key: OS_USERNAME
+          name: keystone-keystone-admin
+    - name: OS_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          key: OS_PASSWORD
+          name: keystone-keystone-admin
+    - name: OS_DEFAULT_DOMAIN
+      valueFrom:
+        secretKeyRef:
+          key: OS_DEFAULT_DOMAIN
+          name: keystone-keystone-admin
+# enable this image is rally is not enough
+#    image: mirantis.azurecr.io/openstack/heat:ussuri-bionic-20201121180111
+    image: xrally/xrally-openstack:2.1.0
+    imagePullPolicy: IfNotPresent
+    name: qa-pod
+    volumeMounts:
+    - mountPath: /artifacts
+      name: qa-pv
+  dnsPolicy: ClusterFirst
+  volumes:
+  - emptyDir: {}
+    name: pod-tmp
+  - name: qa-pv
+    persistentVolumeClaim:
+      claimName: qa-pvc
+
