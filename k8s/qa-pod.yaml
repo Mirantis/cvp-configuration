@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: qa-ubuntu-pod
+  name: qa-pod
   namespace: qa-space
 spec:
   containers:
