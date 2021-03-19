@@ -188,7 +188,7 @@ function process_cmds() {
 }
 
 function _project() {
-    echo project create --description \"CVP Pipeline project\" ${project} >>${cmds}
+    echo project create ${project} >>${cmds}
     echo role add --user admin --project ${project} admin >>${cmds}
 }
 
@@ -199,7 +199,7 @@ function _users() {
 }
 
 function _sg_all() {
-    echo security group create --project ${project} --description \"ICMP, SSH, iPerf, HTTP\" ${sg_all} >>${cmds}
+    echo security group create --project ${project} ${sg_all} >>${cmds}
     # icmp
     echo security group rule create --protocol icmp ${sg_all} >>${cmds}
     # ssh
@@ -217,12 +217,12 @@ function _sg_all() {
 }
 
 function _sg_icmp() {
-    echo security group create --project ${project} --description \"ICMP\" ${sg_icmp} >>${cmds}
+    echo security group create --project ${project} ${sg_icmp} >>${cmds}
     echo security group rule create --protocol icmp ${sg_icmp} >>${cmds}
 }
 
 function _sg_ssh() {
-    echo security group create --project ${project} --description \"ICMP, SSH\" ${sg_ssh} >>${cmds}
+    echo security group create --project ${project} ${sg_ssh} >>${cmds}
     # icmp
     echo security group rule create --protocol icmp ${sg_ssh} >>${cmds}
     # ssh
@@ -230,7 +230,7 @@ function _sg_ssh() {
 }
 
 function _sg_iperf() {
-    echo security group create --project ${project} --description \"ICMP, iPerf\" ${sg_iperf} >>${cmds}
+    echo security group create --project ${project} ${sg_iperf} >>${cmds}
     # icmp
     echo security group rule create --protocol icmp ${sg_iperf} >>${cmds}
     # iperf

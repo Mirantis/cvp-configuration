@@ -125,6 +125,7 @@ function get_all_cmp() {
 function vm_create() {
    [ ! "$silent" = true ] && set -x
    openstack server create --nic net-id=${fixed_net_left_id} --image ${cirros35_id} --flavor ${flavor_tiny_id} --key-name ${keypair_id} --security-group ${secgroup_all_id} --availability-zone ${zone}:${1} ${2} 2>${tmp_out} >/dev/null
+   #openstack server create --nic net-id=${fixed_net_left_id} --image ${ubuntuspt_id} --flavor ${flavor_high_id} --key-name ${keypair_id} --security-group ${secgroup_all_id} --availability-zone ${zone}:${1} ${2} 2>${tmp_out} >/dev/null
    [ ! 0 -eq $? ] && errors+=("${1}/${2}: $(cat ${tmp_out})")
    set +x
    [ ! "$silent" = true ] && cat ${tmp_out}
