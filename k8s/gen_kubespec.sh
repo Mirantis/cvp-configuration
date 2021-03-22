@@ -24,10 +24,11 @@ if [[ ! -f $1 ]]; then
 fi
 
 # extract data as variables
-declare $(sed -e 's/:[^:\/\/,:4]/=/g;s/ *=/=/g;s/-/_/g' $1 | grep 'certificate\|key\|server' | tr -d ' ')
+declare $(sed -e 's/:[^:\/\/,:443,:6443]/=/g;s/ *=/=/g;s/-/_/g' $1 | grep 'certificate\|key\|server' | tr -d ' ')
+echo "# Declared variable: server=$server"
 
 ### Uncomment if separate files needed
-printf "Creating 'ca.crt', 'client.crt' and 'client.key'\n"
+printf "# Creating 'ca.crt', 'client.crt' and 'client.key'\n"
 echo "# '${ca_crt}'"
 echo $certificate_authority_data | base64 -d >${ca_crt}
 echo "# '${client_crt}'"

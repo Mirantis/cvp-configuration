@@ -6,6 +6,7 @@
 {% set replicas = 1 %}
 {% set replicas_scaled = 2 %}
 {% set namespaces = 1 %}
+{% set serviceacc_delay = 60 %}
 
 
 ---
@@ -29,7 +30,7 @@ subtasks:
 - title: Run a single workload with create/read/delete job
   scenario:
     Kubernetes.create_and_delete_job:
-      image: {{image_cirros}}
+      image: {{image_box}}
       command:
       - echo
       - "SUCCESS"
@@ -41,10 +42,11 @@ subtasks:
     namespaces:
       count: {{namespaces}}
       with_serviceaccount: true
+      serviceaccount_delay: {{serviceacc_delay}}
 - title: Run a single workload with create/read/delete pod with configMap volume
   scenario:
     Kubernetes.create_and_delete_pod_with_configmap_volume:
-      image: {{image_pause}}
+      image: {{image_box}}
       mount_path: /var/log/check.txt
       subpath: check.txt
       configmap_data:
@@ -58,42 +60,11 @@ subtasks:
     namespaces:
       count: {{namespaces}}
       with_serviceaccount: true
-- title: Run a single workload with create/read/delete pod with local PVC
-  scenario:
-    Kubernetes.create_and_delete_pod_with_local_persistent_volume:
-      persistent_volume:
-        size: 1Gi
-        volume_mode: Block
-        local_path: /var/tmp
-        access_modes:
-        - ReadWriteOnce
-        node_affinity:
-          required:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: kubernetes.io/os
-                operator: In
-                values:
-                - linux
-      persistent_volume_claim:
-        size: 250Mi
-        access_modes:
-        - ReadWriteOnce
-      image: {{image_box}}
-      mount_path: /opt/check
-  runner:
-    constant:
-      concurrency: {{concurrency}}
-      times: {{times}}
-  contexts:
-    namespaces:
-      count: {{namespaces}}
-      with_serviceaccount: true
-    local_storageclass: {}
+      serviceaccount_delay: {{serviceacc_delay}}
 - title: Run a single workload with create/delete NodePort service
   scenario:
     Kubernetes.create_and_delete_pod_with_node_port_service:
-      image: {{image_pause}}
+      image: {{image_box}}
       port: 80
       protocol: TCP
   runner:
@@ -104,12 +75,13 @@ subtasks:
     namespaces:
       count: {{namespaces}}
       with_serviceaccount: true
+      serviceaccount_delay: {{serviceacc_delay}}
     kubernetes.cfg:
       prepoll_delay: 1
 - title: Run a single workload with create/read/delete pod
   scenario:
     Kubernetes.create_and_delete_pod:
-      image: {{image_pause}}
+      image: {{image_box}}
   runner:
     constant:
       concurrency: {{concurrency}}
@@ -118,3 +90,5 @@ subtasks:
     namespaces:
       count: {{namespaces}}
       with_serviceaccount: true
+      serviceaccount_delay: {{serviceacc_delay}}
+
