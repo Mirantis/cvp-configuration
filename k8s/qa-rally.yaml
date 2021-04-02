@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: qa-pod
+  name: rally
   namespace: qa-space
 spec:
   containers:
@@ -64,21 +64,15 @@ spec:
           key: OS_DEFAULT_DOMAIN
           name: keystone-keystone-admin
     imagePullPolicy: IfNotPresent
-# enable this image if rally is not enough, 
-# but rally will be needed to be installed manually
-    name: ubuntu
-    image: ubuntu:20.04
-# xrally container has a lot of packages missing. 
-# It is better to install rally on ubuntu, than install missing packages on rally image
-#    name: rally-perf
-#    image: xrally/xrally-openstack:2.1.0
+    name: rally
+    image: xrally/xrally-openstack:2.1.0
     volumeMounts:
     - mountPath: /artifacts
-      name: qa-pv
+      name: qa-pv-r
   dnsPolicy: ClusterFirst
   volumes:
   - emptyDir: {}
     name: pod-tmp
-  - name: qa-pv
+  - name: qa-pv-r
     persistentVolumeClaim:
-      claimName: qa-pvc
+      claimName: qa-pvc-r

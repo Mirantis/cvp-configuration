@@ -6,12 +6,12 @@ metadata:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: qa-pv
+  name: qa-pv-a
   namespace: qa-space
   labels:
     type: local
 spec:
-  storageClassName: volumes-hdd
+  storageClassName: storage_class
   capacity:
     storage: 50Gi
   accessModes:
@@ -23,10 +23,40 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: qa-pvc
+  name: qa-pvc-a
   namespace: qa-space
 spec:
-  storageClassName: volumes-hdd
+  storageClassName: storage_class
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: qa-pv-r
+  namespace: qa-space
+  labels:
+    type: local
+spec:
+  storageClassName: storage_class
+  capacity:
+    storage: 50Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: "/tmp/artifacts"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: qa-pvc-r
+  namespace: qa-space
+spec:
+  storageClassName: storage_class
   accessModes:
     - ReadWriteOnce
   resources:

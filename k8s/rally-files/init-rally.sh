@@ -1,9 +1,9 @@
 #!/bin/bash
 cd /artifacts
 # Installing prerequisites
-apt -y update
-apt -y install python3-pip vim git iperf3 mtr htop iputils-ping traceroute tcpdump wget iproute2
-pip3 install rally-openstack python-neutronclient pyghmi
+#apt -y update
+#apt -y install python3-pip vim git iperf3 mtr htop iputils-ping traceroute tcpdump wget iproute2 curl
+#pip3 install rally-openstack python-neutronclient pyghmi
 
 # Prepare Rally
 rally db create
