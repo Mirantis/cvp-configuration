@@ -13,7 +13,7 @@ rally env create --from-sysenv --name openstack
 rally env check
 
 # Prepare rally for kubernetes
-bash res-files/k8s/gen_kubespec.sh ./mos-kubeconf.yaml
+bash /artifacts/rally-files/gen_kubespec.sh ./mos-kubeconf.yaml
 git clone https://github.com/Mirantis/rally-plugins.git
 cd rally-plugins/
 pip3 install .
