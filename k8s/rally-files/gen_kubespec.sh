@@ -1,5 +1,6 @@
 #!/bin/bash
 # files
+cd /artifacts
 ca_crt=$(pwd)/ca.crt
 client_crt=$(pwd)/client.crt
 client_key=$(pwd)/client.key
