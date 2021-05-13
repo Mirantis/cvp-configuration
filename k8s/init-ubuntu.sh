@@ -7,5 +7,5 @@ pip3 install python-openstackclient python-neutronclient pyghmi
 
 mkdir /artifacts/cmp-check && cd /artifacts/cmp-check
 cp /artifacts/res-files/scripts/prepare.sh ./
-cp /artifacts/res-files/scripts/cmp-check.sh ./
+cp /artifacts/res-files/scripts/cmp_check.sh ./
 cp /artifacts/res-files/cleanup.sh ./
