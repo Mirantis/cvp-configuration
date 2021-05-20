@@ -47,7 +47,6 @@ ubuntuspt=${name_prefix}.ubuntu.spt
 cirros3_link=http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img
 cirros4_link=http://download.cirros-cloud.net/0.4.0/cirros-0.4.0-aarch64-disk.img
 ubuntu16_link=https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img
-ubuntuspt_link=ubuntuspt
 
 # Volume (2GB)
 volume=${name_prefix}.volume
@@ -382,7 +381,9 @@ create_fixed_nets
 create_image cirros3
 create_image cirros4
 create_image ubuntu16
-openstack image create --public --disk-format qcow2 --container-format bare --file ubuntuspt cvp.ubuntu.spt -c id -f value
+# update image name to correct one uploaded
+ubuntuspt_file="ubuntuspt.img"
+openstack image create --public --disk-format qcow2 --container-format bare --file ${ubuntuspt_file} ${ubuntuspt} -c id -f value
 
 ### Manifest and fall back to original rc
 print_manifest
