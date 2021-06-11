@@ -1,0 +1,35 @@
+FROM ubuntu:20.04
+
+MAINTAINER Alex Savatieiev (a.savex@gmail.com)
+
+WORKDIR /tmp
+RUN apt-get update && \
+    apt-get install -y make gcc g++ git libaio-dev libaio1 zlib1g-dev && \
+    git clone --depth 1 --branch fio-3.26 https://github.com/axboe/fio.git && \
+    cd /tmp/fio && \
+    ./configure && \
+    make && \
+    make install && \
+    cd /tmp && \
+    rm -rf /tmp/fio
+WORKDIR /opt
+RUN apt-get update && \
+    export TZ="America/Chicago" && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
+    apt-get install -y python3-pip vim git iperf3 mtr htop iputils-ping traceroute tcpdump wget iproute2 curl && \
+    pip3 install python-openstackclient python-neutronclient python-heatclient pyghmi python-octaviaclient && \
+    git clone https://gerrit.mcp.mirantis.com/mcp/cvp-configuration /opt/res-files && \
+    mkdir /opt/cmp-check && cd /opt/cmp-check && \
+    cp /opt/res-files/scripts/prepare.sh ./ && \
+    cp /opt/res-files/scripts/cmp_check.sh ./ && \
+    cp /opt/res-files/cleanup.sh ./
+
+ADD ./si-tests.tgz /opt/si-tests/
+RUN apt -y install python3-venv && \
+    cd /opt/si-tests/ && \
+    python3 -m venv .venv && \
+    . .venv/bin/activate && \
+    pip3 install -r si_tests/requirements.txt
+
+ENTRYPOINT ["sleep infinite"]
+
