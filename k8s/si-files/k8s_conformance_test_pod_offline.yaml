@@ -1,0 +1,97 @@
+{% set K8S_CONFORMANCE_POD_NAME = os_env('K8S_CONFORMANCE_POD_NAME', 'conformance') %}
+{% set K8S_CONFORMANCE_RUN_STORAGE_TESTS = os_env('K8S_CONFORMANCE_RUN_STORAGE_TESTS', 'True') %}
+{% set K8S_CONFORMANCE_RUN_ONLY_HPA_TESTS = os_env('K8S_CONFORMANCE_RUN_ONLY_HPA_TESTS', 'False') %}
+{% set K8S_CONFORMANCE_REPORTS_DIR = os_env('K8S_CONFORMANCE_REPORTS_DIR', '/report') %}
+{% set K8S_CONFORMANCE_FLAKE_ATTEMPTS = os_env('K8S_CONFORMANCE_FLAKE_ATTEMPTS', '2') %}
+{% set K8S_CONFORMANCE_FOCUS = os_env('K8S_CONFORMANCE_FOCUS', 'Conformance') %}
+{% set K8S_CONFORMANCE_CLUSTER_DOMAIN = os_env('K8S_CONFORMANCE_CLUSTER_DOMAIN', '') %}
+{% set K8S_CONFORMANCE_NON_BLOCKING_TAINTS = os_env('K8S_CONFORMANCE_NON_BLOCKING_TAINTS', '') %}
+{% set K8S_CONFORMANCE_NO_COLOR = os_env('K8S_CONFORMANCE_NO_COLOR', 'y') %}
+{% set CDN_REGION = os_env('CDN_REGION', 'public') %}
+{% set DISCOVER_UCP_MGMT = os_env('DISCOVER_UCP_MGMT', 'False') %}
+{% set K8S_CONFORMANCE_CONCURRENCY = os_env('K8S_CONFORMANCE_CONCURRENCY', '10') | int %}
+{% set K8S_CONFORMANCE_STORAGE_CINDER_CONCURRENCY = os_env('K8S_CONFORMANCE_STORAGE_CINDER_CONCURRENCY', '2') | int %}
+{% set REPO_PUBLIC = os_env('REPO_PUBLIC', '') %}
+{% set DISABLE_OFFLINE_LOGIC = os_env('DISABLE_OFFLINE_LOGIC', 'True') %}
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ K8S_CONFORMANCE_POD_NAME }}
+spec:
+  hostNetwork: true
+  restartPolicy: Never
+  serviceAccountName: {{ K8S_CONFORMANCE_SA }}
+  tolerations:
+  - operator: "Exists"
+  containers:
+    - command:
+        - /bin/bash
+        - -c
+        - /entrypoint.sh 2>&1 && touch ./test_passed || touch ./test_failed; sleep 3600
+      name: {{ K8S_CONFORMANCE_POD_NAME }}
+      resources:
+        requests:
+          cpu: "1000m"
+          memory: "{{ K8S_CONFORMANCE_CONCURRENCY * 200 }}Mi"
+        limits:
+          cpu: "2500m"
+          memory: "{{ K8S_CONFORMANCE_CONCURRENCY * 400 }}Mi"
+      imagePullPolicy: Always
+      securityContext:
+        privileged: true
+      env:
+#        - name: FOCUS
+#          value: {{ K8S_CONFORMANCE_FOCUS }}
+#        - name: RUN_ONLY_STORAGE_TESTS
+#          value: "True"
+#        - name: CONCURRENCY
+#          value: "7"
+#        - name: RUN_HPA_TESTS
+#          value: "{{ K8S_CONFORMANCE_RUN_HPA_TESTS }}"
+        - name: RUN_ONLY_HPA_TESTS
+          value: "{{ K8S_CONFORMANCE_RUN_ONLY_HPA_TESTS }}"
+        - name: DISCOVER_UCP_MGMT
+          value: "{{ DISCOVER_UCP_MGMT }}"
+        - name: GINKGO_NO_COLOR
+          value: "{{ K8S_CONFORMANCE_NO_COLOR }}"
+        - name: DEBUG_MODE
+          value: "True"
+        - name: NON_BLOCKING_TAINTS
+          value: "{{ K8S_CONFORMANCE_NON_BLOCKING_TAINTS }}"
+        - name: FLAKE_ATTEMPTS
+          value: "{{ K8S_CONFORMANCE_FLAKE_ATTEMPTS }}"
+        - name: RUN_STORAGE_TESTS
+          value: "{{ K8S_CONFORMANCE_RUN_STORAGE_TESTS }}"
+        - name: DOMAIN
+          value: "{{ K8S_CONFORMANCE_CLUSTER_DOMAIN }}"
+        - name: USER_DEFINED_SKIP_REGEX
+          value: '{{ K8S_CONFORMANCE_USER_DEFINED_SKIP_REGEX }}'
+        - name: STOP_ON_FAIL
+          value: "False"
+        - name: REPORT_DIR
+          value: {{ K8S_CONFORMANCE_REPORTS_DIR }}
+        - name: KUBECONFIG
+          value: /config/{{ KUBECONFIG_SECRET_NAME }}
+        - name: CONCURRENCY
+          value: "{{ K8S_CONFORMANCE_CONCURRENCY }}"
+        - name: STORAGE_CINDER_CONCURRENCY
+          value: "{{ K8S_CONFORMANCE_STORAGE_CINDER_CONCURRENCY }}"
+        - name: CDN_REGION
+          value: "{{ CDN_REGION }}"
+        - name: DISABLE_OFFLINE_LOGIC
+          value: "{{ DISABLE_OFFLINE_LOGIC }}"
+        - name: REPO_PUBLIC
+          value: "{{ REPO_PUBLIC }}"
+      image: {{ K8S_CONFORMANCE_IMAGE }}
+      volumeMounts:
+        - mountPath: /config
+          name: {{ K8S_CONFORMANCE_POD_NAME }}
+          readOnly: true
+  volumes:
+    - hostPath:
+        path: /tmp/conformance
+      name: output-volume
+    - name: {{ K8S_CONFORMANCE_POD_NAME }}
+      secret:
+        secretName: {{ KUBECONFIG_SECRET_NAME }}
