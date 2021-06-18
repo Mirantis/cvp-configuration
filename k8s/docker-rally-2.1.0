@@ -2,21 +2,20 @@ FROM xrally/xrally-openstack:2.1.0
 
 MAINTAINER Alex Savatieiev (a.savex@gmail.com)
 
-WORKDIR /opt
-RUN git clone https://gerrit.mcp.mirantis.com/mcp/cvp-configuration /opt/res-files && \
+WORKDIR /rally
+RUN sudo apt update && \
+    sudo apt -y install curl wget vim
+
+RUN git clone https://gerrit.mcp.mirantis.com/mcp/cvp-configuration /rally/res-files && \
     rally db recreate && \
-    rally env create --from-sysenv --name openstack && \
-    rally env check && \
-    git clone https://github.com/Mirantis/rally-plugins.git /opt/rally-plugins && \
-    cd /opt/rally-plugins/ && \
+    git clone https://github.com/Mirantis/rally-plugins.git /rally/rally-plugins && \
+    cd /rally/rally-plugins/ && \
     pip3 install . && \
     rally plugin list | grep kubernetes && \
-    rm -rf /var/lib/apt/lists/* && \
-    rm -rf /opt/res-files/.git && \
-    rm -rf /opt/cfg-checker/.git
+    rm -rf /rally/res-files/.git
 
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
-    install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl && \
+    sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl && \
     rm kubectl
 
 ENTRYPOINT ["sleep infinite"]
