@@ -1,0 +1,29 @@
+heat_template_version: 2014-10-16  
+description: A simple Ubuntu server booted from volume.  
+
+parameters:
+  metadata:
+    type: json
+
+resources:  
+  server:
+    type: OS::Nova::Server
+    properties:
+      block_device_mapping:
+        - device_name: vda
+          delete_on_termination: true
+          volume_id: { get_resource: volume }
+      flavor: cvp.medium
+      networks:
+        - network: cvp.net.1
+      metadata: {get_param: metadata}
+      user_data_format: RAW
+      user_data: |
+        #!/bin/sh
+        while [ 1 ] ; do echo $((13**99)) 1>/dev/null 2>&1; done
+
+  volume:
+    type: OS::Cinder::Volume
+    properties:
+      image: 'cvp.ubuntu.1604'
+      size: 20

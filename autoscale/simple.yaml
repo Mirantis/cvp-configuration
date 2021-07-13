@@ -1,0 +1,48 @@
+heat_template_version: 2016-10-14
+description: A simple auto scaling group.  
+
+resources:  
+  group:
+    type: OS::Heat::AutoScalingGroup
+    properties:
+      cooldown: 60
+      desired_capacity: 2
+      max_size: 5
+      min_size: 1
+      resource:
+        type: OS::Nova::Server::Ubuntu
+        properties:
+          metadata: {"metering.server_group": {get_param: "OS::stack_id"}}
+
+  scaleup_policy:
+    type: OS::Heat::ScalingPolicy
+    properties:
+      adjustment_type: change_in_capacity
+      auto_scaling_group_id: { get_resource: group }
+      cooldown: 60
+      scaling_adjustment: 1
+
+  cpu_alarm_high:
+    type: OS::Aodh::GnocchiAggregationByResourcesAlarm
+    properties:
+      description: Scale up if CPU time spent >10000 ns
+      metric: cpu
+      aggregation_method: mean
+      granularity: 60
+      evaluation_periods: 1
+      threshold: 10000
+      resource_type: instance
+      comparison_operator: gt
+      alarm_actions:
+        - str_replace:
+            template: trust+url
+            params:
+              url: {get_attr: [scaleup_policy, signal_url]}
+      query:
+        list_join:
+          - ''
+          - - {'=': {server_group: {get_param: "OS::stack_id"}}}
+
+outputs:
+  scaleup_policy_signal_url:
+    value: {get_attr: {scaleup_policy, signal_url}}
