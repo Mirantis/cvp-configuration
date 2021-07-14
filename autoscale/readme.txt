@@ -6,7 +6,7 @@ Network and image must be created prior to run this template
 
 To auto create them, run cvp resource creation script from ../scripts
 Path is relative to this folder: <repo>/autoscale
-    bash ../prepare.sh -w ($pwd)
+    bash ../scripts/repare.sh -w ($pwd)
 
 # Source the rc file
     . cvprc

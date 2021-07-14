@@ -45,4 +45,4 @@ resources:
 
 outputs:
   scaleup_policy_signal_url:
-    value: {get_attr: {scaleup_policy, signal_url}}
+    value: {get_attr: [ scaleup_policy, signal_url ]}
