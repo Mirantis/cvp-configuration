@@ -195,6 +195,7 @@ function _users() {
     echo user create --project ${project} --password ${password} ${user} >>${cmds}
     echo user create --project ${project} --password ${password} ${admin} >>${cmds}
     echo role add --user ${admin} --project ${project} admin >>${cmds}
+    echo role add --user ${user} --project ${project} member >>${cmds}
 }
 
 function _sg_all() {
