@@ -1,6 +1,6 @@
 #!/bin/bash
 export OS_INTERFACE='admin'
-mask='rally_\|tempest_\|tempest-'
+mask='rally_\|tempest_\|tempest-\|spt-'
 
 echo "Starting. Using mask '$mask'"
 

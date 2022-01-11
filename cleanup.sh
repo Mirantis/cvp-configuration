@@ -1,6 +1,6 @@
 #!/bin/bash
 export OS_INTERFACE='admin'
-mask='cvp\|s_rally\|rally_\|tempest_\|tempest-'
+mask='cvp\|s_rally\|rally_\|tempest_\|tempest-|\spt-'
 stack_alt=false
 stack_regex='api-[0-9]+-[a-z]+'
 dry_run=false
