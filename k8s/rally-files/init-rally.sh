@@ -21,7 +21,7 @@ rally plugin list | grep kubernetes
 # Configure kubernetes
 # Check and prepare kubespec file
 if [ ! -f /artifacts/kubespec_generated.yaml ]; then
-    sudo bash /artifacts/rally-files/gen_kubespec.sh /artifacts/mos-kubeconf.yaml
+    sudo bash /artifacts/rally-files/gen_kubespec.sh /artifacts/mos-kubeconfig.yaml
 fi
 # Create kubernetes env
 rally env create --name kubernetes --spec /artifacts/kubespec_generated.yaml

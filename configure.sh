@@ -57,7 +57,7 @@ tempest_configuration () {
   # default tempest version is 18.0.0 now, unless
   # it is explicitly defined in pipelines
   if [ "$tempest_version" == "" ]; then
-      tempest_version='18.0.0'
+      tempest_version='master'
   fi
   if [ "$PROXY" == "offline" ]; then
     rally verify create-verifier --name tempest_verifier_$sub_name --type tempest --source $TEMPEST_REPO --system-wide --version $tempest_version
@@ -86,7 +86,9 @@ tempest_configuration () {
 glance_image() {
 current_path=$(pwd)
 # fetch image with exact name: testvm
-IMAGE_NAME2=testvm
+IMAGE_NAME=cvp.cirros.35
+IMAGE_NAME2=cvp.cirros.40
+IMAGE_REF=$(glance image-list | grep "\b${IMAGE_NAME}\b" | awk '{print $2}')
 IMAGE_REF2=$(glance image-list | grep "\b${IMAGE_NAME2}\b" | awk '{print $2}')
 if [ "${IMAGE_REF2}" == "" ]; then
   if [ "$PROXY" != "offline" ]; then
@@ -108,7 +110,10 @@ if [ "${IMAGE_REF2}" == "" ]; then
     IMAGE_REF2=""
   fi
 fi
+
+sed -i 's/${IMAGE_REF}/'$IMAGE_REF'/g' $current_path/cvp-configuration/tempest/tempest_ext.conf
 sed -i 's/${IMAGE_REF2}/'$IMAGE_REF2'/g' $current_path/cvp-configuration/tempest/tempest_ext.conf
+sed -i 's/${IMAGE_NAME}/'$IMAGE_NAME'/g' $current_path/cvp-configuration/tempest/tempest_ext.conf
 sed -i 's/${IMAGE_NAME2}/'$IMAGE_NAME2'/g' $current_path/cvp-configuration/tempest/tempest_ext.conf
 }
 

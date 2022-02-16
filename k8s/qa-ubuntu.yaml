@@ -65,7 +65,8 @@ spec:
           name: keystone-keystone-admin
     imagePullPolicy: IfNotPresent
     name: ubuntu
-    image: 127.0.0.1:44301/general/external/docker.io/library/ubuntu:bionic-20201119
+    #image: 127.0.0.1:44301/general/external/docker.io/library/ubuntu:bionic-20201119
+    image: savex13/toolset:latest
     volumeMounts:
     - mountPath: /artifacts
       name: qa-pv-a

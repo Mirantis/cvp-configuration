@@ -18,7 +18,7 @@ RUN export TZ="America/Chicago" && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
     apt-get install -y python3-pip python3-venv vim git iperf3 mtr htop iputils-ping traceroute tcpdump wget iproute2 curl screen
 
-RUN pip3 install --no-cache-dir python-openstackclient python-neutronclient python-heatclient pyghmi python-octaviaclient tempestparser python-ironicclient aodhclient gnocchiclient
+RUN pip3 install --no-cache-dir python-openstackclient python-neutronclient python-heatclient pyghmi python-octaviaclient tempestparser python-ironicclient aodhclient gnocchiclient python-barbicanclient python-glanceclient
 
 RUN git clone https://gerrit.mcp.mirantis.com/mcp/cvp-configuration /opt/res-files && \
     git clone http://gerrit.mcp.mirantis.com/mcp/cfg-checker /opt/cfg-checker && \
