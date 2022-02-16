@@ -1,0 +1,128 @@
+{
+    "openstack": {
+        "admin": {
+            "password": "mcp1234",
+            "project_domain_name": "default",
+            "project_name": "cvp.project",
+            "user_domain_name": "default",
+            "username": "cvp.admin"
+        },
+        "users": [
+      {
+          "username": "cvp.user.01",
+          "password": "mcp1234",
+          "tenant_name": "cvp.project"
+      },
+      {
+          "username": "cvp.user.02",
+          "password": "mcp1234",
+          "tenant_name": "cvp.project"
+      },
+      {
+          "username": "cvp.user.03",
+          "password": "mcp1234",
+          "tenant_name": "cvp.project"
+      },
+      {
+          "username": "cvp.user.04",
+          "password": "mcp1234",
+          "tenant_name": "cvp.project"
+      },
+      {
+          "username": "cvp.user.05",
+          "password": "mcp1234",
+          "tenant_name": "cvp.project"
+      },
+      {
+          "username": "cvp.user.06",
+          "password": "mcp1234",
+          "tenant_name": "cvp.project"
+      },
+      {
+          "username": "cvp.user.07",
+          "password": "mcp1234",
+          "tenant_name": "cvp.project"
+      },
+      {
+          "username": "cvp.user.08",
+          "password": "mcp1234",
+          "tenant_name": "cvp.project"
+      },
+      {
+          "username": "cvp.user.09",
+          "password": "mcp1234",
+          "tenant_name": "cvp.project"
+      },
+      {
+          "username": "cvp.user.10",
+          "password": "mcp1234",
+          "tenant_name": "cvp.project"
+      },
+      {
+          "username": "cvp.user.11",
+          "password": "mcp1234",
+          "tenant_name": "cvp.project"
+      },
+      {
+          "username": "cvp.user.12",
+          "password": "mcp1234",
+          "tenant_name": "cvp.project"
+      },
+      {
+          "username": "cvp.user.13",
+          "password": "mcp1234",
+          "tenant_name": "cvp.project"
+      },
+      {
+          "username": "cvp.user.14",
+          "password": "mcp1234",
+          "tenant_name": "cvp.project"
+      },
+      {
+          "username": "cvp.user.15",
+          "password": "mcp1234",
+          "tenant_name": "cvp.project"
+      },
+      {
+          "username": "cvp.user.16",
+          "password": "mcp1234",
+          "tenant_name": "cvp.project"
+      },
+      {
+          "username": "cvp.user.17",
+          "password": "mcp1234",
+          "tenant_name": "cvp.project"
+      },
+      {
+          "username": "cvp.user.18",
+          "password": "mcp1234",
+          "tenant_name": "cvp.project"
+      },
+      {
+          "username": "cvp.user.19",
+          "password": "mcp1234",
+          "tenant_name": "cvp.project"
+      },
+      {
+          "username": "cvp.user.20",
+          "password": "mcp1234",
+          "tenant_name": "cvp.project"
+      }
+        ],
+        "api_info": {
+            "keystone": {
+                "service_type": "identityv3",
+                "version": 3
+            }
+        },
+        "auth_url": "http://keystone-api.openstack.svc.cluster.local:5000/v3",
+        "endpoint_type": "internal",
+        "https_cacert": "",
+        "https_cert": "",
+        "https_insecure": false,
+        "https_key": "",
+        "profiler_conn_str": null,
+        "profiler_hmac_key": null,
+        "region_name": "RegionOne"
+    }
+}

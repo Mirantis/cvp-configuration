@@ -1,0 +1,409 @@
+{% set flavor_name = flavor_name or "cvp.tiny" %}
+{% set image_name = image_name or "cvp.cirros.35" %}
+{% set availability_zone = "nova" %}
+{% set concurrency = 10 %}
+{% set volume_size =  %}
+{% set times = 100 %}
+{% set users = 5 %}
+{% set tenants = 4 %}
+{% set rbd_image = "http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img" %}
+{% set heat_template = "/artifacts/default.yaml.template" %}
+{% set fixed_net = "id" %}
+
+{
+  "KeystoneBasic.authenticate_user_and_validate_token": [
+  {
+    "args": {},
+    "runner": {
+      "type": "constant",
+      "times": {{times}},
+      "concurrency": {{concurrency}}
+    },
+    "sla": { "failure_rate": { "max": 0 } }
+  }
+  ],
+  "KeystoneBasic.create_tenant_with_users": [
+  {
+    "args": { "users_per_tenant": 10 },
+    "runner": {
+      "type": "constant",
+      "concurrency": {{concurrency}},
+      "times": {{times}}
+    },
+    "sla": { "failure_rate": { "max": 0 } }
+  }
+  ],
+  "Authenticate.validate_cinder": [
+  {
+    "args": { "repetitions": 2 },
+    "runner": {
+      "type": "constant",
+      "times": {{times}},
+      "concurrency": {{concurrency}}
+    },
+    "context": {
+      "users": {
+        "users_per_tenant": {{users}},
+        "tenants": {{tenants}}
+      },
+      "api_versions@openstack": { "cinder": {"service_type": "volumev3"} }
+    },
+    "sla": { "failure_rate": { "max": 0 } }
+  }
+  ],
+  "Authenticate.validate_glance": [
+  {
+    "args": { "repetitions": 2 },
+    "runner": {
+      "type": "constant",
+      "times": {{times}},
+      "concurrency": {{concurrency}}
+    },
+    "context": {
+      "users": {
+        "users_per_tenant": {{users}},
+        "tenants": {{tenants}}
+      }
+    },
+    "sla": { "failure_rate": { "max": 0 } }
+  }
+  ],
+  "Authenticate.validate_heat": [
+  {
+    "args": { "repetitions": 2 },
+    "runner": {
+      "type": "constant",
+      "times": {{times}},
+      "concurrency": {{concurrency}}
+    },
+    "context": {
+      "users": {
+        "users_per_tenant": {{users}},
+        "tenants": {{tenants}}
+      }
+    },
+    "sla": { "failure_rate": { "max": 0 } }
+  }
+  ],
+  "Authenticate.validate_nova": [
+  {
+    "args": { "repetitions": 2 },
+    "runner": {
+      "type": "constant",
+      "times": {{times}},
+      "concurrency": {{concurrency}}
+    },
+    "context": {
+      "users": {
+        "users_per_tenant": {{users}},
+        "tenants": {{tenants}}
+      }
+    },
+    "sla": { "failure_rate": { "max": 0 } }
+  }
+  ],
+  "Authenticate.validate_neutron": [
+  {
+    "args": { "repetitions": 2 },
+    "runner": {
+      "type": "constant",
+      "times": {{times}},
+      "concurrency": {{concurrency}}
+    },
+    "context": {
+      "users": {
+        "users_per_tenant": {{users}},
+        "tenants": {{tenants}}
+      }
+    },
+    "sla": { "failure_rate": { "max": 0 } }
+  }
+  ],
+  "NovaServers.boot_and_migrate_server": [
+  {
+    "args": {
+      "flavor": {
+        "name": "{{flavor_name}}"
+      },
+      "image": {
+        "name": "{{image_name}}"
+      },
+      "nics": [
+        {"net-id": "{{fixed_net}}"}
+      ]
+    },
+    "runner": {
+      "type": "constant",
+      "times": {{times}},
+      "concurrency": {{concurrency}}
+    },
+    "context": {
+      "quotas": {
+        "nova": {
+          "instances": -1,
+          "cores": -1,
+          "ram": -1,
+          "key_pairs": -1,
+          "security_groups": -1,
+          "security_group_rules": -1
+        }
+      }
+    },
+    "sla": { "failure_rate": { "max": 0 } }
+  }
+  ],
+  "NovaServers.boot_and_delete_server": [
+  {
+    "args": {
+      "flavor": {
+        "name": "{{flavor_name}}"
+      },
+      "image": {
+        "name": "{{image_name}}"
+      },
+      "nics": [
+        {"net-id": "{{fixed_net}}"}
+      ],
+      "detailed": true,
+      "availability_zone": "{{availability_zone}}"
+    },
+    "runner": {
+      "type": "constant",
+      "concurrency": {{concurrency}},
+      "times": {{times}}
+    },
+    "context": {
+      "quotas": {
+        "nova": {
+          "instances": -1,
+          "cores": -1,
+          "ram": -1,
+          "key_pairs": -1,
+          "security_groups": -1,
+          "security_group_rules": -1
+        }
+      }
+    },
+    "sla": { "failure_rate": { "max": 0 } }
+  }
+  ],
+  "NovaServers.boot_server_from_volume_and_delete": [
+  {
+    "args": {
+      "flavor": {
+        "name": "{{flavor_name}}"
+      },
+      "image": {
+        "name": "{{image_name}}"
+      },
+      "nics": [
+        {"net-id": "{{fixed_net}}"}
+      ],
+      "volume_size": {{volume_size}},
+      "force_delete": false,
+      "availability_zone": "{{availability_zone}}"
+    },
+    "runner": {
+      "type": "constant",
+      "concurrency": {{concurrency}},
+      "times": {{times}}
+    },
+    "context": {
+      "api_versions@openstack": { "cinder": {"service_type": "volumev3"} },
+      "quotas": {
+        "nova": {
+          "instances": -1,
+          "cores": -1,
+          "ram": -1,
+          "key_pairs": -1,
+          "security_groups": -1,
+          "security_group_rules": -1
+        },
+        "cinder": { "volumes": -1 }
+      }
+    },
+    "sla": { "failure_rate": { "max": 0 } }
+  }
+  ],
+  "NeutronNetworks.create_and_delete_networks": [
+  {
+    "runner": {
+      "type": "constant",
+      "concurrency": {{concurrency}},
+      "times": {{times}}
+    },
+    "context": {
+      "users": {
+        "tenants": {{users}},
+        "users_per_tenant": {{tenants}}
+      },
+      "quotas": {
+        "neutron": { "network": -1 }
+      }
+    },
+    "sla": { "failure_rate": { "max": 0 } }
+  }
+  ],
+  "NeutronNetworks.create_and_delete_ports": [
+  {
+    "args": {
+      "network_create_args": {},
+      "port_create_args": {},
+      "ports_per_network": 10
+    },
+    "runner": {
+      "type": "constant",
+      "concurrency": {{concurrency}},
+      "times": {{times}}
+    },
+    "context": {
+      "users": {
+        "tenants": {{users}},
+        "users_per_tenant": {{tenants}}
+      },
+      "quotas": {
+        "neutron": {
+          "network": -1,
+          "port": -1
+        }
+      }
+    },
+    "sla": { "failure_rate": { "max": 0 } }
+  }
+  ],
+  "NeutronNetworks.create_and_delete_routers": [
+  {
+    "args": {
+      "network_create_args": {},
+      "subnet_create_args": {},
+      "subnet_cidr_start": "1.1.0.0/30",
+      "subnets_per_network": 2,
+      "router_create_args": {}
+    },
+    "runner": {
+      "type": "constant",
+      "concurrency": {{concurrency}},
+      "times": {{times}}
+    },
+    "context": {
+      "users": {
+        "tenants": {{users}},
+        "users_per_tenant": {{tenants}}
+      },
+      "quotas": {
+        "neutron": {
+          "network": -1,
+          "subnet": -1,
+          "router": -1
+        }
+      }
+    },
+    "sla": { "failure_rate": { "max": 0 } }
+  }
+  ],
+  "CinderVolumes.create_and_attach_volume": [
+  {
+    "args": {
+      "size": {{volume_size}},
+      "image": {
+        "name": "{{image_name}}"
+      },
+      "flavor": {
+        "name": "{{flavor_name}}"
+      },
+      "nics": [
+        {"net-id": "{{fixed_net}}"}
+      ],
+      "create_volume_params": {},
+      "availability_zone": "{{availability_zone}}"
+    },
+    "runner": {
+      "type": "constant",
+      "concurrency": {{concurrency}},
+      "times": {{times}}
+    },
+    "context": {
+      "api_versions@openstack": { "cinder": {"service_type": "volumev3"} },
+      "quotas": {
+        "nova": {
+          "instances": -1,
+          "cores": -1,
+          "ram": -1,
+          "key_pairs": -1,
+          "security_groups": -1,
+          "security_group_rules": -1
+        },
+        "cinder": { "volumes": -1 }
+      }
+    },
+    "sla": { "failure_rate": { "max": 0 } }
+  }
+  ],
+  "CinderVolumes.create_and_delete_snapshot": [
+  {
+    "args": { "force": false },
+    "runner": {
+      "type": "constant",
+      "concurrency": {{concurrency}},
+      "times": {{times}}
+    },
+    "context": {
+      "volumes": { "size": {{volume_size}} },
+      "quotas": {
+        "cinder": {
+          "snapshots": -1,
+          "volumes": -1
+        }
+      },
+      "api_versions@openstack": { "cinder": {"service_type": "volumev3"} }
+    },
+    "sla": { "failure_rate": { "max": 0 } }
+  }
+  ],
+  "CinderVolumes.create_and_upload_volume_to_image": [
+  {
+    "args": {
+      "size": {{volume_size}},
+      "force": false,
+      "container_format": "bare",
+      "disk_format": "raw",
+      "do_delete": true,
+      "image": {
+        "name": "{{image_name}}"
+      }
+    },
+    "runner": {
+      "type": "constant",
+      "concurrency": {{concurrency}},
+      "times": {{times}}
+    },
+    "context": {
+      "quotas": {
+        "cinder": {
+          "snapshots": -1,
+          "volumes": -1
+        }
+      },
+      "api_versions@openstack": { "cinder": {"service_type": "volumev3"} }
+    },
+    "sla": { "failure_rate": { "max": 0 } }
+  }
+  ],
+  "GlanceImages.create_and_delete_image": [
+  {
+    "args": {
+      "image_location": "{{rbd_image}}",
+      "container_format": "bare",
+      "disk_format": "qcow2"
+    },
+    "runner": {
+      "type": "constant",
+      "concurrency": {{concurrency}},
+      "times": {{times}}
+    },
+    "context": {
+    },
+    "sla": { "failure_rate": { "max": 0 } }
+  }
+  ]
+}
