@@ -1,0 +1,11 @@
+https://nova.nc4.iad0.netskope.com/v2.1/flavors
+https://designate.nc4.iad0.netskope.com/
+https://octavia.nc4.iad0.netskope.com
+https://placement.nc4.iad0.netskope.com/
+https://cloudformation.nc4.iad0.netskope.com/v1
+https://keystone.nc4.iad0.netskope.com/v3
+https://neutron.nc4.iad0.netskope.com
+https://cinder.nc4.iad0.netskope.com/v3/
+https://rgw-store.nc4.iad0.netskope.com/swift/info
+https://glance.nc4.iad0.netskope.com
+https://barbican.nc4.iad0.netskope.com/
