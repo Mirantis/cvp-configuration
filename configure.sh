@@ -72,6 +72,7 @@ tempest_configuration () {
     #rally verify add-verifier-ext --version 7a4bff728fbd8629ec211669264ab645aa921e2b --source https://github.com/openstack/telemetry-tempest-plugin
     rally verify add-verifier-ext --version 0.3.0 --source https://github.com/openstack/heat-tempest-plugin
     pip install --force-reinstall python-cinderclient==3.2.0
+    /home/rally/.rally/verification/*/.venv/bin/pip install --force-reinstall 'paramiko==2.7.2'
     unset https_proxy
     update_cacerts "/home/rally/.rally/verification"
   fi
