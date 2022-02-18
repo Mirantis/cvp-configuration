@@ -20,7 +20,7 @@ RUN git clone https://github.com/openstack/heat-tempest-plugin && \
     pushd heat-tempest-plugin; git checkout 0.2.0; pip install -r requirements.txt; \
     popd;
 
-RUN pip install --force-reinstall python-cinderclient==3.2.0 python-glanceclient==2.11
+RUN pip install --force-reinstall python-cinderclient==3.2.0 python-glanceclient==2.11 paramiko==2.7.2
 
 RUN sed -i 's/uuid4())/uuid4()).replace("-","")/g' /usr/local/lib/python2.7/dist-packages/rally/plugins/openstack/scenarios/keystone/utils.py
 RUN sed -i 's/uuid4())/uuid4()).replace("-","")/g' /usr/local/lib/python2.7/dist-packages/rally/plugins/openstack/context/keystone/users.py
