@@ -86,29 +86,48 @@ tempest_configuration () {
 glance_image() {
 current_path=$(pwd)
 # fetch image with exact name: testvm
-IMAGE_NAME=cvp.cirros.35
-IMAGE_NAME2=cvp.cirros.40
+IMAGE_NAME=cvp.cirros.51
+IMAGE_NAME2=cvp.cirros.52
 IMAGE_REF=$(glance image-list | grep "\b${IMAGE_NAME}\b" | awk '{print $2}')
 IMAGE_REF2=$(glance image-list | grep "\b${IMAGE_NAME2}\b" | awk '{print $2}')
 if [ "${IMAGE_REF2}" == "" ]; then
+  imagefile51=cirros-0.5.1-x86_64-disk.img
+  imagefile52=cirros-0.5.2-x86_64-disk.img
+  imageurl51=https://download.cirros-cloud.net/0.5.1/${imagefile51}
+  imageurl52=https://download.cirros-cloud.net/0.5.2/${imagefile52}
+  imagepath51=$current_path/cvp-configuration/${imagefile51}
+  imagepath52=$current_path/cvp-configuration/${imagefile52}
   if [ "$PROXY" != "offline" ]; then
     if [ -n "${PROXY}" ]; then
       export http_proxy=$PROXY
       export https_proxy=$PROXY
     fi
-    ls $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img || wget http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img -O $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img
+    ls ${imagepath51} || wget ${imageurl51} -O ${imagepath51}
+    ls ${imagepath52} || wget ${imageurl52} -O ${imagepath52}
     unset http_proxy
     unset https_proxy
   fi
-  if [ -e $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img ]; then
-    echo "MD5 should be ee1eca47dc88f4879d8a229cc70a07c6"
-    md5sum $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img
-    glance image-create --name=${IMAGE_NAME2} --visibility=public --container-format=bare --disk-format=qcow2 < $current_path/cvp-configuration/cirros-0.3.4-x86_64-disk.img
+  # v5.1
+  if [ -e $current_path/cvp-configuration/${imagefile51} ]; then
+    echo "MD5 for the file is:"
+    md5sum ${imagepath51}
+    glance image-create --name=${IMAGE_NAME} --visibility=public --container-format=bare --disk-format=qcow2 < ${imagepath51}
+    IMAGE_REF=$(glance image-list | grep "\b${IMAGE_NAME}\b" | awk '{print $2}')
+  else
+    echo "Cirros image v5.1 was not downloaded! Some tests may fail"
+    IMAGE_REF=""
+  fi
+  # v5.2
+  if [ -e $current_path/cvp-configuration/${imagefile52} ]; then
+    echo "MD5 for the file is:"
+    md5sum ${imagepath52}
+    glance image-create --name=${IMAGE_NAME2} --visibility=public --container-format=bare --disk-format=qcow2 < ${imagepath52}
     IMAGE_REF2=$(glance image-list | grep "\b${IMAGE_NAME2}\b" | awk '{print $2}')
   else
-    echo "Cirros image was not downloaded! Some tests may fail"
+    echo "Cirros image v5.2 was not downloaded! Some tests may fail"
     IMAGE_REF2=""
   fi
+
 fi
 
 sed -i 's/${IMAGE_REF}/'$IMAGE_REF'/g' $current_path/cvp-configuration/tempest/tempest_ext.conf
@@ -121,11 +140,19 @@ quick_configuration () {
 current_path=$(pwd)
 #image
 glance_image
-#flavor for rally
-nova flavor-list | grep tiny 2>&1 >/dev/null || {
-    echo "Let's create m1.tiny flavor"
-    nova flavor-create --is-public true m1.tiny auto 128 1 1
+
+#flavors for rally
+nova flavor-list | grep cvp.tiny 2>&1 >/dev/null || {
+    echo "Let's create cvp.tiny flavor"
+    #nova flavor-create --is-public true m1.tiny auto 128 1 1
+    openstack flavor create --id 1 --ram 64 --disk 1 --vcpus 1 cvp.tiny
 }
+nova flavor-list | grep cvp.small 2>&1 >/dev/null || {
+    echo "Let's create cvp.small flavor"
+    openstack flavor create --id 2 --ram 256 --disk 2 --vcpus 1 cvp.small
+}
+
+
 #shared fixed network
 shared_count=`neutron net-list -c name -c shared | grep True | grep "fixed-net" | wc -l`
 if [ $shared_count -eq 0 ]; then

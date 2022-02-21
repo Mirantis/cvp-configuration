@@ -1,0 +1,71 @@
+*.py[cod]
+*.swp
+
+# C extensions
+*.so
+
+# Packages
+*.egg
+*.egg-info
+dist
+build
+include
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
+lib
+local
+lib64
+MANIFEST
+TAGS
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.coverage
+.tox
+nosetests.xml
+
+# Translations
+*.mo
+
+# Mr Developer
+.mr.developer.cfg
+.cache
+.project
+.pydevproject
+.idea
+.DS_Store
+.vscode
+.venv
+
+# Local example
+example_local.py
+
+# Local settings
+local_settings.py
+id_rsa*
+kaas-bm-uscloudrc*
+
+# Documentation
+doc/_build/
+
+# Logs
+/logs
+tests.log
+
+# Certs
+/ca.crt
+/ca.pem
+
+# Cache
+/.cache
+
+# Artifacts
+/artifacts/
+si_tests/kaas-bm-env/state/

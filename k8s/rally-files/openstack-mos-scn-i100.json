@@ -5,10 +5,10 @@
 {% set tenants = 3 %}
 
 {% set flavor_name = flavor_name or "cvp.tiny" %}
-{% set image_name = image_name or "cvp.cirros.35" %}
+{% set image_name = image_name or "cvp.cirros.51" %}
 {% set availability_zone = "nova" %}
 {% set rbd_image = "http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img" %}
-{% set heat_template = "/artifacts/res-files/rally/default.yaml.template" %}
+{% set heat_template = "/artifacts/default.yaml.template" %}
 {% set fixed_net = "id" %}
 
 {

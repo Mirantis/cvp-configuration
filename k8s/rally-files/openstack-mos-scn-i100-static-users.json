@@ -1,5 +1,5 @@
 {% set flavor_name = flavor_name or "cvp.tiny" %}
-{% set image_name = image_name or "cvp.cirros.35" %}
+{% set image_name = image_name or "cvp.cirros.51" %}
 {% set availability_zone = "nova" %}
 {% set concurrency = 10 %}
 {% set volume_size =  %}

@@ -39,14 +39,17 @@ subnet2=${name_prefix}.subnet.2
 router=${name_prefix}.router
 
 # Images: cirros (3.5, 4.0), ubuntu (16.04)
-cirros3=${name_prefix}.cirros.35
-cirros4=${name_prefix}.cirros.40
+cirros51=${name_prefix}.cirros.51
+cirros52=${name_prefix}.cirros.52
 ubuntu16=${name_prefix}.ubuntu.1604
-ubuntuspt=${name_prefix}.ubuntu.spt
+ubuntu20=${name_prefix}.ubuntu.2004
 
-cirros3_link=http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img
-cirros4_link=http://download.cirros-cloud.net/0.4.0/cirros-0.4.0-aarch64-disk.img
+#cirros3_link=http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img
+#cirros4_link=http://download.cirros-cloud.net/0.4.0/cirros-0.4.0-aarch64-disk.img
+cirros51_link=https://download.cirros-cloud.net/0.5.1/cirros-0.5.1-x86_64-disk.img
+cirros52_link=https://download.cirros-cloud.net/0.5.2/cirros-0.5.2-x86_64-disk.img
 ubuntu16_link=https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img
+ubuntu20_link=https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img
 
 # Volume (2GB)
 volume=${name_prefix}.volume
@@ -144,14 +147,14 @@ function print_manifest() {
     put volume_id $(ol1 volume ${volume})
 
     # images
-    put cirros35_name ${cirros3}
-    put cirros35_id $(ol1 image ${cirros3})
-    put cirros40_name ${cirros4}
-    put cirros40_id $(ol1 image ${cirros4})
+    put cirros51_name ${cirros51}
+    put cirros51_id $(ol1 image ${cirros51})
+    put cirros52_name ${cirros52}
+    put cirros52_id $(ol1 image ${cirros52})
     put ubuntu16_name ${ubuntu16}
     put ubuntu16_id $(ol1 image ${ubuntu16})
-    put ubuntuspt_name ${ubuntuspt}
-    put ubuntuspt_id $(ol1 image ${ubuntuspt})
+    put ubuntu20_name ${ubuntu20}
+    put ubuntu20_id $(ol1 image ${ubuntu20})
 }
 
 # create rc file out of current ENV vars
@@ -382,12 +385,10 @@ create_keypair
 create_fixed_nets
 
 # images
-#create_image cirros3
-#create_image cirros4
-#create_image ubuntu16
-# update image name to correct one uploaded
-#ubuntuspt_file="ubuntuspt.img"
-#openstack image create --public --disk-format qcow2 --container-format bare --file ${ubuntuspt_file} ${ubuntuspt} -c id -f value
+create_image cirros51
+create_image cirros52
+create_image ubuntu16
+create_image ubuntu20
 
 ### Manifest and fall back to original rc
 print_manifest
