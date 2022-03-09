@@ -293,8 +293,8 @@ function create_fixed_nets() {
     echo router add subnet ${router_id} ${subnet2_id} >>${cmds}
     process_cmds
 
-    # TODO: Search for external net
-    external=prod-public
+    # get external network name
+    external=$(openstack network list --external -c Name -f value | head -n1)
     echo router set ${router} --external-gateway ${external} >>${cmds}
     process_cmds
 }
