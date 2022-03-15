@@ -191,6 +191,14 @@ function _clean_regions {
     _clean_and_flush
 }
 
+### Services
+function _clean_services {
+    services=( $(openstack service list -c Name -f value | grep ${mask}) )
+    echo "-> ${#services[@]} services containing '${mask}' found"
+    printf "%s\n" ${services[@]} | xargs -I{} echo service delete {} >>${cmds}
+    _clean_and_flush
+}
+
 ### Stacks
 function _clean_stacks {
     # By default openstack denies use of global_index for everyone.
@@ -242,6 +250,7 @@ _clean_sec_groups
 _clean_keypairs
 _clean_routers_and_networks
 _clean_regions
+_clean_services
 _clean_containers
 
 # project cleaning disabled by default
