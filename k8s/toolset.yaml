@@ -65,7 +65,7 @@ spec:
           name: keystone-keystone-admin
     imagePullPolicy: IfNotPresent
     name: toolset
-    image: savex13/toolset:0.3
+    image: savex13/toolset:0.4
     volumeMounts:
     - mountPath: /artifacts
       name: qa-pv-a

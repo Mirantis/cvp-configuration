@@ -19,7 +19,7 @@ RUN export TZ="America/Chicago" && \
     apt autoremove --yes && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install --no-cache-dir python-openstackclient python-neutronclient python-heatclient pyghmi python-octaviaclient tempestparser python-ironicclient aodhclient gnocchiclient
+RUN pip3 install --no-cache-dir python-openstackclient python-neutronclient python-heatclient pyghmi python-octaviaclient tempestparser python-ironicclient aodhclient gnocchiclient python-barbicanclient python-glanceclient
 
 RUN mkdir /opt/packages/ && \
     cd /opt/packages && \
