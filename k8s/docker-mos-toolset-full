@@ -16,7 +16,7 @@ RUN apt-get update && \
 
 RUN export TZ="America/Chicago" && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
-    apt-get install -y python3-pip python3-venv vim git iperf3 mtr htop iputils-ping traceroute tcpdump wget iproute2 curl screen
+    apt-get install -y python3-pip python3-venv vim git iperf3 mtr htop iputils-ping traceroute tcpdump wget iproute2 curl screen qemu-utils
 
 RUN pip3 install --no-cache-dir python-openstackclient python-neutronclient python-heatclient pyghmi python-octaviaclient tempestparser python-ironicclient aodhclient gnocchiclient python-barbicanclient python-glanceclient
 
