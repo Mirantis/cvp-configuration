@@ -18,6 +18,12 @@ RUN export TZ="America/Chicago" && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
     apt-get install -y python3-pip python3-venv vim git iperf3 mtr htop iputils-ping traceroute tcpdump wget iproute2 curl screen qemu-utils
 
+RUN curl https://baltocdn.com/helm/signing.asc | apt-key add - && \
+    apt-get install apt-transport-https --yes && \
+    echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list && \
+    apt-get update && \
+    apt-get install -y helm
+
 RUN pip3 install --no-cache-dir python-openstackclient python-neutronclient python-heatclient pyghmi python-octaviaclient tempestparser python-ironicclient aodhclient gnocchiclient python-barbicanclient python-glanceclient
 
 RUN git clone https://gerrit.mcp.mirantis.com/mcp/cvp-configuration /opt/res-files && \
@@ -44,7 +50,7 @@ RUN cd /opt/si-tests/ && \
 
 RUN mkdir /opt/packages/ && \
     cd /opt/packages && \
-    apt-get download $(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances iperf3 | grep "^\w" | sort -u) || true
+    apt-get download $(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances iperf3 fio | grep "^\w" | sort -u) || true
 
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
     install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl && \

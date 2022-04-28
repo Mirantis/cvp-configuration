@@ -1,0 +1,17 @@
+http://designate-api.openstack.svc.cluster.local:9001/
+http://octavia-api.openstack.svc.cluster.local:9876
+http://cinder-api.openstack.svc.cluster.local:8776/v3/
+http://barbican-api.openstack.svc.cluster.local:9311/
+http://neutron-server.openstack.svc.cluster.local:9696
+http://ironic-api.openstack.svc.cluster.local:6385
+http://heat-api.openstack.svc.cluster.local:8004/v1/
+http://gnocchi-api.openstack.svc.cluster.local:8041
+http://keystone-api.openstack.svc.cluster.local:5000/v3
+http://masakari-api.openstack.svc.cluster.local:15868/v1
+http://placement-api.openstack.svc.cluster.local:8778/
+https://rook-ceph-rgw-rgw-store.rook-ceph.svc:8443/swift/info
+http://aodh-api.openstack.svc.cluster.local:8042
+http://heat-cfn.openstack.svc.cluster.local:8000/v1
+http://glance-api.openstack.svc.cluster.local:9292
+http://nova-api.openstack.svc.cluster.local:8774/v2.1/flavors
+http://cinder-api.openstack.svc.cluster.local:8776/v2/

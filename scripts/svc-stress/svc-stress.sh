@@ -7,21 +7,21 @@ if [[ -z ${project_id+x} ]]; then
     export project_id=$(openstack project list -c ID -c Name -f value | grep ${OS_PROJECT_NAME} | cut -d' ' -f1)
     echo "# Exported project_id: ${project_id}"
 fi
-poke_uri=$(echo ${1/project_id/$project_id})
+#poke_uri=$(echo ${1/project_id/$project_id})
 
 function ppoke {
-rr=$(curl --insecure -sH "X-Auth-Token: ${token}" $1)
+rr=$(curl -sSH "X-Auth-Token: ${token}" $1 2>&1)
 if [[ $? != 0 ]]; then
-	echo "[$(date +'%H:%M:%S')] Error: $rr"
+	printf "[$(date +'%H:%M:%S')] -> $1\nError: $rr\n\n"
 else
-	echo "[$(date +'%H:%M:%S')] -> '$1', $(echo $rr | wc -c) bytes"
+	printf "[$(date +'%H:%M:%S')] -> '$1', $(echo $rr | wc -c) bytes\n"
 fi
 }
 
-cc=50;
+cc=${2};
 while [[ $cc -gt 0 ]]; do
 	cat $1 | while read svc; do
-		ppoke $svc | grep "Error";
+		ppoke $svc;
 	done
 	(( cc -= 1 ));
 	echo "$cc to go";

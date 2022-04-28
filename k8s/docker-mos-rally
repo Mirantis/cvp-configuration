@@ -1,0 +1,14 @@
+FROM xrally/xrally-openstack:2.1.0 
+
+MAINTAINER Alex Savatieiev (a.savex@gmail.com)
+
+WORKDIR /rally
+RUN sudo apt-get update && \
+    sudo apt-get install -y wget curl git
+
+RUN git clone https://github.com/Mirantis/rally-plugins.git && \
+    cd rally-plugins/ && \
+    pip3 install .
+
+ENTRYPOINT ["bash"]
+

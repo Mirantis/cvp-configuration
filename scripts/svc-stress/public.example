@@ -1,0 +1,17 @@
+https://cinder.mvp-dev.sdscloud.com/v3
+https://aodh.mvp-dev.sdscloud.com
+https://glance.mvp-dev.sdscloud.com
+https://gnocchi.mvp-dev.sdscloud.com
+https://barbican.mvp-dev.sdscloud.com/
+https://keystone.mvp-dev.sdscloud.com/v3
+https://designate.mvp-dev.sdscloud.com/
+https://placement.mvp-dev.sdscloud.com/
+https://cinder.mvp-dev.sdscloud.com/v2
+https://octavia.mvp-dev.sdscloud.com
+https://nova.mvp-dev.sdscloud.com/v2.1/flavors
+https://neutron.mvp-dev.sdscloud.com
+https://heat.mvp-dev.sdscloud.com/v1/
+https://cloudformation.mvp-dev.sdscloud.com/v1
+https://rgw-store.mvp-dev.sdscloud.com/swift/info
+https://masakari.mvp-dev.sdscloud.com/v1
+https://ironic.mvp-dev.sdscloud.com

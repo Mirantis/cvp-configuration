@@ -255,15 +255,15 @@ function create_keypair() {
 function _flavors() {
     # huge paged flavors
     if [ "$huge_pages" = true ]; then
-        echo flavor create --id 1 --ram 64 --disk 1 --vcpus 1 ${flavor_t} --property hw:mem_page_size=large >>${cmds}
-        echo flavor create --id 2 --ram 256 --disk 2 --vcpus 1 ${flavor_s} --property hw:mem_page_size=large >>${cmds}
-        echo flavor create --id 3 --ram 2048 --disk 10 --vcpus 2 ${flavor_m} --property hw:mem_page_size=large >>${cmds}
-        echo flavor create --id 4 --ram 2048 --disk 20 --vcpus 4 ${flavor_h} --property hw:mem_page_size=large >>${cmds}
+        echo flavor create --id 1 --ram 256 --disk 5 --vcpus 1 ${flavor_t} --property hw:mem_page_size=large >>${cmds}
+        echo flavor create --id 2 --ram 512 --disk 10 --vcpus 2 ${flavor_s} --property hw:mem_page_size=large >>${cmds}
+        echo flavor create --id 3 --ram 2048 --disk 20 --vcpus 4 ${flavor_m} --property hw:mem_page_size=large >>${cmds}
+        echo flavor create --id 4 --ram 4096 --disk 30 --vcpus 6 ${flavor_h} --property hw:mem_page_size=large >>${cmds}
     else
-        echo flavor create --id 1 --ram 64 --disk 1 --vcpus 1 ${flavor_t} >>${cmds}
-        echo flavor create --id 2 --ram 256 --disk 2 --vcpus 1 ${flavor_s} >>${cmds}
-        echo flavor create --id 3 --ram 2048 --disk 10 --vcpus 2 ${flavor_m} >>${cmds}
-        echo flavor create --id 4 --ram 2048 --disk 20 --vcpus 4 ${flavor_h} >>${cmds}
+        echo flavor create --id 1 --ram 256 --disk 5 --vcpus 1 ${flavor_t} >>${cmds}
+        echo flavor create --id 2 --ram 512 --disk 10 --vcpus 2 ${flavor_s} >>${cmds}
+        echo flavor create --id 3 --ram 2048 --disk 20 --vcpus 4 ${flavor_m} >>${cmds}
+        echo flavor create --id 4 --ram 4096 --disk 30 --vcpus 6 ${flavor_h} >>${cmds}
     fi
 }
 
