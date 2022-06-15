@@ -65,7 +65,7 @@ spec:
           name: keystone-keystone-admin
     imagePullPolicy: IfNotPresent
     name: rally
-    image: 127.0.0.1:44301/openstack/extra/xrally-openstack:2.1.0-20210524175537
+    image: savex13/xrally-kube:2.1.0
     volumeMounts:
     - mountPath: /artifacts
       name: qa-pv-r
