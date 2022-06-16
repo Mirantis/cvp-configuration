@@ -29,5 +29,13 @@ RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/s
     install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl && \
     rm kubectl
 
+RUN git clone "https://gerrit.mcp.mirantis.com/mcp/mos-spt" /opt/mos-spt && \
+    cd /opt/mos-spt && \
+    python3 -m venv .venv && \
+    . .venv/bin/activate && \
+    pip3 install --no-cache-dir -r requirements.txt && \
+    deactivate && \
+    cd /opt
+
 ENTRYPOINT ["sleep infinite"]
 
