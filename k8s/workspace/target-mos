@@ -1,0 +1,3 @@
+#!/bin/bash
+export TARGET_NAMESPACE=${MOS_NS}
+export TARGET_CLUSTER=${MOS_CLUSTER}

@@ -1,0 +1,2 @@
+#!/bin/bash
+export KUBECONFIG=$MY_PROJFOLDER/envs/mos-kubeconfig.yaml
