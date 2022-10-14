@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: toolset
+  namespace: qa-space
+spec:
+  containers:
+  - command:
+    - /bin/sleep
+    - infinity
+    imagePullPolicy: IfNotPresent
+    name: toolset
+    image: savex13/toolset:latest
+  dnsPolicy: ClusterFirst
+  volumes:
+  - emptyDir: {}
+    name: pod-tmp
