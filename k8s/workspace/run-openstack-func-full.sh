@@ -13,8 +13,8 @@ echo "# Creating schema"
 [ -f "/artifacts/tmp/artifacts/test_scheme.yaml" ] && rm -v $MY_PROJFOLDER/tmp/artifacts/test_scheme.yaml
 cat <<'EOF' >artifacts/test_scheme.yaml
 ---
-smoke: true
-concurrency: 4
+smoke: false
+concurrency: 8
 blacklist-file: /etc/tempest/test-blacklist
 enabled: true
 fail_on_test: true
@@ -52,5 +52,5 @@ else
 fi
 cp ./artifacts/*.xml $MY_PROJFOLDER/reports/${tenv}-func/
 cd $MY_PROJFOLDER/reports/
-tparser -f r_xml -d -r $MY_CLIENTSHORTNAME-${tenv}-openstack-func-smoke-latest.html $MY_PROJFOLDER/reports/${tenv}-func/
+tparser -f r_xml -d -r $MY_CLIENTSHORTNAME-${tenv}-openstack-func-full-latest.html $MY_PROJFOLDER/reports/${tenv}-func/
 cd $MY_PROJFOLDER

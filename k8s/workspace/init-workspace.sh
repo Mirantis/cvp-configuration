@@ -11,17 +11,21 @@ function qkeystone() {
 export MY_PROJFOLDER=/artifacts
 echo "# Using folder '$MY_PROJFOLDER'"
 cd $MY_PROJFOLDER
-[ -f envs ] && mkdir envs
-[ -f yamls ] && mkdir yamls
-[ -f reports ] && mkdir reports
-[ -f tmp ] && mkdir tmp
+[ ! -d envs ] && mkdir envs
+[ ! -d yamls ] && mkdir yamls
+[ ! -d reports ] && mkdir reports
+[ ! -d tmp ] && mkdir tmp
 
 # move mcc konfig to default place
 if [ -f $MY_PROJFOLDER/mcc-kubeconfig.yaml ]; then
     mv $MY_PROJFOLDER/mcc-kubeconfig.yaml $MY_PROJFOLDER/envs/mcc-kubeconfig.yaml
 fi
+if [ -f $MY_PROJFOLDER/node.key ]; then
+    mv $MY_PROJFOLDER/node.key $MY_PROJFOLDER/envs/node.key
+fi
 if [ ! -f $MY_PROJFOLDER/envs/mcc-kubeconfig.yaml ]; then
 	echo "ERROR: MCC kubeconfig not found either at '$MY_PROJFOLDER/mcc-kubeconfig.yaml' or '$MY_PROJFOLDER/envs/mcc-kubeconfig.yaml'"
+	exit 1
 fi
 echo " "
 
@@ -70,6 +74,12 @@ printf "\n\nPreparing additional files"
 cp -v /opt/res-files/k8s/workspace/* $MY_PROJFOLDER/envs/
 [ ! -d $MY_PROJFOLDER/scripts ] && mkdir $MY_PROJFOLDER/scripts
 mv -v $MY_PROJFOLDER/envs/*.sh $MY_PROJFOLDER/scripts/
+
+cp -v /opt/res-files/k8s/yamls/qa-rally.yaml $MY_PROJFOLDER/yamls
+cp -v /opt/res-files/k8s/yamls/qa-res.yaml $MY_PROJFOLDER/yamls
+cp -v /opt/res-files/k8s/yamls/qa-toolset-bare.yaml $MY_PROJFOLDER/yamls
+cp -v /opt/res-files/k8s/yamls/qa-toolset.yaml $MY_PROJFOLDER/yamls
+
 # remove duplicate init
 rm -v $MY_PROJFOLDER/scripts/init-workspace.sh
 # update IP Addresses

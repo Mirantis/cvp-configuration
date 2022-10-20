@@ -20,7 +20,7 @@ else
         echo "# Creating openstack resources"
 	echo " "
 	kubectl exec toolset --stdin -n qa-space -- bash -c "mkdir /artifacts/cmp-check"
-        kubectl exec toolset --stdin -n qa-space -- bash -c "cd /artifacts/cmp-check; bash /opt/cmp-check/prepare.sh"
+        kubectl exec toolset --tty --stdin -n qa-space -- bash -c "cd /artifacts/cmp-check; bash /opt/cmp-check/prepare.sh -w \$(pwd)"
 fi
 
 #
@@ -41,6 +41,13 @@ echo "# s/public_net_uuid/ -> ${netid}"
 sed -i "s/public_net_uuid/${netid}/g" $MY_PROJFOLDER/yamls/tempest_custom.yaml
 echo "# s/public_net_name/ -> ${TEMPEST_CUSTOM_PUBLIC_NET}"
 sed -i "s/public_net_name/${TEMPEST_CUSTOM_PUBLIC_NET}/g" $MY_PROJFOLDER/yamls/tempest_custom.yaml
+echo " "
 
+echo "# Updating SPT global_config.yaml"
+cp -v /opt/res-files/k8s/yamls/spt_global_config.yaml.clean $MY_PROJFOLDER/yamls/global_config.yaml
+echo "# s/public-network-name/ -> ${TEMPEST_CUSTOM_PUBLIC_NET}"
+sed -i "s/public-network-name/${TEMPEST_CUSTOM_PUBLIC_NET}/g" $MY_PROJFOLDER/yamls/global_config.yaml
+echo "# s/mtu-value/ -> default"
+sed -i "s/mtu-value/default/g" $MY_PROJFOLDER/yamls/global_config.yaml
 # 
 echo "# Done!"

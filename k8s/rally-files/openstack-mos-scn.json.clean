@@ -1,6 +1,6 @@
-{% set concurrency = 10 %}
+{% set concurrency = concurrent-threads %}
 {% set volume_size = 1 %}
-{% set times = 100 %}
+{% set times = run-times-number %}
 {% set users = 3 %}
 {% set tenants = 3 %}
 
