@@ -12,10 +12,10 @@ admin_uuid=$(kubectl exec toolset --stdin -n qa-space -- bash -c "openstack user
 if [ ! -z ${TEMPEST_CUSTOM_PUBLIC_NET+x} ]; then
         echo "# Copying global_config.yaml"
         kubectl cp $MY_PROJFOLDER/yamls/global_config.yaml qa-space/toolset:/opt/mos-spt/global_config.yaml
-        echo " "
-        echo "# Running spt checks"
+    echo " "
+    echo "# Running spt checks"
 	echo " "
-	kubectl exec toolset --stdin --tty -n qa-space -- bash -c "cd /opt/mos-spt; . .venv/bin/activate; pytest -rs -o log_cli=true --tb=short tests/test_vm2vm.py"
+	kubectl exec toolset --stdin --tty -n qa-space -- bash -c "cd /opt/mos-spt; . .venv/bin/activate; pytest -rs -o log_cli=true --tb=short tests/"
 else
         echo "# Public network not set: TEMPEST_CUSTOM_PUBLIC_NET=${TEMPEST_CUSTOM_PUBLIC_NET}"
 	exit 1

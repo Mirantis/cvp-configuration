@@ -30,7 +30,10 @@ cp -v /opt/res-files/k8s/yamls/tempest_custom.yaml.clean $MY_PROJFOLDER/yamls/te
 declare $(kubectl exec toolset --stdin -n qa-space -- bash -c "cat /artifacts/cmp-check/cvp.manifest")
 echo "# Getting network details"
 netid=$(kubectl exec toolset --stdin -n qa-space -- openstack network show ${TEMPEST_CUSTOM_PUBLIC_NET} -c id -f value)
-subnetid=$(kubectl exec toolset --stdin -n qa-space -- openstack subnet list -f value | grep ${TEMPEST_CUSTOM_PUBLIC_NET} | cut -d' ' -f1)
+subnetid=$(kubectl exec toolset --stdin -n qa-space -- openstack subnet list -f value | grep ${netid} | cut -d' ' -f1)
+echo "# image_ref_name -> ${cirros51_name}"
+sed -i "s/image_ref_name/${cirros51_name}/g" $MY_PROJFOLDER/yamls/tempest_custom.yaml
+image_ref_name
 echo "# image_ref_uuid -> ${cirros51_id}"
 sed -i "s/image_ref_uuid/${cirros51_id}/g" $MY_PROJFOLDER/yamls/tempest_custom.yaml
 echo "# image_ref_alt_uuid -> ${cirros52_id}"
@@ -45,6 +48,8 @@ echo " "
 
 echo "# Updating SPT global_config.yaml"
 cp -v /opt/res-files/k8s/yamls/spt_global_config.yaml.clean $MY_PROJFOLDER/yamls/global_config.yaml
+echo "# image_ref_name -> ${ubuntu20_name}"
+sed -i "s/image_ref_name/${ubuntu20_name}/g" $MY_PROJFOLDER/yamls/global_config.yaml
 echo "# s/public-network-name/ -> ${TEMPEST_CUSTOM_PUBLIC_NET}"
 sed -i "s/public-network-name/${TEMPEST_CUSTOM_PUBLIC_NET}/g" $MY_PROJFOLDER/yamls/global_config.yaml
 echo "# s/mtu-value/ -> default"

@@ -2,8 +2,8 @@
 tenv=mcc
 . /opt/si-tests/.sivenv/bin/activate
 cd $MY_PROJFOLDER/tmp
-. $MY_PROJFOLDER/${tenv}rc
-. $MY_PROJFOLDER/target-${tenv}
+. $MY_PROJFOLDER/envs/mccrc
+. $MY_PROJFOLDER/envs/target-${tenv}
 pytest /opt/si-tests/si_tests/tests/deployment/test_k8s_conformance.py
 unset TARGET_CLUSTER
 unset TARGET_NAMESPACE
