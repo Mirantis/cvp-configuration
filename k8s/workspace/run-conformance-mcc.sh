@@ -4,6 +4,13 @@ tenv=mcc
 cd $MY_PROJFOLDER/tmp
 . $MY_PROJFOLDER/envs/mccrc
 . $MY_PROJFOLDER/envs/target-${tenv}
+
+# Setting concurrency
+echo "Current conformance concurrency is ${K8S_CONFORMANCE_CONCURRENCY}"
+export K8S_CONFORMANCE_CONCURRENCY=5
+echo "Using concurrency of ${K8S_CONFORMANCE_CONCURRENCY} for MCC"
+
+# Run tests
 pytest /opt/si-tests/si_tests/tests/deployment/test_k8s_conformance.py
 unset TARGET_CLUSTER
 unset TARGET_NAMESPACE

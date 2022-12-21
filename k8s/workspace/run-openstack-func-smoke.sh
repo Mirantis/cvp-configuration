@@ -7,6 +7,11 @@ cd $MY_PROJFOLDER/tmp
 # Just in case
 unset TARGET_CLUSTER
 unset TARGET_NAMESPACE
+# Cleaning up
+echo "# Cleaning up '/artifacts/tmp/artifacts/'"
+[ -d "/artifacts/tmp/artifacts/" ] && rm -rf "/artifacts/tmp/artifacts/"
+[ -f "/artifacts/tmp/nosetests.xml" ]  && rm "/artifacts/tmp/nosetests.xml"
+mkdir "/artifacts/tmp/artifacts/"
 
 # 
 echo "# Creating schema"

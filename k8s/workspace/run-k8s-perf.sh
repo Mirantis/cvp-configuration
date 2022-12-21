@@ -14,6 +14,7 @@ if [ -z $(kubectl exec -n qa-space --stdin rally -- rally env list | grep kubern
         kubectl exec -n qa-space --stdin rally -- rally env list
 else
         echo "# Running k8s performance tests"
+        kubectl exec -n qa-space --stdin rally -- rally env use kubernetes
         kubectl exec -n qa-space --stdin rally -- rally task start /rally/rally-files/k8s-mos-scn-i100c5.yaml
 	# generate report
 	echo "# Generating report"

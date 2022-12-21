@@ -58,6 +58,7 @@ echo "# Extracted CLUSTER: '${vCLUSTER}'"
 printf "\n\n# Writing additional options"
 ewriteln "export SI_BINARIES_DIR=$(which helm | rev | cut -d'/' -f2- | rev)"
 ewriteln "export HELM_BINARY_PATH=$(which helm)"
+ewriteln "export K8S_CONFORMANCE_CONCURRENCY=10"
 
 # extract MOS kubeconfig
 echo " "
@@ -111,7 +112,7 @@ if [ -f $MY_PROJFOLDER/envs/mos-kubeconfig.yaml ]; then
     vPUBNET=$(kubectl --kubeconfig $MY_PROJFOLDER/envs/mos-kubeconfig.yaml -n openstack exec ${keystone_pod} -c keystone-client --stdin -- ${cmd})
     echo "-> 'openstack network list --external -c Name -f value': '${vPUBNET}'"
     ewriteln "export TEMPEST_CUSTOM_PUBLIC_NET=${vPUBNET}"
-
+    ewriteln "export TEMPEST_CUSTOM_FLAVOR=cvp.tiny"
     ewriteln "export TEMPEST_CUSTOM_IMAGE=cvp.cirros.51"
     ewriteln "export TEMPEST_CUSTOM_IMAGE_ALT=cvp.cirros.52"
     #prepare tempest custom yaml
