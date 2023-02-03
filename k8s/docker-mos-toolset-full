@@ -2,7 +2,8 @@ FROM ubuntu:20.04
 
 MAINTAINER Alex Savatieiev (a.savex@gmail.com)
 
-ADD ./si-tests.tgz /opt/si-tests/
+ADD ./src/si-tests.tgz /opt/si-tests/
+ADD ./src/mos-checker.tgz /opt/cfg-checker/
 WORKDIR /opt
 RUN apt-get update && \
     apt-get install -y make gcc g++ git libaio-dev libaio1 zlib1g-dev && \
@@ -27,7 +28,6 @@ RUN curl https://baltocdn.com/helm/signing.asc | apt-key add - && \
 RUN pip3 install --no-cache-dir python-openstackclient python-neutronclient python-heatclient pyghmi python-octaviaclient tempestparser python-ironicclient aodhclient gnocchiclient python-barbicanclient python-glanceclient
 
 RUN git clone https://gerrit.mcp.mirantis.com/mcp/cvp-configuration /opt/res-files && \
-    git clone http://gerrit.mcp.mirantis.com/mcp/cfg-checker /opt/cfg-checker && \
     cd /opt/cfg-checker && \
     python3 -m venv .checkervenv && \
     . .checkervenv/bin/activate && \
