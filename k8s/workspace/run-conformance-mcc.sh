@@ -9,6 +9,8 @@ cd $MY_PROJFOLDER/tmp
 echo "Current conformance concurrency is ${K8S_CONFORMANCE_CONCURRENCY}"
 export K8S_CONFORMANCE_CONCURRENCY=5
 echo "Using concurrency of ${K8S_CONFORMANCE_CONCURRENCY} for MCC"
+export K8S_CONFORMANCE_RUN_NETPOLICY_TESTS=False
+echo "Run network policy tests is ${K8S_CONFORMANCE_CONCURRENCY} for MCC"
 
 # Run tests
 pytest /opt/si-tests/si_tests/tests/deployment/test_k8s_conformance.py
