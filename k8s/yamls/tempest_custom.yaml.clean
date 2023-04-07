@@ -39,10 +39,10 @@ validation:
     image_alt_ssh_user: cirros
     image_ssh_password: gocubsgo
     image_alt_ssh_password: gocubsgo
+    ssh_key_type: ecdsa
 octavia:
     availability_zone: nova
     availability_zoine2: nova
-    ssh_key_type: ecdsa
 volume:
     volume_type: volume_type_name
     volume_type_multiattach: volume_type_name
