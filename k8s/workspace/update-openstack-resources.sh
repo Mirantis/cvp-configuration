@@ -44,6 +44,8 @@ echo "# s/public_net_uuid/ -> ${netid}"
 sed -i "s/public_net_uuid/${netid}/g" $MY_PROJFOLDER/yamls/tempest_custom.yaml
 echo "# s/public_net_name/ -> ${TEMPEST_CUSTOM_PUBLIC_NET}"
 sed -i "s/public_net_name/${TEMPEST_CUSTOM_PUBLIC_NET}/g" $MY_PROJFOLDER/yamls/tempest_custom.yaml
+echo "# s/volume_type_name/ -> ${TEMPEST_CUSTOM_VOLUME_TYPE}"
+sed -i "s/volume_type_name/${TEMPEST_CUSTOM_VOLUME_TYPE}/g" $MY_PROJFOLDER/yamls/tempest_custom.yaml
 echo " "
 
 echo "# Updating SPT global_config.yaml"

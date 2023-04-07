@@ -32,9 +32,17 @@ network-feature-enabled:
     floating_ips: true
 validation:
     run_validation: true
-    ssh_timeout: 60
+    ssh_timeout: 30
     connect_timeout: 10
     ping_timeout: 10
+    image_ssh_user: cirros
+    image_alt_ssh_user: cirros
+    image_ssh_password: gocubsgo
+    image_alt_ssh_password: gocubsgo
 octavia:
     availability_zone: nova
-    availability_zone2: nova
+    availability_zoine2: nova
+    ssh_key_type: ecdsa
+volume:
+    volume_type: volume_type_name
+    volume_type_multiattach: volume_type_name
