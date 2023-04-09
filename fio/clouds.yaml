@@ -1,0 +1,45 @@
+# This is a clouds.yaml file, which can be used by OpenStack tools as a source
+# of configuration on how to connect to a cloud. If this is your only cloud,
+# just put this file in ~/.config/openstack/clouds.yaml and tools like
+# python-openstackclient will just work with no further config. (You will need
+# to add your password to the auth section)
+# If you have more than one cloud account, add the cloud entry to the clouds
+# section of your existing file and you can refer to them by name with
+# OS_CLOUD=openstack or --os-cloud=openstack
+clouds:
+  target:
+    auth:
+      auth_url: AUTH_URL
+      username: USER_NAME
+      project_name: PROJECT_NAME
+      project_domain_id: default
+      user_domain_name: "default"
+      password: PASSWORD
+    region_name: REGION_NAME
+    interface: "public"
+    insecure: true
+    identity_api_version: 3
+    custom_vars:
+      ubuntu_image_name: "Ubuntu-18.04"
+      fio_net_name: "fio-net"
+      fio_subnet_name: "fio-subnet"
+      fixed_subnet_range: "192.168.200.0/24"
+      net_ipv4: '4'
+      fio_router_name: "fio-router"
+      floating_net_name: "public"
+      sg_name: "fio-sg"
+      keypair_name: "fio-key"
+      keypair_file_location: "."
+      fio_client_name_mask: "fio-vm"
+      fio_flavor_name: "fio-flavor"
+      fio_flavor_ram: 2048
+      fio_flavor_cpus: 10
+      fio_flavor_disk: 20
+      fio_clients_count: 100
+      fio_vol_name_mask: "fio-vol"
+      fio_vol_size: 100
+      fio_vol_type: "volumes-nvme"
+      fio_vol_mountpoint: "/dev/vdc"
+      mtu_size: 8000
+      hv_suffix: "kaas-kubernetes-XXX"
+      cloud_name: "cloud-XXX"
