@@ -24,5 +24,5 @@ spec:
         - infinity
         name: nodeinfo-pod
         imagePullPolicy: IfNotPresent
-        image: savex13/toolset-min:latest
+        image: registry.mirantis.com/osavatieiev/toolset-min:latest
       hostNetwork: true

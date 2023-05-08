@@ -10,7 +10,8 @@ spec:
     - infinity
     imagePullPolicy: IfNotPresent
     name: toolset
-    image: savex13/toolset:latest
+    #image: savex13/toolset:latest
+    image: registry.mirantis.com/osavatieiev/toolset:latest
   dnsPolicy: ClusterFirst
   volumes:
   - emptyDir: {}
