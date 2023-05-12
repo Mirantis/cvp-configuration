@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 
-MAINTAINER Alex Savatieiev (a.savex@gmail.com)
+LABEL maintainer="qa-ps@mirantis.com"
 
 ADD ./src/si-tests.tgz /opt/si-tests/
 ADD ./src/mos-checker.tgz /opt/cfg-checker/
@@ -12,18 +12,23 @@ RUN apt-get update && \
     ./configure && \
     make && \
     make install && \
-    cd /opt && \
-    rm -rf /opt/fio
+    rm -rf /opt/fio && \
+    mkdir /opt/density && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN export TZ="America/Chicago" && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
-    apt-get install -y python3-pip python3-venv vim git iperf3 iperf mtr htop iputils-ping traceroute tcpdump wget iproute2 curl screen qemu-utils
+    apt-get update && \
+    apt-get install -y python3-pip python3-venv vim git iperf3 iperf mtr htop iputils-ping traceroute tcpdump wget iproute2 curl screen qemu-utils jq && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN curl https://baltocdn.com/helm/signing.asc | apt-key add - && \
+RUN apt-get update && \
+    curl https://baltocdn.com/helm/signing.asc | apt-key add - && \
     apt-get install apt-transport-https --yes && \
     echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list && \
     apt-get update && \
-    apt-get install -y helm
+    apt-get install -y helm && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install --no-cache-dir python-openstackclient python-neutronclient python-heatclient pyghmi python-octaviaclient tempestparser python-ironicclient aodhclient gnocchiclient python-barbicanclient python-glanceclient
 
@@ -45,12 +50,13 @@ RUN cd /opt/si-tests/ && \
     python3 -m venv .sivenv && \
     . .sivenv/bin/activate && \
     pip3 install --no-cache-dir -r si_tests/requirements.txt && \
-    deactivate && \
-    cd /opt
+    deactivate
 
 RUN mkdir /opt/packages/ && \
     cd /opt/packages && \
-    apt-get download $(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances iperf3 iperf fio | grep "^\w" | sort -u) || true
+    apt-get update && \
+    apt-get download $(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances iperf3 iperf fio | grep "^\w" | sort -u) || true && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
     install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl && \
@@ -61,8 +67,17 @@ RUN git clone "https://gerrit.mcp.mirantis.com/mcp/mos-spt" /opt/mos-spt && \
     python3 -m venv .venv && \
     . .venv/bin/activate && \
     pip3 install --no-cache-dir -r requirements.txt && \
+    deactivate
+
+ADD ./src/openstack-refapp.tgz /opt/density/openstack-refapp/
+
+RUN cd /opt/density/openstack-refapp/ && \
+    python3 -m venv .refapp-venv && \
+    . .refapp-venv/bin/activate && \
+    pip3 install --no-cache-dir -r requirements.txt && \
     deactivate && \
-    cd /opt
+    cp /opt/res-files/scripts/prepare-refapp.sh /opt/density/openstack-refapp/ && \
+    cp /opt/res-files/scripts/run-refapp-density.sh /opt/density/openstack-refapp/
 
 ENTRYPOINT ["sleep infinite"]
 
