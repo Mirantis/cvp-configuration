@@ -31,6 +31,7 @@ clouds:
       keypair_name: "fio-key"
       keypair_file_location: "."
       fio_client_name_mask: "fio-vm"
+      fio_aa_group_name: "fio-anti-affinity-group"
       fio_flavor_name: "fio-flavor"
       fio_flavor_ram: 2048
       fio_flavor_cpus: 10
@@ -42,4 +43,5 @@ clouds:
       fio_vol_mountpoint: "/dev/vdc"
       mtu_size: 8000
       hv_suffix: "kaas-kubernetes-XXX"
-      cloud_name: "cloud-XXX"
+      cloud_name: "cloud-lon-XXX"
+      concurrency: 5

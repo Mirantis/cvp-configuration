@@ -1,3 +1,5 @@
+import multiprocessing as mp
+
 import connection as conn
 from openstack.exceptions import ResourceFailure
 from typing import Final
@@ -8,40 +10,50 @@ network = conn.cloud.network
 volume = conn.cloud.volume
 
 CLIENT_NAME_MASK: Final[str] = conn.FIO_CLIENT_NAME_MASK
+AA_SERVER_GROUP_NAME: Final[str] = conn.FIO_AA_SERVER_GROUP_NAME
 FLAVOR_NAME: Final[str] = conn.FIO_FLAVOR_NAME
 KEYPAIR_NAME: Final[str] = conn.FIO_KEYPAIR_NAME
 SG_NAME: Final[str] = conn.FIO_SG_NAME
 
 ROUTER_NAME: Final[str] = conn.FIO_ROUTER_NAME
 NET_NAME: Final[str] = conn.FIO_NET_NAME
+CONCURRENCY: Final[int] = conn.CONCURRENCY
+
+
+def delete_fio_client(vm_id: str) -> None:
+    vm = compute.get_server(vm_id)
+    attachments = compute.volume_attachments(vm)
+    # Delete fio volume attachment (and any other attachments
+    # that the VM could have)
+    # Delete the volume and the server
+    for att in attachments:
+        vol_id = att.volume_id
+        vol = volume.get_volume(vol_id)
+        try:
+            conn.detach_volume(vm, vol)
+            print(
+                f"'{vol.id}' volume has been detached from fio '{vm.name}'"
+                " server.")
+            conn.delete_volume(vol)
+            print(f"'{vol.id}' volume has been deleted.")
+            conn.delete_server(vm)
+            print(f"'{vm.name}' server has been deleted.")
+        except ResourceFailure as e:
+            print(
+                f"Cleanup of '{vm.id}' with volume '{vol.id}' attached "
+                f"failed with '{e.message}' error.")
+            conn.delete_volume(vol)
 
 
 if __name__ == "__main__":
-    # Find fio clients and server
-    vms = compute.servers(name=CLIENT_NAME_MASK)
-    for vm in vms:
-        attachments = compute.volume_attachments(vm)
-        # Delete fio volume attachment (and any other attachments
-        # that the VM could have)
-        # Delete the volume and the server
-        for att in attachments:
-            vol_id = att.volume_id
-            vol = volume.get_volume(vol_id)
-            try:
-                conn.detach_volume(vm, vol)
-                print(
-                    f"'{vol.id}' volume has been detached from fio '{vm.name}'"
-                    " server.")
-                conn.delete_volume(vol)
-                print(f"'{vol.id}' volume has been deleted.")
-                conn.delete_server(vm)
-                print(f"'{vm.name}' server has been deleted.")
-            except ResourceFailure as e:
-                print(
-                    f"Cleanup of '{vm.id}' with volume '{vol.id}' attached "
-                    f"failed with '{e.message}' error.")
-                conn.delete_volume(vol)
-                continue
+    # Find fio VMs
+    vms = list(compute.servers(name=CLIENT_NAME_MASK, details=False))
+
+    # Delete fio VMs in parallel in batches of CONCURRENCY size
+    with mp.Pool(processes=CONCURRENCY) as pool:
+        results = [pool.apply_async(delete_fio_client, (vm.id,)) for vm in vms]
+        # Waits for batch of fio VMs to be deleted
+        _ = [r.get() for r in results]
 
     # Remove ports from fio router (including external GW)
     router = network.find_router(ROUTER_NAME)
@@ -79,3 +91,10 @@ if __name__ == "__main__":
     if sg:
         network.delete_security_group(sg)
         print(f"fio '{sg.id}' security group has been deleted.")
+
+    # Delete fio server group
+    server_group = compute.find_server_group(
+        AA_SERVER_GROUP_NAME, all_projects=True)
+    if server_group:
+        compute.delete_server_group(server_group)
+        print(f"fio '{server_group.name}' server group has been deleted.")

@@ -27,7 +27,7 @@ CLOUD_NAME: Final[Any] = get_resource_value('cloud_name', '')
 UBUNTU_IMAGE_NAME: Final[Any] = get_resource_value(
     'ubuntu_image_name', 'Ubuntu-18.04')
 FIO_SG_NAME: Final[Any] = get_resource_value('sg_name', 'fio-sg')
-FIO_KEYPAIR_NAME: Final[Union[int, str]] = "-".join(
+FIO_KEYPAIR_NAME: Final[str] = "-".join(
     [get_resource_value('keypair_name', 'fio-key'), CLOUD_NAME])
 PRIVATE_KEYPAIR_FILE: Final[str] = "{}/{}.pem".format(
     get_resource_value('keypair_file_location', '.'),
@@ -49,7 +49,7 @@ FIO_FLAVOR_NAME: Final[Any] = get_resource_value('fio_flavor_name', 'fio')
 FIO_FLAVOR_RAM: Final[Any] = get_resource_value('fio_flavor_ram', 2048)
 FIO_FLAVOR_CPUS: Final[Any] = get_resource_value('fio_flavor_cpus', 10)
 FIO_FLAVOR_DISK: Final[Any] = get_resource_value('fio_flavor_disk', 20)
-FIO_CLIENTS_COUNT: Final[Any] = int(
+FIO_CLIENTS_COUNT: Final[int] = int(
     get_resource_value('fio_clients_count', 10))
 FIO_VOL_NAME_MASK: Final[Any] = get_resource_value(
     'fio_vol_name_mask', 'fio-vol')
@@ -60,8 +60,11 @@ FIO_VOL_MOUNTPOINT: Final[Any] = get_resource_value(
     'fio_vol_mountpoint', '/dev/vdc')
 FIO_CLIENT_NAME_MASK: Final[Any] = get_resource_value(
     'fio_client_name_mask', 'fio-vm')
+FIO_AA_SERVER_GROUP_NAME: Final[Any] = get_resource_value(
+    'fio_aa_group_name', 'fio-anti-affinity-group')
 
 HV_SUFFIX: Final[Any] = get_resource_value('hv_suffix', '')
+CONCURRENCY: Final[int] = int(get_resource_value('concurrency', 5))
 
 
 def delete_server(srv: openstack.compute.v2.server.Server) -> None:
@@ -102,6 +105,7 @@ if __name__ == "__main__":
     print(FIO_FLAVOR_DISK)
     print(FIO_CLIENTS_COUNT)
     print(FIO_CLIENT_NAME_MASK)
+    print(FIO_AA_SERVER_GROUP_NAME)
     print(FIO_VOL_NAME_MASK)
     print(FIO_VOL_SIZE)
     print(FIO_VOL_TYPE)
@@ -109,3 +113,4 @@ if __name__ == "__main__":
 
     print(HV_SUFFIX)
     print(CLOUD_NAME)
+    print(CONCURRENCY)
