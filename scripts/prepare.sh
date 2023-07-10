@@ -201,6 +201,7 @@ function _users() {
     echo role add --user ${admin} --project ${project} creator >>${cmds}
     echo role add --user ${user} --project ${project} member >>${cmds}
     echo role add --user ${user} --project ${project} creator >>${cmds}
+    echo role add --user ${user} --project ${project} load-balancer_member >>${cmds}
 
 }
 
