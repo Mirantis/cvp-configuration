@@ -25,6 +25,7 @@ network = cloud.network
 orchestration = cloud.orchestration
 object_store = cloud.object_store
 volume = cloud.volume
+load_balancer = cloud.load_balancer
 
 mask = "cvp|s_rally|rally_|tempest-|tempest_|spt|fio"
 full_mask = f"^(?!.*(manual|-static-)).*({mask}).*$"
@@ -61,6 +62,17 @@ def _log_resources_count(count, resource, pattern=mask):
 
 def _log_resource_delete(id_, name, type_):
     log.info(f"... deleting {name} (id={id_}) {type_}")
+
+
+def _force_delete_load_balancer(id_):
+    log.info(f"... ... force deleting {id_} load balancer")
+    lb_ep = load_balancer.get_endpoint()
+    lb_uri = f"{lb_ep}/lbaas/loadbalancers/{id_}"
+    headers = {'X-Auth-Token': cloud.session.get_token(),
+               'Content-Type': 'application/json'}
+    params = {'cascade': 'true', 'force': 'true'}
+    cloud.session.request(url=lb_uri, method='DELETE',
+                          headers=headers, params=params)
 
 
 def cleanup_users():
@@ -318,6 +330,23 @@ def cleanup_networks():
         network.delete_network(id_)
 
 
+def cleanup_load_balancers():
+    lbs = load_balancer.load_balancers()
+    lbs_to_delete = _filter_test_resources(lbs, 'name')
+    _log_resources_count(len(lbs_to_delete), 'load_balancer(s)')
+    if args.dry_run:
+        return
+    for id_ in lbs_to_delete:
+        _log_resource_delete(id_, lbs_to_delete[id_], 'load_balancer')
+        try:
+            load_balancer.delete_load_balancer(id_, cascade=True)
+        except openstack.exceptions.ConflictException:
+            # force delete the LB in case it is in some PENDING_* state
+            _force_delete_load_balancer(id_)
+        except Exception as e:
+            log.info(f"... ... could not delete {id_} load balancer: {e}")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description='OpenStack test resources cleanup script')
@@ -364,6 +393,7 @@ if __name__ == "__main__":
     cleanup_routers()
     cleanup_networks()
     cleanup_containers()
+    cleanup_load_balancers()
 
     if args.projects:
         cleanup_projects()
