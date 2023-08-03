@@ -148,8 +148,9 @@ def cleanup_stacks(stacks_alt=False):
 
     for id_ in stacks_to_delete:
         _log_resource_delete(id_, stacks_to_delete[id_], 'stack')
+        stack_obj = orchestration.get_stack(id_)
         orchestration.delete_stack(id_)
-        orchestration.wait_for_delete(id_)
+        orchestration.wait_for_delete(stack_obj)
 
 
 def cleanup_flavors():
@@ -210,10 +211,11 @@ def cleanup_snapshots():
     if args.dry_run:
         return
     for id_ in snapshots_to_delete:
+        snapshot_obj = volume.get_snapshot(id_)
         volume.reset_snapshot(id_, 'available')
         _log_resource_delete(id_, snapshots_to_delete[id_], 'snapshot')
-        volume.delete_snapshot(id_)
-        volume.wait_for_delete(id_)
+        volume.delete_snapshot(id_, force=True)
+        volume.wait_for_delete(snapshot_obj)
 
 
 def cleanup_volumes():
@@ -239,6 +241,19 @@ def cleanup_volume_groups():
     for id_ in groups_to_delete:
         _log_resource_delete(id_, groups_to_delete[id_], 'volume group')
         volume.delete_group(id_)
+
+
+def cleanup_volume_backups():
+    backups = volume.backups(all_tenants=True)
+    backups_to_delete = _filter_test_resources(backups, 'name')
+    _log_resources_count(len(backups_to_delete), 'volume backup(s)')
+    if args.dry_run:
+        return
+    for id_ in backups_to_delete:
+        backup_obj = volume.get_backup(id_)
+        _log_resource_delete(id_, backups_to_delete[id_], 'volume backup')
+        volume.delete_backup(id_)
+        volume.wait_for_delete(backup_obj)
 
 
 def cleanup_volume_group_types():
@@ -378,6 +393,7 @@ if __name__ == "__main__":
     cleanup_stacks(stacks_alt=args.stacks_alt)
     cleanup_servers()
     cleanup_flavors()
+    cleanup_volume_backups()
     cleanup_snapshots()
     cleanup_volumes()
     cleanup_volume_groups()
