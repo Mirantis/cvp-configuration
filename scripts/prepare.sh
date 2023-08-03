@@ -191,7 +191,8 @@ function process_cmds() {
 
 function _project() {
     echo project create ${project} >>${cmds}
-    echo role add --user admin --project ${project} admin >>${cmds}
+    admin_username=$(openstack user list --project admin -c Name -f value | grep admin)
+    echo role add --user ${admin_username} --project ${project} admin >>${cmds}
 }
 
 function _users() {
