@@ -362,6 +362,24 @@ def cleanup_load_balancers():
             log.info(f"... ... could not delete {id_} load balancer: {e}")
 
 
+def cleanup_floating_ips():
+    projects = identity.projects()
+    list_projects_to_delete = list(_filter_test_resources(projects, 'name'))
+    floating_ips = network.ips()
+    fips_to_delete = {}
+    for ip in floating_ips:
+        # filter only non-associated IPs, only inside target projects
+        if (ip.status == 'DOWN') and (ip.fixed_ip_address is None):
+            if ip.project_id in list_projects_to_delete:
+                fips_to_delete[ip.id] = ip.floating_ip_address
+    _log_resources_count(len(fips_to_delete), 'floating ip(s)')
+    if args.dry_run:
+        return
+    for id_ in fips_to_delete:
+        _log_resource_delete(id_, fips_to_delete[id_], 'floating ip')
+        network.delete_ip(id_)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description='OpenStack test resources cleanup script')
@@ -410,6 +428,7 @@ if __name__ == "__main__":
     cleanup_networks()
     cleanup_containers()
     cleanup_load_balancers()
+    cleanup_floating_ips()
 
     if args.projects:
         cleanup_projects()
