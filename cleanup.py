@@ -409,6 +409,7 @@ if __name__ == "__main__":
             f"Stacks will be cleaned up using additional '{stack_mask}' mask")
 
     cleanup_stacks(stacks_alt=args.stacks_alt)
+    cleanup_load_balancers()
     cleanup_servers()
     cleanup_flavors()
     cleanup_volume_backups()
@@ -427,7 +428,6 @@ if __name__ == "__main__":
     cleanup_routers()
     cleanup_networks()
     cleanup_containers()
-    cleanup_load_balancers()
     cleanup_floating_ips()
 
     if args.projects:
