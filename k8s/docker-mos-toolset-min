@@ -1,6 +1,6 @@
-FROM ubuntu:20.04
+FROM mirantis.azurecr.io/openstack/heat:yoga-focal-20230821170130
 
-MAINTAINER Alex Savatieiev (a.savex@gmail.com)
+LABEL maintainer="qa-ps@mirantis.com"
 
 ADD ./src/mos-spt.tgz /opt/mos-spt/
 WORKDIR /opt
@@ -20,7 +20,7 @@ RUN export TZ="America/Chicago" && \
     apt autoremove --yes && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install --no-cache-dir python-openstackclient python-neutronclient python-heatclient pyghmi python-octaviaclient tempestparser python-ironicclient aodhclient gnocchiclient python-barbicanclient python-glanceclient
+RUN pip3 install --no-cache-dir tempestparser
 
 RUN mkdir /opt/packages/ && \
     cd /opt/packages && \

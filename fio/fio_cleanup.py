@@ -30,19 +30,19 @@ def delete_fio_client(vm_id: str) -> None:
         vol_id = att.volume_id
         vol = volume.get_volume(vol_id)
         try:
-            conn.detach_volume(vm, vol)
+            conn.detach_volume(att, vm, vol)
             print(
                 f"'{vol.id}' volume has been detached from fio '{vm.name}'"
                 " server.")
             conn.delete_volume(vol)
             print(f"'{vol.id}' volume has been deleted.")
-            conn.delete_server(vm)
-            print(f"'{vm.name}' server has been deleted.")
         except ResourceFailure as e:
             print(
                 f"Cleanup of '{vm.id}' with volume '{vol.id}' attached "
                 f"failed with '{e.message}' error.")
             conn.delete_volume(vol)
+    conn.delete_server(vm)
+    print(f"'{vm.name}' server has been deleted.")
 
 
 if __name__ == "__main__":
@@ -59,11 +59,12 @@ if __name__ == "__main__":
     router = network.find_router(ROUTER_NAME)
     if router:
         network.update_router(router.id, external_gateway_info={})
-        print("Externa GW port has been deleted from fio router.")
+        print("External GW port has been deleted from fio router.")
         router_ports = network.ports(device_id=router.id)
         for p in router_ports:
-            network.remove_interface_from_router(router.id, port_id=p.id)
-            print(f"'{p.id}' port has been deleted from fio router.")
+            if p.device_owner != "network:router_ha_interface":
+                network.remove_interface_from_router(router.id, port_id=p.id)
+                print(f"'{p.id}' port has been deleted from fio router.")
 
     # Delete fio network topology
     net = network.find_network(NET_NAME)
@@ -93,8 +94,7 @@ if __name__ == "__main__":
         print(f"fio '{sg.id}' security group has been deleted.")
 
     # Delete fio server group
-    server_group = compute.find_server_group(
-        AA_SERVER_GROUP_NAME, all_projects=True)
+    server_group = conn.find_server_group(AA_SERVER_GROUP_NAME)
     if server_group:
         compute.delete_server_group(server_group)
         print(f"fio '{server_group.name}' server group has been deleted.")

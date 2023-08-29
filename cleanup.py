@@ -1,13 +1,19 @@
 import argparse
+import json
 import os
 import re
 import sys
+import time
+
+from types import SimpleNamespace
 
 import openstack
 
 
 # Send logs to both, a log file and stdout
 openstack.enable_logging(debug=False, path='openstack.log', stream=sys.stdout)
+
+volume_api_version = "3.43"
 
 # Connect to cloud
 TEST_CLOUD = os.getenv('OS_TEST_CLOUD', 'os-cloud')
@@ -41,6 +47,11 @@ def get_resource_value(resource_key, default):
         return default
 
 
+def items_to_object(items):
+    data = json.dumps(items)
+    return json.loads(data, object_hook=lambda d: SimpleNamespace(**d))
+
+
 def _filter_test_resources(resources, attribute, pattern=mask_pattern):
     filtered_resources = {}
     for item in resources:
@@ -64,15 +75,43 @@ def _log_resource_delete(id_, name, type_):
     log.info(f"... deleting {name} (id={id_}) {type_}")
 
 
-def _force_delete_load_balancer(id_):
-    log.info(f"... ... force deleting {id_} load balancer")
-    lb_ep = load_balancer.get_endpoint()
-    lb_uri = f"{lb_ep}/lbaas/loadbalancers/{id_}"
+def _get_volume_groups(all_tenants='true'):
+    ep = volume.get_endpoint()
+    uri = f"{ep}/groups/detail"
     headers = {'X-Auth-Token': cloud.session.get_token(),
-               'Content-Type': 'application/json'}
-    params = {'cascade': 'true', 'force': 'true'}
-    cloud.session.request(url=lb_uri, method='DELETE',
-                          headers=headers, params=params)
+               'Accept': 'application/json',
+               'OpenStack-API-Version': f'volume {volume_api_version}'}
+    params = {'all_tenants': all_tenants}
+    response = cloud.session.request(url=uri, method='GET',
+                                     headers=headers, params=params).json()
+    for group in response['groups']:
+        yield group
+
+
+def _delete_volume_group(uuid, delete_volumes='false'):
+    ep = volume.get_endpoint()
+    uri = f"{ep}/groups/{uuid}/action"
+    headers = {'X-Auth-Token': cloud.session.get_token(),
+               'OpenStack-API-Version': f'volume {volume_api_version}',
+               'Content-Type': 'application/json',
+               'Accept': 'application/json'}
+    body = {"delete": {"delete-volumes": delete_volumes}}
+    cloud.session.request(
+        url=uri, method='POST', headers=headers, json=body)
+
+
+def _reset_volume_status(uuid, status='available', attach_status='detached',
+                         migration_status='None'):
+    ep = volume.get_endpoint()
+    uri = f"{ep}/volumes/{uuid}/action"
+    headers = {'X-Auth-Token': cloud.session.get_token(),
+               'Content-Type': 'application/json',
+               'Accept': 'application/json'}
+    body = {"os-reset_status": {
+        "status": status, "attach_status": attach_status,
+        "migration_status": migration_status}}
+    cloud.session.request(
+        url=uri, method='POST', headers=headers, json=body)
 
 
 def cleanup_users():
@@ -225,7 +264,7 @@ def cleanup_volumes():
     if args.dry_run:
         return
     for id_ in volumes_to_delete:
-        volume.reset_volume_status(id_, 'available', 'detached', 'None')
+        _reset_volume_status(id_, 'available', 'detached', 'None')
         _log_resource_delete(id_, volumes_to_delete[id_], 'volume')
         volume.delete_volume(id_)
         vol_obj = volume.get_volume(id_)
@@ -233,14 +272,16 @@ def cleanup_volumes():
 
 
 def cleanup_volume_groups():
-    groups = volume.groups()
+    groups_in_response = _get_volume_groups()
+    groups = items_to_object([g for g in groups_in_response])
     groups_to_delete = _filter_test_resources(groups, 'name')
     _log_resources_count(len(groups_to_delete), 'volume group(s)')
     if args.dry_run:
         return
     for id_ in groups_to_delete:
         _log_resource_delete(id_, groups_to_delete[id_], 'volume group')
-        volume.delete_group(id_)
+        _delete_volume_group(id_)
+        time.sleep(10)      # TODO(izadorozhna): need to add a proper waiter
 
 
 def cleanup_volume_backups():
@@ -357,7 +398,8 @@ def cleanup_load_balancers():
             load_balancer.delete_load_balancer(id_, cascade=True)
         except openstack.exceptions.ConflictException:
             # force delete the LB in case it is in some PENDING_* state
-            _force_delete_load_balancer(id_)
+            log.info(f"... ... force deleting {id_} load balancer")
+            load_balancer.delete_load_balancer(id_, cascade=True, force=True)
         except Exception as e:
             log.info(f"... ... could not delete {id_} load balancer: {e}")
 

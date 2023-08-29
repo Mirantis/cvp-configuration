@@ -83,7 +83,7 @@ else
 fi
 
 function cmp_stats() {
-   cmpid=$(openstack hypervisor list --matching ${1} -f value -c ID)
+   cmpid=$(openstack hypervisor list | grep ${1} | awk '{print $2}')
    vars=( $(openstack hypervisor show ${cmpid} -f shell -c state -c running_vms -c vcpus -c vcpus_used -c memory_mb -c memory_mb_used) )
    [ ! 0 -eq $? ] && errors+=("${1}: $(cat ${vars[@]})")
    if [ ! $state == '"up"' ]; then

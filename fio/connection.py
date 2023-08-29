@@ -78,11 +78,23 @@ def delete_volume(vol: openstack.block_storage.v3.volume.Volume) -> None:
 
 
 def detach_volume(
+    att: openstack.compute.v2.volume_attachment.VolumeAttachment,
     srv: openstack.compute.v2.server.Server,
     vol: openstack.block_storage.v3.volume.Volume
 ) -> None:
-    cloud.compute.delete_volume_attachment(srv, vol)
+    cloud.compute.delete_volume_attachment(att, srv)
     cloud.volume.wait_for_status(vol, status='available')
+
+
+def find_server_group(
+        name: str
+) -> Union[openstack.compute.v2.server_group.ServerGroup, None]:
+    server_groups = cloud.compute.server_groups(all_projects=True)
+    matching_server_groups = [s for s in server_groups
+                              if s.name == name]
+    server_group = matching_server_groups[0] \
+        if matching_server_groups else None
+    return server_group
 
 
 if __name__ == "__main__":
