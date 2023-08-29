@@ -138,7 +138,7 @@ if __name__ == "__main__":
         sys.exit(0)
 
     # Create fio sg if needed
-    project_id = conn.cloud.auth['project_id']
+    project_id = conn.cloud.current_project_id
     sg = network.find_security_group(SG_NAME, project_id=project_id)
     if not sg:
         sg = network.create_security_group(name=SG_NAME)
