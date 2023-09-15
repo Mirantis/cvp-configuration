@@ -32,7 +32,7 @@ RUN apt-get update && \
 
 RUN pip3 install --no-cache-dir pyghmi tempestparser
 
-RUN git clone https://gerrit.mcp.mirantis.com/mcp/cvp-configuration /opt/res-files && \
+RUN git clone https://gerrit.mcp.mirantis.com/mcp/cvp-configuration -b 23.2-yoga /opt/res-files && \
     cd /opt/cfg-checker && \
     python3 -m venv .checkervenv && \
     . .checkervenv/bin/activate && \
