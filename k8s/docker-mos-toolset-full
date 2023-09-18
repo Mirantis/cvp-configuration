@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM mirantis.azurecr.io/openstack/heat:victoria-focal-20230912131036
 
 LABEL maintainer="qa-ps@mirantis.com"
 
@@ -30,9 +30,9 @@ RUN apt-get update && \
     apt-get install -y helm && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install --no-cache-dir python-openstackclient python-neutronclient python-heatclient pyghmi python-octaviaclient tempestparser python-ironicclient aodhclient gnocchiclient python-barbicanclient python-glanceclient
+RUN pip3 install --no-cache-dir pyghmi tempestparser
 
-RUN git clone https://gerrit.mcp.mirantis.com/mcp/cvp-configuration /opt/res-files && \
+RUN git clone https://gerrit.mcp.mirantis.com/mcp/cvp-configuration -b 23.2-victoria /opt/res-files && \
     cd /opt/cfg-checker && \
     python3 -m venv .checkervenv && \
     . .checkervenv/bin/activate && \
@@ -50,6 +50,7 @@ RUN cd /opt/si-tests/ && \
     python3 -m venv .sivenv && \
     . .sivenv/bin/activate && \
     pip3 install --no-cache-dir -r si_tests/requirements.txt && \
+    pip3 install urllib3==1.26.16 && \
     deactivate
 
 RUN mkdir /opt/packages/ && \

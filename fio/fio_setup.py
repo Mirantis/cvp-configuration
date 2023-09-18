@@ -114,7 +114,7 @@ def create_fio_client(
         conn.delete_volume(vol)
 
     # Attach the volume to the fio client
-    compute.create_volume_attachment(vm, volume=vol)
+    compute.create_volume_attachment(vm,  volume_id=vol.id)
     try:
         vol = volume.wait_for_status(vol, status='in-use')
         print(f"Volume '{vol.name}' is attached to '{vm.name}' fio client")
@@ -195,8 +195,7 @@ if __name__ == "__main__":
             router.id, subnet_id=fio_subnet.id)
 
     # Create fio server group with anti-affinity scheduling policy
-    server_group = compute.find_server_group(
-        AA_SERVER_GROUP_NAME, all_projects=True)
+    server_group = conn.find_server_group(AA_SERVER_GROUP_NAME)
     if not server_group:
         server_group = compute.create_server_group(
             name=AA_SERVER_GROUP_NAME, policies=['soft-anti-affinity'])
