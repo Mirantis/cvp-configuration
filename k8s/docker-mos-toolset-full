@@ -6,7 +6,7 @@ ADD ./src/si-tests.tgz /opt/si-tests/
 ADD ./src/mos-checker.tgz /opt/cfg-checker/
 WORKDIR /opt
 RUN apt-get update && \
-    apt-get install -y make gcc g++ git libaio-dev libaio1 zlib1g-dev && \
+    apt-get install -y sed make gcc g++ git libaio-dev libaio1 zlib1g-dev && \
     git clone --depth 1 --branch fio-3.26 https://github.com/axboe/fio.git && \
     cd /opt/fio && \
     ./configure && \
@@ -49,6 +49,7 @@ RUN git clone https://gerrit.mcp.mirantis.com/mcp/cvp-configuration /opt/res-fil
 RUN cd /opt/si-tests/ && \
     python3 -m venv .sivenv && \
     . .sivenv/bin/activate && \
+    pip3 install --upgrade setuptools wheel && \
     pip3 install --no-cache-dir -r si_tests/requirements.txt && \
     deactivate
 
