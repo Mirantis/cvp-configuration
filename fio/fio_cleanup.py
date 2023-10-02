@@ -14,6 +14,7 @@ AA_SERVER_GROUP_NAME: Final[str] = conn.FIO_AA_SERVER_GROUP_NAME
 FLAVOR_NAME: Final[str] = conn.FIO_FLAVOR_NAME
 KEYPAIR_NAME: Final[str] = conn.FIO_KEYPAIR_NAME
 SG_NAME: Final[str] = conn.FIO_SG_NAME
+VOL_NAME_MASK: Final[str] = conn.FIO_VOL_NAME_MASK
 
 ROUTER_NAME: Final[str] = conn.FIO_ROUTER_NAME
 NET_NAME: Final[str] = conn.FIO_NET_NAME
@@ -92,6 +93,13 @@ if __name__ == "__main__":
     if sg:
         network.delete_security_group(sg)
         print(f"fio '{sg.id}' security group has been deleted.")
+
+    # Delete the orphan fio volumes which are not attached (if any)
+    volumes = volume.volumes(VOL_NAME_MASK)
+    for v in volumes:
+        if not v.attachments:
+            volume.delete_volume(v.id)
+            print(f"'{v.id}' volume has been deleted.")
 
     # Delete fio server group
     server_group = conn.find_server_group(AA_SERVER_GROUP_NAME)
