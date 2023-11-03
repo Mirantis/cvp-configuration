@@ -65,7 +65,7 @@ spec:
           name: keystone-keystone-admin
     imagePullPolicy: IfNotPresent
     name: rally
-    image: registry.mirantis.com/osavatieiev/xrally-kube:latest
+    image: registry.mirantis.com/professional-services-qa/xrally-kube:latest
     volumeMounts:
     - mountPath: /artifacts
       name: qa-pv-r
