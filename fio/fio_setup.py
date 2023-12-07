@@ -1,3 +1,4 @@
+import base64
 import multiprocessing as mp
 import os
 import random
@@ -6,6 +7,7 @@ from typing import Dict, Final, List
 
 import connection as conn
 from openstack.exceptions import ResourceFailure
+from oslo_utils import encodeutils
 
 
 compute = conn.cloud.compute
@@ -74,11 +76,15 @@ SG_ALLOW_ALL_RULES: Final[List[Dict]] = [
 
 def create_fio_client(
         image_id: str, flavor_id: str, networks: List,
-        key_name: str, security_groups: List, server_group_id: str
+        key_name: str, security_groups: List, server_group_id: str,
+        user_data: str
 ) -> None:
     rand_name = str(random.randint(1, 0x7fffffff))
     vm_name = f"{CLIENT_NAME_MASK}-{rand_name}"
 
+    kwargs = {}
+    if user_data:
+        kwargs['user_data'] = user_data
     vm = compute.create_server(
         name=vm_name,
         image_id=image_id,
@@ -86,7 +92,8 @@ def create_fio_client(
         networks=networks,
         key_name=key_name,
         security_groups=security_groups,
-        scheduler_hints={'group': server_group_id})
+        scheduler_hints={'group': server_group_id},
+        **kwargs)
     try:
         vm = compute.wait_for_server(vm, wait=180)
         print(f"Fio client '{vm.name}' is created on '{vm.compute_host}' node")
@@ -201,13 +208,20 @@ if __name__ == "__main__":
         server_group = compute.create_server_group(
             name=AA_SERVER_GROUP_NAME, policies=['soft-anti-affinity'])
 
+    # Prepare user data for fio client VMs
+    udata = None
+    with open('user_data.sh', 'r') as script:
+        f = encodeutils.safe_encode(script.read().encode('utf-8'))
+        udata = base64.b64encode(f).decode('utf-8')
+
     vm_kwargs = dict(
         image_id=img.id,
         flavor_id=flavor.id,
         networks=[{'uuid': fio_net.id}],
         key_name=KEYPAIR_NAME,
         security_groups=[{'name': SG_NAME}],
-        server_group_id=server_group.id)
+        server_group_id=server_group.id,
+        user_data=udata)
 
     # Create fio client VMs in parallel in batches of CONCURRENCY size
     with mp.Pool(processes=CONCURRENCY) as pool:
