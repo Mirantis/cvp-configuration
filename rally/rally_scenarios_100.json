@@ -6,7 +6,7 @@
 {% set times = 100 %}
 {% set users = 3 %}
 {% set tenants = 3 %}
-{% set rbd_image = "http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img" %}
+{% set rbd_image = "https://download.cirros-cloud.net/0.6.2/cirros-0.6.2-x86_64-disk.img" %}
 {% set heat_template = "/home/rally/default.yaml.template" %}
 {% set fixed_net = "${FIXED_NET}" %}
 {

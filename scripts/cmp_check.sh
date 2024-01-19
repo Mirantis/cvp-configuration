@@ -125,7 +125,7 @@ function get_all_cmp() {
 
 function vm_create() {
    [ ! "$silent" = true ] && set -x
-   openstack server create --nic net-id=${fixed_net_left_id} --image ${cirros51_id} --flavor ${flavor_tiny_id} --key-name ${keypair_id} --security-group ${secgroup_all_id} --availability-zone ${zone}:${1} ${2} 2>${tmp_out} >/dev/null
+   openstack server create --nic net-id=${fixed_net_left_id} --image ${cirros61_id} --flavor ${flavor_tiny_id} --key-name ${keypair_id} --security-group ${secgroup_all_id} --availability-zone ${zone}:${1} ${2} 2>${tmp_out} >/dev/null
    #openstack server create --nic net-id=${fixed_net_left_id} --image ${ubuntu16_id} --flavor ${flavor_high_id} --key-name ${keypair_id} --security-group ${secgroup_all_id} --availability-zone ${zone}:${1} ${2} 2>${tmp_out} >/dev/null
    #openstack server create --nic net-id=${fixed_net_right_id} --image ${ubuntu16_id} --flavor ${flavor_high_id} --key-name ${keypair_id} --security-group ${secgroup_all_id} --availability-zone ${zone}:${1} ${2} 2>${tmp_out} >/dev/null
    #openstack server create --nic net-id=${fixed_net_left_id} --image ${ubuntu20_id} --flavor ${flavor_high_id} --key-name ${keypair_id} --security-group ${secgroup_all_id} --availability-zone ${zone}:${1} ${2} 2>${tmp_out} >/dev/null

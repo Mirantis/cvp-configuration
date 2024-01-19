@@ -1,4 +1,4 @@
-FROM mirantis.azurecr.io/openstack/heat:yoga-focal-20230821170130
+FROM mirantis.azurecr.io/openstack/heat:antelope-jammy-20231204144213
 
 LABEL maintainer="qa-ps@mirantis.com"
 
@@ -8,23 +8,14 @@ RUN export TZ="America/Chicago" && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
     apt-get update && \
     apt-get install -y make gcc g++ git libaio-dev libaio1 zlib1g-dev && \
-    apt-get install -y python3-pip python3-venv vim iperf3 iperf mtr htop iputils-ping traceroute tcpdump wget iproute2 curl screen && \
-    git clone --depth 1 --branch fio-3.26 https://github.com/axboe/fio.git && \
-    cd /opt/fio && \
-    ./configure && \
-    make && \
-    make install && \
-    cd /opt && \
-    rm -rf /opt/fio && \
-    apt --yes remove gcc g++ && \
-    apt autoremove --yes && \
+    apt-get install -y python3-pip python3-venv vim iperf3 iperf mtr htop iputils-ping traceroute tcpdump wget iproute2 curl screen qemu-utils jq && \
     rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install --no-cache-dir tempestparser
 
 RUN mkdir /opt/packages/ && \
     cd /opt/packages && \
-    apt-get download $(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances iperf3 iperf | grep "^\w" | sort -u) || true
+    apt-get download $(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances iperf3 iperf fio | grep "^\w" | sort -u) || true
 
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
     install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl && \

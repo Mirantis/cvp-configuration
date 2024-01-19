@@ -171,8 +171,8 @@ if [ -f $MY_PROJFOLDER/envs/mos-kubeconfig.yaml ]; then
     ewriteln "export TEMPEST_CUSTOM_VOLUME_TYPE=${vVOLTYPE}"
     # hardcoded values
     ewriteln "export TEMPEST_CUSTOM_FLAVOR=cvp.tiny"
-    ewriteln "export TEMPEST_CUSTOM_IMAGE=cvp.cirros.51"
-    ewriteln "export TEMPEST_CUSTOM_IMAGE_ALT=cvp.cirros.52"
+    ewriteln "export TEMPEST_CUSTOM_IMAGE=cvp.cirros.61"
+    ewriteln "export TEMPEST_CUSTOM_IMAGE_ALT=cvp.cirros.62"
     #prepare tempest custom yaml
     cp /opt/res-files/k8s/yamls/tempest_custom.yaml.clean $MY_PROJFOLDER/yamls/tempest_custom.yaml
     ewriteln 'export TEMPEST_CUSTOM_PARAMETERS=$(cat $MY_PROJFOLDER/yamls/tempest_custom.yaml)'

@@ -38,7 +38,7 @@
   cinder_quotas_params: { snapshots: -1, volumes: -1}
 
 # Parameters for Glance
-  glance_image_location: "https://download.cirros-cloud.net/0.3.5/cirros-0.3.5-i386-disk.img"
+  glance_image_location: "https://download.cirros-cloud.net/0.6.2/cirros-0.6.2-x86_64-disk.img"
   glance_number_nova_servers_to_boot: 2
   glance_images_per_tenant_before_benchmarking: 4
 

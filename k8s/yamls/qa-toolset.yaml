@@ -68,7 +68,7 @@ spec:
     #image: 127.0.0.1:44301/general/external/docker.io/library/ubuntu:bionic-20201119
     #image: savex13/toolset:latest
     #image: registry.mirantis.com/professional-services-qa/toolset:latest
-    image: registry.mirantis.com/professional-services-qa/toolset:23.2-yoga
+    image: registry.mirantis.com/professional-services-qa/toolset:23.3-antelope
     volumeMounts:
     - mountPath: /artifacts
       name: qa-pv-a
