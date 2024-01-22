@@ -5,6 +5,7 @@ all_computes=false
 fill_mode=false
 zone=nova
 use_fqdn=false
+vm_name_prefix=cvp_test_vm_
 
 tmp_out=$(mktemp)
 trap "rm -f ${tmp_out}" EXIT
@@ -153,7 +154,7 @@ function join_by { local IFS="$1"; shift; echo "$*"; }
 function clean_cmp() {
    # #### Cleaning mode
    if [ $cleaning = true ]; then
-      vmname=vm_${1}
+      vmname=${vm_name_prefix}${1}
       vmid=( $(getid ${vmname}) )
       if [ ${#vmid[@]} -ne 0 ]; then
          [ ! "$silent" = true ] && echo "# ${1}: cleaning ${#vmid[@]} VMs"
@@ -267,7 +268,7 @@ if [[ ! ${fill_mode} = true ]]; then
    for node in ${cmp_nodes[@]}; do
       echo "# ${node}: checking"
       cname=$(echo ${node} | cut -d'.' -f1)
-      check_cmp_node ${node} vm_${cname}
+      check_cmp_node ${node} ${vm_name_prefix}${cname}
       echo "# ${node}: done"
    done
    errors
@@ -283,7 +284,7 @@ else
       counter=1
       while [[ $counter -lt ${vmcount}+1 ]]; do
          cname=$(echo ${node} | cut -d'.' -f1)
-         vmname_c=vm_${cname}_$(printf "%02d" ${counter})
+         vmname_c=${vm_name_prefix}${cname}_$(printf "%02d" ${counter})
          [ ! "$silent" = true ] && echo "# ${node}: creating ${vmname_c}"
          vm_create ${node} ${vmname_c}
          cmp_stats ${node}

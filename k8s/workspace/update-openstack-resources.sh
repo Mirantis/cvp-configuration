@@ -33,7 +33,6 @@ netid=$(kubectl exec toolset --stdin -n qa-space -- openstack network show ${TEM
 subnetid=$(kubectl exec toolset --stdin -n qa-space -- openstack subnet list -f value | grep ${netid} | cut -d' ' -f1)
 echo "# image_ref_name -> ${cirros51_name}"
 sed -i "s/image_ref_name/${cirros51_name}/g" $MY_PROJFOLDER/yamls/tempest_custom.yaml
-image_ref_name
 echo "# image_ref_uuid -> ${cirros51_id}"
 sed -i "s/image_ref_uuid/${cirros51_id}/g" $MY_PROJFOLDER/yamls/tempest_custom.yaml
 echo "# image_ref_alt_uuid -> ${cirros52_id}"
