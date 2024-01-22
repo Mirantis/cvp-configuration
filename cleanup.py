@@ -23,9 +23,14 @@ identity = cloud.identity
 image = cloud.image
 network = cloud.network
 orchestration = cloud.orchestration
-object_store = cloud.object_store
 volume = cloud.volume
 load_balancer = cloud.load_balancer
+
+# Check if Object Storage is present on the cloud, else skip
+object_store_present = any(service.type == 'object-store' for service
+                           in list(identity.services()))
+if object_store_present:
+    object_store = cloud.object_store
 
 mask = "cvp|s_rally|rally_|tempest-|tempest_|spt|fio"
 full_mask = f"^(?!.*(manual|-static-)).*({mask}).*$"
@@ -412,7 +417,10 @@ if __name__ == "__main__":
     cleanup_load_balancers()
     cleanup_servers()
     cleanup_flavors()
-    cleanup_volume_backups()
+    try:  # Skip if cinder-backup service is not enabled
+        cleanup_volume_backups()
+    except openstack.exceptions.ResourceNotFound:
+        pass
     cleanup_snapshots()
     cleanup_volumes()
     cleanup_volume_groups()
@@ -427,7 +435,8 @@ if __name__ == "__main__":
     cleanup_regions()
     cleanup_routers()
     cleanup_networks()
-    cleanup_containers()
+    if object_store_present:
+        cleanup_containers()
     cleanup_floating_ips()
 
     if args.projects:
