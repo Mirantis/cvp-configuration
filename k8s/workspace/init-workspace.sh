@@ -108,8 +108,8 @@ if [ -f $MY_PROJFOLDER/envs/mos-kubeconfig.yaml ]; then
     keystone_pod=$(kubectl --kubeconfig $MY_PROJFOLDER/envs/mos-kubeconfig.yaml get pod -n openstack -o=custom-columns=NAME:.metadata.name | grep keystone-client)
     echo "# Extracting network: taking the first found external network"
     cmd="openstack network list --external -c Name -f value | head -n1"
-    echo "# Running 'kubectl --kubeconfig $MY_PROJFOLDER/envs/mos-kubeconfig.yaml -n openstack exec ${keystone_pod} -c keystone-client --stdin -- "${cmd}"'"
-    vPUBNET=$(kubectl --kubeconfig $MY_PROJFOLDER/envs/mos-kubeconfig.yaml -n openstack exec ${keystone_pod} -c keystone-client --stdin -- ${cmd})
+    echo "# Running 'kubectl --kubeconfig $MY_PROJFOLDER/envs/mos-kubeconfig.yaml -n openstack exec ${keystone_pod} -c keystone-client --stdin -- sh -c '${cmd}'"
+    vPUBNET=$(kubectl --kubeconfig $MY_PROJFOLDER/envs/mos-kubeconfig.yaml -n openstack exec ${keystone_pod} -c keystone-client --stdin -- sh -c "${cmd}")
     echo "-> 'openstack network list --external -c Name -f value | head -n1': '${vPUBNET}'"
     ewriteln "export TEMPEST_CUSTOM_PUBLIC_NET=${vPUBNET}"
 
