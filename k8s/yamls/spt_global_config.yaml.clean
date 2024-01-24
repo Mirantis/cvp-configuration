@@ -2,21 +2,30 @@
 # parameters for glance image test
 IMAGE_SIZE_MB: 9000
 
-# parameters for vm2vm test
+# parameters for vm2vm tests
 CMP_HOSTS: []
 image_name: "image_ref_name" # Use Ubuntu 20.04 LTS image
-flavor_name: 'spt-test'
+flavor_name: "spt-test"
 flavor_ram: 1536
 flavor_vcpus: 1
 flavor_disk: 5
 nova_timeout: 300
-external_network: 'public-network-name'
-custom_mtu: 'mtu-value' # 'default' or some value like 8950
-iperf_prep_string: "sudo /bin/bash -c 'echo \"91.189.88.161        archive.ubuntu.com\" >> /etc/hosts'"
-internet_at_vms: 'false' # whether Internet is present at OpenStack VMs and iperf can be installed with apt
-iperf_deb_package_dir_path: '/opt/packages/'
+external_network: "public-network-name"
+custom_mtu: 'default' # 'default' or some value like 8950
+iperf_prep_string: "sudo /bin/bash -c 'echo \"91.189.88.161        archive.ubuntu.com\" >> /etc/hosts'" # for VMs
+internet_at_vms: "false" # whether Internet is present at OpenStack VMs and iperf can be installed with apt
+ssh_timeout: 500 # timeout to connect to VMs' floating IPs
+
+# common parameters for vm2vm, hw2hw tests
+skipped_nodes: []
+iperf_deb_package_dir_path: "/opt/packages/"
 iperf_time: 60 # time in seconds to transmit for (iperf -t option)
 multiple_threads_number: 10
-multiple_threads_iperf_utility: "iperf3" # set "iperf" for v2, "iperf3" for v3
-ssh_timeout: 500
-skipped_nodes: []
+multiple_threads_iperf_utility: "iperf" # set "iperf" for v2, "iperf3" for v3
+
+# parameters for hw2hw tests
+hw_nodes_list: [] # list of HW node names
+mos_kubeconfig_path: "/opt/mos-spt/mos-kubeconfig.yaml"
+node_ssh_key_path: "/opt/mos-spt/node.key"
+node_ssh_username: "mcc-user"
+network_cidr: ""
