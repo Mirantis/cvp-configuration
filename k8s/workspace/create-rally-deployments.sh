@@ -7,9 +7,9 @@ if [ ${status} != "Running" ]; then
 	exit 1
 fi
 
-# Updating filder and file permissions
-kubectl exec -n qa-space --stdin rally -- sudo chown rally /artifacts
-kubectl exec -n qa-space --stdin rally -- sudo chown rally /rally/rally-files/*
+# Updating folder and file permissions
+kubectl exec -n qa-space --stdin rally -- sudo chown rally -R /artifacts
+kubectl exec -n qa-space --stdin rally -- sudo chown rally -R /rally/rally-files/
 
 ###
 if [ ! -z $(kubectl exec -n qa-space --stdin rally -- rally env list | grep openstack | cut -d' ' -f2) ]; then
