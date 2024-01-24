@@ -1,4 +1,4 @@
-FROM xrally/xrally-openstack:2.1.0 
+FROM xrally/xrally-openstack:2.1.0
 
 LABEL maintainer="qa-ps@mirantis.com"
 
@@ -10,7 +10,10 @@ RUN mkdir /rally/rally-files && \
 RUN git clone https://github.com/Mirantis/rally-plugins.git && \
     cd rally-plugins/ && \
     pip3 install . && \
-    cd /rally
+    # since rally-plugins use v1beta1 API which is deprecated, downgrade kubernetes
+    pip3 install kubernetes==21.7.0 && \
+    cd /rally && \
+    rally plugin list | grep kubernetes
 
 COPY ./rally-files/* /rally/rally-files/ 
 
