@@ -54,7 +54,5 @@ echo "# image_ref_name -> ${ubuntu20_name}"
 sed -i "s/image_ref_name/${ubuntu20_name}/g" $MY_PROJFOLDER/yamls/global_config.yaml
 echo "# s/public-network-name/ -> ${TEMPEST_CUSTOM_PUBLIC_NET}"
 sed -i "s/public-network-name/${TEMPEST_CUSTOM_PUBLIC_NET}/g" $MY_PROJFOLDER/yamls/global_config.yaml
-echo "# s/mtu-value/ -> default"
-sed -i "s/mtu-value/default/g" $MY_PROJFOLDER/yamls/global_config.yaml
 # 
 echo "# Done!"
