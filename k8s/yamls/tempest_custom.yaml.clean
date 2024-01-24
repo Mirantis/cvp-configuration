@@ -42,7 +42,7 @@ validation:
     ssh_key_type: ecdsa
 octavia:
     availability_zone: nova
-    availability_zoine2: nova
+    availability_zone2: nova
 volume:
     volume_type: volume_type_name
     volume_type_multiattach: volume_type_name

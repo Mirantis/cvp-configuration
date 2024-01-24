@@ -26,6 +26,7 @@ fi
 #
 echo " "
 echo "# Filling tempest_custom.yaml"
+# TODO: set the correct availability_zone in case nova is not used (now nova is default option)
 cp -v /opt/res-files/k8s/yamls/tempest_custom.yaml.clean $MY_PROJFOLDER/yamls/tempest_custom.yaml
 declare $(kubectl exec toolset --stdin -n qa-space -- bash -c "cat /artifacts/cmp-check/cvp.manifest")
 echo "# Getting network details"
