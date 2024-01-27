@@ -12,6 +12,22 @@ echo "Using concurrency of ${K8S_CONFORMANCE_CONCURRENCY} for MCC"
 export K8S_CONFORMANCE_RUN_NETPOLICY_TESTS=False
 echo "Run network policy tests is ${K8S_CONFORMANCE_CONCURRENCY} for MCC"
 
+if [ -z "$MCC_K8S_CONFORMANCE_IMAGE_VERSION" ]; then
+  echo "Error: Failed to determine Kubernetes Conformance image version. Please export K8S_CONFORMANCE_IMAGE_VERSION, for example, export K8S_CONFORMANCE_IMAGE_VERSION=1.xx.x-x"
+  exit 1
+else
+  echo "Using K8S Conformance image version ${MCC_K8S_CONFORMANCE_IMAGE_VERSION}"
+  export K8S_CONFORMANCE_IMAGE_VERSION=${MCC_K8S_CONFORMANCE_IMAGE_VERSION}
+fi
+
+if [ -z "$MCC_K8S_CONFORMANCE_IMAGE_URL" ]; then
+  echo "Error: Failed to determine Kubernetes Conformance image path. Please export K8S_CONFORMANCE_IMAGE_URL, for example, export K8S_CONFORMANCE_IMAGE_URL=mirantis.azurecr.io/lcm/kubernetes/k8s-conformance:v1.xx.x-x"
+  exit 1
+else
+  echo "Using K8S Conformance image path ${MCC_K8S_CONFORMANCE_IMAGE_URL}"
+  export K8S_CONFORMANCE_IMAGE_URL=${MCC_K8S_CONFORMANCE_IMAGE_URL}
+fi
+
 # Run tests
 pytest /opt/si-tests/si_tests/tests/deployment/test_k8s_conformance.py
 unset TARGET_CLUSTER

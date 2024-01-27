@@ -1,3 +1,4 @@
+#!/bin/bash
 ### initial folders
 function ewriteln() {
 	echo ${1} | tee -a $MY_PROJFOLDER/env.sh
@@ -6,6 +7,33 @@ function qkeystone() {
 	keystone_pod=$(kubectl --kubeconfig $MY_PROJFOLDER/envs/mos-kubeconfig.yaml get pod -n openstack -o=custom-columns=NAME:.metadata.name | grep keystone-client)
 	# echo "# Running 'kubectl --kubeconfig $MY_PROJFOLDER/envs/mos-kubeconfig.yaml -n openstack exec {} -c keystone-client --stdin -- "${1}"'"
 	kubectl --kubeconfig $MY_PROJFOLDER/envs/mos-kubeconfig.yaml -n openstack exec ${keystone_pod} -c keystone-client --stdin -- '${1}'
+}
+function get_conformance_image_tag() {
+    kubeconfig_path=$1
+    k8s_server_version=$(kubectl --kubeconfig="$kubeconfig_path" version -o json 2>/dev/null | jq -r '.serverVersion.gitVersion')
+    k8s_short_version=${k8s_server_version:1:4}
+    image_tag=""
+    case $k8s_short_version in
+        "1.18")
+            image_tag="1.18.9-16"
+            ;;
+        "1.19")
+            image_tag="1.19.2-1"
+            ;;
+        "1.20")
+            image_tag="1.20.6-4"
+            ;;
+        "1.21")
+            image_tag="1.21.9-4"
+            ;;
+        "1.24")
+            image_tag="1.24.4-2"
+            ;;
+        "1.27")
+            image_tag="1.27.6-2"
+            ;;
+    esac
+    echo "$image_tag"
 }
 
 export MY_PROJFOLDER=/artifacts
@@ -60,6 +88,16 @@ ewriteln "export SI_BINARIES_DIR=$(which helm | rev | cut -d'/' -f2- | rev)"
 ewriteln "export HELM_BINARY_PATH=$(which helm)"
 ewriteln "export K8S_CONFORMANCE_CONCURRENCY=10"
 
+printf "\n\n# Writing additional options for K8S conformance tests for MCC cluster...\n"
+mcc_kubeconfig_path="$MY_PROJFOLDER/envs/mcc-kubeconfig.yaml"
+mcc_conformance_image_tag=$(get_conformance_image_tag "$mcc_kubeconfig_path")
+if [ -z "$mcc_conformance_image_tag" ]; then
+    echo "Could not identify K8S_CONFORMANCE_IMAGE_VERSION for MCC."
+fi
+mcc_conformance_image_url="mirantis.azurecr.io/lcm/kubernetes/k8s-conformance:v${mcc_conformance_image_tag}"
+ewriteln "export MCC_K8S_CONFORMANCE_IMAGE_VERSION='${mcc_conformance_image_tag}'"
+ewriteln "export MCC_K8S_CONFORMANCE_IMAGE_URL='${mcc_conformance_image_url}'"
+
 # extract MOS kubeconfig
 echo " "
 printf "\n\nExtracting mos-kubeconfig.yaml"
@@ -103,6 +141,16 @@ if [ -f $MY_PROJFOLDER/envs/mos-kubeconfig.yaml ]; then
     ewriteln "export OSH_DEPLOYMENT_NAME=$(kubectl --kubeconfig $MY_PROJFOLDER/envs/mos-kubeconfig.yaml -n openstack get openstackdeployment --no-headers | cut -d' ' -f1)"
     ewriteln "export SI_BINARIES_DIR=$(which helm | rev | cut -d'/' -f2- | rev)"
     ewriteln "export HELM_BINARY_PATH=$(which helm)"
+
+    printf "\n\n# Writing additional options for K8S conformance tests for MOS cluster...\n"
+    mos_kubeconfig_path="$MY_PROJFOLDER/envs/mos-kubeconfig.yaml"
+    mos_conformance_image_tag=$(get_conformance_image_tag "$mos_kubeconfig_path")
+    if [ -z "$mos_conformance_image_tag" ]; then
+        echo "Could not identify K8S_CONFORMANCE_IMAGE_VERSION for MOS."
+    fi
+    mos_conformance_image_url="mirantis.azurecr.io/lcm/kubernetes/k8s-conformance:v${mos_conformance_image_tag}"
+    ewriteln "export MOS_K8S_CONFORMANCE_IMAGE_VERSION='${mos_conformance_image_tag}'"
+    ewriteln "export MOS_K8S_CONFORMANCE_IMAGE_URL='${mos_conformance_image_url}'"
 
     echo " "
     keystone_pod=$(kubectl --kubeconfig $MY_PROJFOLDER/envs/mos-kubeconfig.yaml get pod -n openstack -o=custom-columns=NAME:.metadata.name | grep keystone-client)
