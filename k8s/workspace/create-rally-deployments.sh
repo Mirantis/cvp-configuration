@@ -10,6 +10,8 @@ fi
 # Updating folder and file permissions
 kubectl exec -n qa-space --stdin rally -- sudo chown rally -R /artifacts
 kubectl exec -n qa-space --stdin rally -- sudo chown rally -R /rally/rally-files/
+# Copy actual rally-files to the rally pod:
+kubectl cp /opt/res-files/k8s/rally-files/ qa-space/rally:/rally/
 
 ###
 if [ ! -z $(kubectl exec -n qa-space --stdin rally -- rally env list | grep openstack | cut -d' ' -f2) ]; then
