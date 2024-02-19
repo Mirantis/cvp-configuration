@@ -1,6 +1,8 @@
 #!/bin/bash
+echo "Sourcing $MY_PROJFOLDER/env.sh"
+. $MY_PROJFOLDER/env.sh
 if [ -z ${TEMPEST_CUSTOM_PUBLIC_NET+x} ]; then
-	echo "# WARNING: Public network is empty"
+	echo "# WARNING: Public network is empty, please export its name to TEMPEST_CUSTOM_PUBLIC_NET environment variable to use some specific external net in case of several networks. Otherwise random external network will be used."
 fi
 # mosrc
 . $MY_PROJFOLDER/envs/mosrc
@@ -17,10 +19,10 @@ if [ ! -z $(kubectl exec toolset --stdin -n qa-space -- bash -c "openstack user 
 	echo " "
 	kubectl exec toolset --stdin -n qa-space -- bash -c "cat /artifacts/cmp-check/cvp.manifest"
 else
-        echo "# Creating openstack resources"
+  echo "# Creating openstack resources"
 	echo " "
 	kubectl exec toolset --stdin -n qa-space -- bash -c "mkdir /artifacts/cmp-check"
-        kubectl exec toolset --tty --stdin -n qa-space -- bash -c "cd /artifacts/cmp-check; bash /opt/cmp-check/prepare.sh -w \$(pwd)"
+  kubectl exec toolset --tty --stdin -n qa-space -- bash -c "cd /artifacts/cmp-check; export CUSTOM_PUBLIC_NET_NAME="${TEMPEST_CUSTOM_PUBLIC_NET:-}"; bash /opt/cmp-check/prepare.sh -w \$(pwd)"
 fi
 
 #
@@ -32,12 +34,12 @@ declare $(kubectl exec toolset --stdin -n qa-space -- bash -c "cat /artifacts/cm
 echo "# Getting network details"
 netid=$(kubectl exec toolset --stdin -n qa-space -- openstack network show ${TEMPEST_CUSTOM_PUBLIC_NET} -c id -f value)
 subnetid=$(kubectl exec toolset --stdin -n qa-space -- openstack subnet list -f value | grep ${netid} | cut -d' ' -f1)
-echo "# image_ref_name -> ${cirros51_name}"
-sed -i "s/image_ref_name/${cirros51_name}/g" $MY_PROJFOLDER/yamls/tempest_custom.yaml
-echo "# image_ref_uuid -> ${cirros51_id}"
-sed -i "s/image_ref_uuid/${cirros51_id}/g" $MY_PROJFOLDER/yamls/tempest_custom.yaml
-echo "# image_ref_alt_uuid -> ${cirros52_id}"
-sed -i "s/image_ref_alt_uuid/${cirros52_id}/g" $MY_PROJFOLDER/yamls/tempest_custom.yaml
+#echo "# image_ref_name -> ${cirros51_name}"
+#sed -i "s/image_ref_name/${cirros51_name}/g" $MY_PROJFOLDER/yamls/tempest_custom.yaml
+#echo "# image_ref_uuid -> ${cirros51_id}"
+#sed -i "s/image_ref_uuid/${cirros51_id}/g" $MY_PROJFOLDER/yamls/tempest_custom.yaml
+#echo "# image_ref_alt_uuid -> ${cirros52_id}"
+#sed -i "s/image_ref_alt_uuid/${cirros52_id}/g" $MY_PROJFOLDER/yamls/tempest_custom.yaml
 echo "# s/public_subnet_uuid/ -> ${subnetid}"
 sed -i "s/public_subnet_uuid/${subnetid}/g" $MY_PROJFOLDER/yamls/tempest_custom.yaml
 echo "# s/public_net_uuid/ -> ${netid}"

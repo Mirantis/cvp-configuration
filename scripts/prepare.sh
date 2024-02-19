@@ -296,9 +296,25 @@ function create_fixed_nets() {
     process_cmds
 
     # get external network name
-    external=$(openstack network list --external -c Name -f value | head -n1)
-    echo router set ${router} --external-gateway ${external} >>${cmds}
-    process_cmds
+    if [ -n "${CUSTOM_PUBLIC_NET_NAME:-}" ]; then
+      # if CUSTOM_PUBLIC_NET_NAME is set to some specific net, check it is present on the cloud and use it
+      echo "# Checking that the external network ${CUSTOM_PUBLIC_NET_NAME} is present on the cloud"
+      network_exists=$(openstack network show "$CUSTOM_PUBLIC_NET_NAME" -c id -f value 2>/dev/null)
+      if [ -n "$network_exists" ]; then
+        echo router set ${router} --external-gateway ${CUSTOM_PUBLIC_NET_NAME} >>${cmds}
+        process_cmds
+      else
+        echo "# The network ${CUSTOM_PUBLIC_NET_NAME} does not exist"
+        CUSTOM_PUBLIC_NET_NAME=""
+      fi
+    fi
+    if [ -z "${CUSTOM_PUBLIC_NET_NAME:-}" ]; then
+      echo "# Selecting a random external network as an external gateway for the router"
+      # if the custom network is not set or is empty, select the first external network
+      external=$(openstack network list --external -c Name -f value | head -n1)
+      echo router set ${router} --external-gateway ${external} >>${cmds}
+      process_cmds
+    fi
 }
 
 function _get_image() {
