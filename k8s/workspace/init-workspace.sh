@@ -70,6 +70,7 @@ fi
 ewriteln "export MY_CLIENTNAME='ClientName'"
 ewriteln "export MY_CLIENTSHORTNAME='clname'"
 ewriteln "export MY_PROJNAME='MOS_DEPLOY'"
+CUSTOM_PUBLIC_NET_NAME=""
 ewriteln "export MY_PROJFOLDER=/artifacts"
 
 # NS & CLUSTER
@@ -154,12 +155,28 @@ if [ -f $MY_PROJFOLDER/envs/mos-kubeconfig.yaml ]; then
 
     echo " "
     keystone_pod=$(kubectl --kubeconfig $MY_PROJFOLDER/envs/mos-kubeconfig.yaml get pod -n openstack -o=custom-columns=NAME:.metadata.name | grep keystone-client)
-    echo "# Extracting network: taking the first found external network"
-    cmd="openstack network list --external -c Name -f value | head -n1"
-    echo "# Running 'kubectl --kubeconfig $MY_PROJFOLDER/envs/mos-kubeconfig.yaml -n openstack exec ${keystone_pod} -c keystone-client --stdin -- sh -c '${cmd}'"
-    vPUBNET=$(kubectl --kubeconfig $MY_PROJFOLDER/envs/mos-kubeconfig.yaml -n openstack exec ${keystone_pod} -c keystone-client --stdin -- sh -c "${cmd}")
-    echo "-> 'openstack network list --external -c Name -f value | head -n1': '${vPUBNET}'"
-    ewriteln "export TEMPEST_CUSTOM_PUBLIC_NET=${vPUBNET}"
+    if [ -n "${CUSTOM_PUBLIC_NET_NAME:-}" ]; then
+      # if CUSTOM_PUBLIC_NET_NAME is set to some specific net, check it is present on the cloud
+      echo "# Checking that the external network ${CUSTOM_PUBLIC_NET_NAME} is present on the cloud"
+      cmd="openstack network show ${CUSTOM_PUBLIC_NET_NAME} -c id -f value 2>/dev/null"
+      echo "# Running 'kubectl --kubeconfig $MY_PROJFOLDER/envs/mos-kubeconfig.yaml -n openstack exec ${keystone_pod} -c keystone-client --stdin -- sh -c '${cmd}'"
+      network_exists=$(kubectl --kubeconfig $MY_PROJFOLDER/envs/mos-kubeconfig.yaml -n openstack exec "${keystone_pod}" -c keystone-client --stdin -- sh -c "${cmd}")
+      if [ -n "$network_exists" ]; then
+        echo "# Setting TEMPEST_CUSTOM_PUBLIC_NET to ${CUSTOM_PUBLIC_NET_NAME}"
+        ewriteln "export TEMPEST_CUSTOM_PUBLIC_NET=${CUSTOM_PUBLIC_NET_NAME}"
+      else
+        echo "The custom external (floating) network ${CUSTOM_PUBLIC_NET_NAME} is not found on the cloud. Set CUSTOM_PUBLIC_NET_NAME=\"\" to automatically pick some public network."
+        exit 1
+      fi
+    else
+      # else if it is not set by the QA engineer, let's extract the first external network and use it
+      echo "# Extracting network: taking the first found external network"
+      cmd="openstack network list --external -c Name -f value | head -n1"
+      echo "# Running 'kubectl --kubeconfig $MY_PROJFOLDER/envs/mos-kubeconfig.yaml -n openstack exec ${keystone_pod} -c keystone-client --stdin -- sh -c '${cmd}'"
+      vPUBNET=$(kubectl --kubeconfig $MY_PROJFOLDER/envs/mos-kubeconfig.yaml -n openstack exec ${keystone_pod} -c keystone-client --stdin -- sh -c "${cmd}")
+      echo "-> 'openstack network list --external -c Name -f value | head -n1': '${vPUBNET}'"
+      ewriteln "export TEMPEST_CUSTOM_PUBLIC_NET=${vPUBNET}"
+    fi
 
     echo "# Extracting volume types"
     cmd_all="openstack volume type list -f value -c Name"
@@ -170,9 +187,9 @@ if [ -f $MY_PROJFOLDER/envs/mos-kubeconfig.yaml ]; then
     echo "# Default volume type used: ${vVOLTYPE}"
     ewriteln "export TEMPEST_CUSTOM_VOLUME_TYPE=${vVOLTYPE}"
     # hardcoded values
-    ewriteln "export TEMPEST_CUSTOM_FLAVOR=cvp.tiny"
-    ewriteln "export TEMPEST_CUSTOM_IMAGE=cvp.cirros.61"
-    ewriteln "export TEMPEST_CUSTOM_IMAGE_ALT=cvp.cirros.62"
+    ewriteln "# export TEMPEST_CUSTOM_FLAVOR=cvp.tiny"
+    ewriteln "# export TEMPEST_CUSTOM_IMAGE=cvp.cirros.61"
+    ewriteln "# export TEMPEST_CUSTOM_IMAGE_ALT=cvp.cirros.62"
     #prepare tempest custom yaml
     cp /opt/res-files/k8s/yamls/tempest_custom.yaml.clean $MY_PROJFOLDER/yamls/tempest_custom.yaml
     ewriteln 'export TEMPEST_CUSTOM_PARAMETERS=$(cat $MY_PROJFOLDER/yamls/tempest_custom.yaml)'

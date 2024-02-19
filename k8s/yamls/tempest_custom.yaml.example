@@ -6,11 +6,21 @@ auth:
 identity:
     disable_ssl_certificate_validation: true
 compute:
+    fixed_network_name: cvp.net.1
+    flavor_ref: 1
+    flavor_ref_alt: 2
+    image_ref: image_ref_uuid
+    image_ref_alt: image_ref_alt_uuid
+    min_compute_nodes: 3
     volume_device_name: vdb
     compute_volume_common_az: nova
+object-storage:
+    endpoint_type: internal
 heat_plugin:
+    fixed_network_name: cvp.net.1
     floating_network_name: public_net_name
     network_for_ssh: public_net_name
+    fixed_subnet_name: cvp.subnet.1
 network:
     subnet_id: public_subnet_uuid
     public_network_id: public_net_uuid
@@ -18,9 +28,18 @@ network:
 network-feature-enabled:
     floating_ips: true
 validation:
+    run_validation: true
     ssh_timeout: 30
     connect_timeout: 10
     ping_timeout: 10
+    image_ssh_user: cirros
+    image_alt_ssh_user: cirros
+    image_ssh_password: gocubsgo
+    image_alt_ssh_password: gocubsgo
+    ssh_key_type: ecdsa
+octavia:
+    availability_zone: nova
+    availability_zone2: nova
 volume:
     volume_type: volume_type_name
     volume_type_multiattach: volume_type_name
