@@ -9,7 +9,7 @@
 {% set times = 100 %}
 {% set users = 5 %}
 {% set tenants = 10 %}
-{% set rbd_image = "http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img" %}
+{% set rbd_image = "https://download.cirros-cloud.net/0.6.2/cirros-0.6.2-x86_64-disk.img" %}
 {% set heat_template = "/home/rally/default.yaml.template" %}
 {% set block_migration = true %}
 {% set ext_net_name = "<NAME>" %}

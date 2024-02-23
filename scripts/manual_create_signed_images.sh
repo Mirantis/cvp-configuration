@@ -1,5 +1,4 @@
 #!/bin/bash
-
 echo "Preparing certs"
 openssl genrsa -out image_key.pem 1024
 openssl rsa -pubout -in image_key.pem -out image_key.pem.pub
@@ -16,31 +15,29 @@ echo "Exported '$s_uuid'"
 echo "Converting images to Raw"
 qemu-img convert -f qcow2 -O raw -p cvp.ubuntu.2004 /var/tmp/cvp.ubuntu.2004.raw
 qemu-img convert -f qcow2 -O raw -p cvp.ubuntu.1604 /var/tmp/cvp.ubuntu.1604.raw
-qemu-img convert -f qcow2 -O raw -p cvp.cirros.51 /var/tmp/cvp.cirros.51.raw
-qemu-img convert -f qcow2 -O raw -p cvp.cirros.52 /var/tmp/cvp.cirros.52.raw
+qemu-img convert -f qcow2 -O raw -p cvp.cirros.61 /var/tmp/cvp.cirros.61.raw
+qemu-img convert -f qcow2 -O raw -p cvp.cirros.62 /var/tmp/cvp.cirros.62.raw
 ​
 echo "Signing images"
-openssl dgst -sha256 -sign image_key.pem -sigopt rsa_padding_mode:pss -out cvp.cirros.51.raw.signature /var/tmp/cvp.cirros.51.raw
-openssl dgst -sha256 -sign image_key.pem -sigopt rsa_padding_mode:pss -out cvp.cirros.52.raw.signature /var/tmp/cvp.cirros.52.raw
+openssl dgst -sha256 -sign image_key.pem -sigopt rsa_padding_mode:pss -out cvp.cirros.61.raw.signature /var/tmp/cvp.cirros.61.raw
+openssl dgst -sha256 -sign image_key.pem -sigopt rsa_padding_mode:pss -out cvp.cirros.62.raw.signature /var/tmp/cvp.cirros.62.raw
 openssl dgst -sha256 -sign image_key.pem -sigopt rsa_padding_mode:pss -out cvp.ubuntu.1604.raw.signature /var/tmp/cvp.ubuntu.1604.raw
 openssl dgst -sha256 -sign image_key.pem -sigopt rsa_padding_mode:pss -out cvp.ubuntu.2004.raw.signature /var/tmp/cvp.ubuntu.2004.raw
-
 echo "Generating base64 equivalents"
-base64 -w 0 cvp.cirros.51.raw.signature >cvp.cirros.51.raw.signature.b64
-base64 -w 0 cvp.cirros.52.raw.signature >cvp.cirros.52.raw.signature.b64
+base64 -w 0 cvp.cirros.61.raw.signature >cvp.cirros.61.raw.signature.b64
+base64 -w 0 cvp.cirros.62.raw.signature >cvp.cirros.62.raw.signature.b64
 base64 -w 0 cvp.ubuntu.1604.raw.signature >cvp.ubuntu.1604.raw.signature.b64
 base64 -w 0 cvp.ubuntu.2004.raw.signature >cvp.ubuntu.2004.raw.signature.b64
-
 echo "Exporting vars"
-export cirros51_sign=$(cat cvp.cirros.51.raw.signature.b64)
-export cirros52_sign=$(cat cvp.cirros.52.raw.signature.b64)
+export cirros61_sign=$(cat cvp.cirros.61.raw.signature.b64)
+export cirros62_sign=$(cat cvp.cirros.62.raw.signature.b64)
 export ubuntu1604_sign=$(cat cvp.ubuntu.1604.raw.signature.b64)
 export ubuntu2004_sign=$(cat cvp.ubuntu.2004.raw.signature.b64)
 ​
-echo "Uploading 'cvp.cirros.51.raw.signed''"
-glance image-create --name cvp.cirros.51.raw.signed --container-format bare --disk-format raw --property img_signature="$cirros51_sign" --property img_signature_certificate_uuid="$s_uuid" --property img_signature_hash_method='SHA-256' --property img_signature_key_type='RSA-PSS' < /var/tmp/cvp.cirros.51.raw
-echo "Uploading 'cvp.cirros.52.raw.signed''"
-glance image-create --name cvp.cirros.52.raw.signed --container-format bare --disk-format raw --property img_signature="$cirros52_sign" --property img_signature_certificate_uuid="$s_uuid" --property img_signature_hash_method='SHA-256' --property img_signature_key_type='RSA-PSS' < /var/tmp/cvp.cirros.52.raw
+echo "Uploading 'cvp.cirros.61.raw.signed''"
+glance image-create --name cvp.cirros.61.raw.signed --container-format bare --disk-format raw --property img_signature="$cirros61_sign" --property img_signature_certificate_uuid="$s_uuid" --property img_signature_hash_method='SHA-256' --property img_signature_key_type='RSA-PSS' < /var/tmp/cvp.cirros.61.raw
+echo "Uploading 'cvp.cirros.62.raw.signed''"
+glance image-create --name cvp.cirros.62.raw.signed --container-format bare --disk-format raw --property img_signature="$cirros62_sign" --property img_signature_certificate_uuid="$s_uuid" --property img_signature_hash_method='SHA-256' --property img_signature_key_type='RSA-PSS' < /var/tmp/cvp.cirros.62.raw
 echo "Uploading 'cvp.ubuntu.1604.raw.signed''"
 glance image-create --name cvp.ubuntu.1604.raw.signed --container-format bare --disk-format raw --property img_signature="$ubuntu1604_sign" --property img_signature_certificate_uuid="$s_uuid" --property img_signature_hash_method='SHA-256' --property img_signature_key_type='RSA-PSS' < /var/tmp/cvp.ubuntu.1604.raw
 echo "Uploading 'cvp.ubuntu.2004.raw.signed''"
