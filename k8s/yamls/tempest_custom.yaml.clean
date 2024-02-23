@@ -17,10 +17,6 @@ network:
     floating_network_name: public_net_name
 network-feature-enabled:
     floating_ips: true
-validation:
-    ssh_timeout: 30
-    connect_timeout: 10
-    ping_timeout: 10
 volume:
     volume_type: volume_type_name
     volume_type_multiattach: volume_type_name
