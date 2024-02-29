@@ -15,7 +15,7 @@ clouds:
       project_name: PROJECT_NAME
       project_domain_name: PROJECT_DOMAIN_NAME
       user_domain_name: USER_DOMAIN_NAME
-    region_name: RegionOne
+    region_name: REGION_NAME
     interface: public
     identity_api_version: 3
     verify: false
