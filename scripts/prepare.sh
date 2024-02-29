@@ -1,6 +1,9 @@
 #!/bin/bash
 export OS_INTERFACE='admin'
 
+# Prepare clouds.yaml file for the future cleanup, with original admin creds
+sed -i "s#AUTH_URL#${OS_AUTH_URL}#g; s#USERNAME#${OS_USERNAME}#g; s#USER_PASSWORD#${OS_PASSWORD}#g; s#PROJECT_NAME#${OS_PROJECT_NAME}#g; s#PROJECT_DOMAIN_NAME#${OS_PROJECT_DOMAIN_NAME}#g; s#USER_DOMAIN_NAME#${OS_USER_DOMAIN_NAME}#g; s#REGION_NAME#${OS_REGION_NAME}#g" /opt/res-files/clouds.yaml
+
 # local vars
 name_prefix=cvp
 filename=${name_prefix}.manifest
