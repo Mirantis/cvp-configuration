@@ -1,9 +1,18 @@
+FROM ubuntu:20.04 AS download-packages
+RUN mkdir /opt/packages && cd /opt/packages && \
+    apt-get update && \
+    apt-get download $(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances iperf3 iperf fio | grep "^\w" | sort -u) || true && \
+    rm -rf /var/lib/apt/lists/*
+
 FROM mirantis.azurecr.io/openstack/heat:antelope-jammy-20231204144213
 
 LABEL maintainer="qa-ps@mirantis.com"
 
 ADD ./src/mos-spt.tgz /opt/mos-spt/
 WORKDIR /opt
+
+COPY --from=download-packages /opt/packages /opt/packages
+
 RUN export TZ="America/Chicago" && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
     apt-get update && \
@@ -12,10 +21,6 @@ RUN export TZ="America/Chicago" && \
     rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install --no-cache-dir tempestparser
-
-RUN mkdir /opt/packages/ && \
-    cd /opt/packages && \
-    apt-get download $(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances iperf3 iperf fio | grep "^\w" | sort -u) || true
 
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
     install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl && \

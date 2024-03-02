@@ -1,3 +1,9 @@
+FROM ubuntu:20.04 AS download-packages
+RUN mkdir /opt/packages && cd /opt/packages && \
+    apt-get update && \
+    apt-get download $(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances iperf3 iperf fio | grep "^\w" | sort -u) || true && \
+    rm -rf /var/lib/apt/lists/*
+
 FROM mirantis.azurecr.io/openstack/heat:antelope-jammy-20231204144213
 
 LABEL maintainer="qa-ps@mirantis.com"
@@ -5,6 +11,9 @@ LABEL maintainer="qa-ps@mirantis.com"
 ADD ./src/si-tests.tgz /opt/si-tests/
 ADD ./src/mos-checker.tgz /opt/cfg-checker/
 WORKDIR /opt
+
+COPY --from=download-packages /opt/packages /opt/packages
+
 RUN apt-get update && \
     apt-get install -y make gcc g++ git libaio-dev libaio1 zlib1g-dev fio && \
     mkdir /opt/density && \
@@ -45,12 +54,6 @@ RUN cd /opt/si-tests/ && \
     . .sivenv/bin/activate && \
     pip3 install --no-cache-dir -r si_tests/requirements.txt && \
     deactivate
-
-RUN mkdir /opt/packages/ && \
-    cd /opt/packages && \
-    apt-get update && \
-    apt-get download $(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances iperf3 iperf fio | grep "^\w" | sort -u) || true && \
-    rm -rf /var/lib/apt/lists/*
 
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
     install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl && \
