@@ -4,6 +4,12 @@ tenv=mos
 cd $MY_PROJFOLDER/tmp
 . $MY_PROJFOLDER/env.sh
 . $MY_PROJFOLDER/envs/${tenv}rc
+
+if grep -q "public_subnet_uuid" "$MY_PROJFOLDER/yamls/tempest_custom.yaml"; then
+    echo "The ${MY_PROJFOLDER}/yamls/tempest_custom.yaml file is not updated, it has the placeholders. Please run '. $MY_PROJFOLDER/env.sh && . $MY_PROJFOLDER/envs/mosrc && bash $MY_PROJFOLDER/scripts/update-openstack-resources.sh' before running tempest."
+    exit 1
+fi
+
 # Just in case
 unset TARGET_CLUSTER
 unset TARGET_NAMESPACE
