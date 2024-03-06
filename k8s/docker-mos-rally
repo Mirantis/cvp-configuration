@@ -1,6 +1,6 @@
 FROM xrally/xrally-openstack:2.1.0
 
-MAINTAINER Alex Savatieiev (a.savex@gmail.com)
+LABEL maintainer="qa-ps@mirantis.com"
 
 WORKDIR /rally
 RUN mkdir /rally/rally-files && \
