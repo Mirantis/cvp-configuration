@@ -4,8 +4,11 @@ RUN mkdir /opt/packages && cd /opt/packages && \
     apt-get download $(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances iperf3 iperf fio | grep "^\w" | sort -u) || true && \
     rm -rf /var/lib/apt/lists/*
 
+<<<<<<< HEAD   (826e6f Do not run tempest run if the custom params are placeholders)
 FROM mirantis.azurecr.io/openstack/heat:antelope-jammy-20231204144213
 
+=======
+>>>>>>> CHANGE (814323 Updated the src folder with new repositories archives)
 LABEL maintainer="qa-ps@mirantis.com"
 
 ADD ./src/mos-spt.tgz /opt/mos-spt/
@@ -20,7 +23,16 @@ RUN export TZ="America/Chicago" && \
     apt-get install -y python3-pip python3-venv vim iperf3 iperf mtr htop iputils-ping traceroute tcpdump wget iproute2 curl screen qemu-utils jq && \
     rm -rf /var/lib/apt/lists/*
 
+<<<<<<< HEAD   (826e6f Do not run tempest run if the custom params are placeholders)
 RUN pip3 install --no-cache-dir tempestparser
+=======
+RUN pip3 install --no-cache-dir python-openstackclient python-neutronclient python-heatclient pyghmi python-octaviaclient tempestparser python-ironicclient aodhclient gnocchiclient python-barbicanclient python-glanceclient
+
+RUN mkdir /opt/packages/ && \
+    cd /opt/packages && \
+    apt-get update && \
+    apt-get download $(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances iperf3 iperf | grep "^\w" | sort -u) || true
+>>>>>>> CHANGE (814323 Updated the src folder with new repositories archives)
 
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
     install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl && \
