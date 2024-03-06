@@ -24,6 +24,7 @@ RUN pip3 install --no-cache-dir tempestparser
 
 RUN mkdir /opt/packages/ && \
     cd /opt/packages && \
+    apt-get update && \
     apt-get download $(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances iperf3 iperf | grep "^\w" | sort -u) || true
 
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
