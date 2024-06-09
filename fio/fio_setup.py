@@ -1,5 +1,5 @@
 import base64
-import multiprocessing as mp
+import concurrent.futures as cex
 import os
 import random
 import sys
@@ -224,9 +224,7 @@ if __name__ == "__main__":
         user_data=udata)
 
     # Create fio client VMs in parallel in batches of CONCURRENCY size
-    with mp.Pool(processes=CONCURRENCY) as pool:
-        results = [
-            pool.apply_async(create_fio_client, kwds=vm_kwargs)
-            for _ in range(CLIENTS_COUNT)]
+    with cex.ThreadPoolExecutor(max_workers=CONCURRENCY) as executor:
+        futures = [executor.submit(create_fio_client, **vm_kwargs) for _ in range(CLIENTS_COUNT)]
         # Wait for batch of fio client VMs to be created
-        _ = [r.get() for r in results]
+        _ = [future.result() for future in futures]

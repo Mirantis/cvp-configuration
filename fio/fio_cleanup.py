@@ -1,4 +1,4 @@
-import multiprocessing as mp
+import concurrent.futures as cex
 
 import connection as conn
 from openstack.exceptions import ResourceFailure
@@ -51,10 +51,10 @@ if __name__ == "__main__":
     vms = list(compute.servers(name=CLIENT_NAME_MASK, details=False))
 
     # Delete fio VMs in parallel in batches of CONCURRENCY size
-    with mp.Pool(processes=CONCURRENCY) as pool:
-        results = [pool.apply_async(delete_fio_client, (vm.id,)) for vm in vms]
+    with cex.ThreadPoolExecutor(max_workers=CONCURRENCY) as executor:
+        futures = [executor.submit(delete_fio_client, vm.id) for vm in vms]
         # Waits for batch of fio VMs to be deleted
-        _ = [r.get() for r in results]
+        _ = [future.result() for future in futures]
 
     # Remove ports from fio router (including external GW)
     router = network.find_router(ROUTER_NAME)
