@@ -302,6 +302,7 @@ function create_fixed_nets() {
       echo "# Checking that the external network ${CUSTOM_PUBLIC_NET_NAME} is present on the cloud"
       network_exists=$(openstack network show "$CUSTOM_PUBLIC_NET_NAME" -c id -f value 2>/dev/null)
       if [ -n "$network_exists" ]; then
+        TEST_PUBLIC_NET=${CUSTOM_PUBLIC_NET_NAME}
         echo router set ${router} --external-gateway ${CUSTOM_PUBLIC_NET_NAME} >>${cmds}
         process_cmds
       else
@@ -313,8 +314,25 @@ function create_fixed_nets() {
       echo "# Selecting a random external network as an external gateway for the router"
       # if the custom network is not set or is empty, select the first external network
       external=$(openstack network list --external -c Name -f value | head -n1)
+      TEST_PUBLIC_NET=${external}
       echo router set ${router} --external-gateway ${external} >>${cmds}
       process_cmds
+    fi
+
+    # set external gateway info for the Heat router if it is not set (required for Heat Tempest tests)
+    external_gateway_info=$(openstack router show heat-router -f json -c external_gateway_info | jq -r '.external_gateway_info')
+    if [[ "$external_gateway_info" == "null" ]]; then
+      echo "# Setting external gw info for heat-router using ${TEST_PUBLIC_NET}"
+      openstack router set --external-gateway ${TEST_PUBLIC_NET} heat-router
+      if [[ $? -eq 0 ]]; then
+        echo "# External gateway set successfully for heat-router"
+        openstack router show heat-router -c external_gateway_info
+      else
+        echo "# Failed to set external gateway for heat-router"
+      fi
+    else
+      echo "# Router heat-router already has an external gateway"
+      openstack router show heat-router -c external_gateway_info
     fi
 }
 
