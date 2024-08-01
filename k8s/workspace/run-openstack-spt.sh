@@ -25,3 +25,8 @@ else
         echo "# Public network not set: TEMPEST_CUSTOM_PUBLIC_NET=${TEMPEST_CUSTOM_PUBLIC_NET}"
 	exit 1
 fi
+
+echo "# Copying SPT HTML test report"
+mkdir -p /artifacts/reports/mos-spt
+kubectl exec toolset --stdin --tty -n qa-space -- bash -c "mkdir -p /opt/mos-spt/html_reports && cp /opt/mos-spt/*.html /opt/mos-spt/html_reports"
+kubectl cp qa-space/toolset:/opt/mos-spt/html_reports/ /artifacts/reports/mos-spt/
