@@ -2,8 +2,8 @@ FROM mirantis.azurecr.io/openstack/heat:victoria-focal-20230912131036
 
 LABEL maintainer="qa-ps@mirantis.com"
 
-ADD ./src/si-tests.tgz /opt/si-tests/
-ADD ./src/mos-checker.tgz /opt/cfg-checker/
+ADD k8s/src/si-tests.tgz /opt/si-tests/
+ADD k8s/src/mos-checker.tgz /opt/cfg-checker/
 WORKDIR /opt
 RUN apt-get update && \
     apt-get install -y make gcc g++ git libaio-dev libaio1 zlib1g-dev && \
@@ -70,7 +70,7 @@ RUN git clone "https://gerrit.mcp.mirantis.com/mcp/mos-spt" /opt/mos-spt && \
     pip3 install --no-cache-dir -r requirements.txt && \
     deactivate
 
-ADD ./src/openstack-refapp.tgz /opt/density/openstack-refapp/
+ADD k8s/src/openstack-refapp.tgz /opt/density/openstack-refapp/
 
 RUN cd /opt/density/openstack-refapp/ && \
     python3 -m venv .refapp-venv && \
@@ -79,6 +79,8 @@ RUN cd /opt/density/openstack-refapp/ && \
     deactivate && \
     cp /opt/res-files/scripts/prepare-refapp.sh /opt/density/openstack-refapp/ && \
     cp /opt/res-files/scripts/run-refapp-density.sh /opt/density/openstack-refapp/
+
+RUN printf "LABELS:\n  IMAGE_TAG: 23.2-victoria" > /dockerimage_metadata
 
 ENTRYPOINT ["sleep infinite"]
 
