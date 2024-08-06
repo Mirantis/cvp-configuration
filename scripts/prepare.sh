@@ -16,6 +16,7 @@ project=${name_prefix}.project
 user=${name_prefix}.user
 admin=${name_prefix}.admin
 password=mcp1234
+domain=${OS_PROJECT_DOMAIN_NAME}
 
 # Security group
 sg_all=${name_prefix}.sg.all
@@ -192,7 +193,7 @@ function process_cmds() {
 
 function _project() {
     echo project create ${project} >>${cmds}
-    admin_username=$(openstack user list --project admin -c Name -f value | grep admin)
+    admin_username=$(openstack user list --project admin --domain ${domain} -c Name -f value | grep admin)
     echo role add --user ${admin_username} --project ${project} admin >>${cmds}
 }
 
