@@ -1,5 +1,4 @@
-{% set image_box ="127.0.0.1:44301/stacklight/busybox:1.30" %}
-{% set image_box = "busybox" %}
+{% set image_box ="mirantis.azurecr.io/general/external/e2e-test-images/registry.k8s.io/e2e-test-images/busybox:1.29-4" %}
 {% set image_pause = "mirantis.azurecr.io/general/external/pause:3.1" %}
 {% set image_cirros = "virtlet/download.cirros-cloud.net/0.6.2/cirros-0.6.2-x86_64-disk.img" %}
 {% set concurrency = 5 %}

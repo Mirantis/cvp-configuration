@@ -8,7 +8,7 @@
 {% set tenants = 4 %}
 {% set rbd_image = "https://download.cirros-cloud.net/0.6.2/cirros-0.6.2-x86_64-disk.img" %}
 {% set heat_template = "/rally/rally-files/default.yaml.template" %}
-{% set fixed_net = "id" %}
+{% set fixed_net = "${FIXED_NET}" %}
 
 {
   "KeystoneBasic.authenticate_user_and_validate_token": [

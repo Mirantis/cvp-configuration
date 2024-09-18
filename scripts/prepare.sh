@@ -9,7 +9,12 @@ name_prefix=cvp
 filename=${name_prefix}.manifest
 rcfile=${name_prefix}rc
 huge_pages=false
+set_gw_heat_router=false
 logfile=prepare.log
+working_folder=$(pwd)
+
+# Cloud admin details
+admin_username=${OS_USERNAME}
 
 # Project, User, Roles
 project=${name_prefix}.project
@@ -57,13 +62,14 @@ ubuntu20_link=https://cloud-images.ubuntu.com/focal/current/focal-server-cloudim
 volume=${name_prefix}.volume
 
 function show_help {
-    printf "CVP Pipeline: Resource creation script\n\t-h, -?\t\tShow this help\n"
+    printf "QA verification: Resources creation script\n\t-h, -?\t\tShow this help\n"
     printf "\t-H\t\tAdds '--property hw:mem_page_size=large' to flavors, i.e. huge_pages for DPDK\n"
-    printf "\t-w <path>\tSets working folder"
+    printf "\t-w <path>\tSets working folder (default: ${working_folder})\n"
+    printf "\t-g\t\tTo set external_gateway_info to heat-router with the external network (if not set yet)\n"
 }
 
 OPTIND=1 # Reset in case getopts has been used previously in the shell.
-while getopts "h?:Hw:" opt; do
+while getopts ":gHw:h?"  opt; do
     case "$opt" in
     h|\?)
         show_help
@@ -72,8 +78,11 @@ while getopts "h?:Hw:" opt; do
     w)  working_folder=${OPTARG}
         printf "# Working folder is ${working_folder}\n"
         ;;
-    h)  huge_pages=true
+    H)  huge_pages=true
         printf "# Using 'huge_pages' property in flavors\n"
+        ;;
+    g)  set_gw_heat_router=true
+        printf "# Setting external_gateway_info to heat-router with the external network (if not set yet)\n\n"
         ;;
     esac
 done
@@ -193,7 +202,8 @@ function process_cmds() {
 
 function _project() {
     echo project create ${project} >>${cmds}
-    admin_username=$(openstack user list --project admin --domain ${domain} -c Name -f value | grep admin)
+    # admin_username=$(openstack user list --project admin --domain ${domain} -c Name -f value | grep admin)
+    # user admin_username from the initial env vars of the pod
     echo role add --user ${admin_username} --project ${project} admin >>${cmds}
 }
 
@@ -320,20 +330,25 @@ function create_fixed_nets() {
       process_cmds
     fi
 
-    # set external gateway info for the Heat router if it is not set (required for Heat Tempest tests)
-    external_gateway_info=$(openstack router show heat-router -f json -c external_gateway_info | jq -r '.external_gateway_info')
-    if [[ "$external_gateway_info" == "null" ]]; then
-      echo "# Setting external gw info for heat-router using ${TEST_PUBLIC_NET}"
-      openstack router set --external-gateway ${TEST_PUBLIC_NET} heat-router
-      if [[ $? -eq 0 ]]; then
-        echo "# External gateway set successfully for heat-router"
-        openstack router show heat-router -c external_gateway_info
+    if [ "$set_gw_heat_router" = true ]; then
+      echo "# Variable 'set_gw_heat_router' is true; setting the external gateway info for heat-router (if not set yet)..."
+      # set external gateway info for the Heat router if it is not set (required for Heat Tempest tests)
+      external_gateway_info=$(openstack router show heat-router -f json -c external_gateway_info | jq -r '.external_gateway_info')
+      if [[ "$external_gateway_info" == "null" ]]; then
+        echo "# Setting external gw info for heat-router using ${TEST_PUBLIC_NET}"
+        openstack router set --external-gateway ${TEST_PUBLIC_NET} heat-router
+        if [[ $? -eq 0 ]]; then
+          echo "# External gateway set successfully for heat-router"
+          openstack router show heat-router -c external_gateway_info
+        else
+          echo "# Failed to set external gateway for heat-router"
+        fi
       else
-        echo "# Failed to set external gateway for heat-router"
+        echo "# Router heat-router already has an external gateway"
+        openstack router show heat-router -c external_gateway_info
       fi
     else
-      echo "# Router heat-router already has an external gateway"
-      openstack router show heat-router -c external_gateway_info
+      echo "# Variable 'set_gw_heat_router' is not true, skipping setting external_gateway_info for heat-router..."
     fi
 }
 
@@ -385,6 +400,7 @@ function create_image() {
 ###################
 ### Main
 ###################
+echo "Using working folder: ${working_folder}"
 if [[ -z ${working_folder+x} ]]; then
     # cwd into working dir
     cd ${working_folder}
@@ -431,6 +447,6 @@ create_image ubuntu20
 ### Manifest and fall back to original rc
 print_manifest
 printf ="\n\nSetting quota\n"
-openstack quota set --cores -1 --ram -1 --instances -1 --volumes -1 --gigabytes -1 cvp.project
+openstack quota set --cores -1 --ram -1 --instances -1 --volumes -1 --gigabytes -1 --server-groups -1 --server-group-members -1 cvp.project
 source "./adminrc"
 printf "\n\nOriginal rc preserved and backed up in 'adminrc'\nNew rc is '${rcfile}'\n"
