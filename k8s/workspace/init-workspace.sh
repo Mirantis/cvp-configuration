@@ -67,10 +67,15 @@ else
 	truncate -s 0 $MY_PROJFOLDER/env.sh
 	echo "$MY_PROJFOLDER/env.sh has been truncated"
 fi
+
+### Edit the following lines to set the client name, floating network name, IAM writer password
 ewriteln "export MY_CLIENTNAME='ClientName'"
 ewriteln "export MY_CLIENTSHORTNAME='clname'"
 ewriteln "export MY_PROJNAME='MOS_DEPLOY'"
 CUSTOM_PUBLIC_NET_NAME=""
+ewriteln "export WRITER_PASSWORD=''" # IAM (Keycloak) writer password
+
+### Setting the project directory
 ewriteln "export MY_PROJFOLDER=/artifacts"
 
 # NS & CLUSTER
@@ -98,6 +103,9 @@ fi
 mcc_conformance_image_url="mirantis.azurecr.io/lcm/kubernetes/k8s-conformance:v${mcc_conformance_image_tag}"
 ewriteln "export MCC_K8S_CONFORMANCE_IMAGE_VERSION='${mcc_conformance_image_tag}'"
 ewriteln "export MCC_K8S_CONFORMANCE_IMAGE_URL='${mcc_conformance_image_url}'"
+
+# getting IAM Keycloak URL
+ewriteln "export KEYCLOAK_URL=$(kubectl get cluster kaas-mgmt -o jsonpath='{.status.providerStatus.helm.releases.iam.keycloak.url}')"
 
 # extract MOS kubeconfig
 echo " "
