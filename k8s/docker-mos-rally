@@ -15,7 +15,7 @@ RUN git clone https://github.com/Mirantis/rally-plugins.git && \
     cd /rally && \
     rally plugin list | grep kubernetes
 
-COPY ./rally-files/* /rally/rally-files/ 
+COPY k8s/rally-files/* /rally/rally-files/
 
 ENTRYPOINT ["bash"]
 
