@@ -1,4 +1,6 @@
 #!/bin/bash
+
+. "$(dirname "$0")/functions.sh"
 ##
 echo "### Checking rally environments"
 status=$(kubectl -n qa-space get pod | grep rally | tr -s " " | cut -d' ' -f3)
@@ -18,7 +20,8 @@ else
         kubectl exec -n qa-space --stdin rally -- rally task start /rally/rally-files/k8s-mos-scn-i100c5.yaml
 	# generate report
 	echo "# Generating report"
-	fname=$MY_CLIENTSHORTNAME-mos-k8s-perf-latest.html
+	fname="$MY_CLIENTSHORTNAME-mos-k8s-perf-$(get_timestamp).html"
 	kubectl exec -n qa-space --stdin rally -- rally task report $(kubectl exec -n qa-space --stdin rally -- rally task list | grep kubernetes | cut -d' ' -f2 | tail -1) --html-static --out ${fname}
-	kubectl cp qa-space/rally:/rally/${fname} $MY_PROJFOLDER/reports/${fname}
+	kubectl cp qa-space/rally:/rally/${fname} "${MY_PROJFOLDER}/reports/${fname}"
+	update_latest_report_to "${MY_PROJFOLDER}/reports/${fname}"
 fi

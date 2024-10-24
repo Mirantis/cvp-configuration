@@ -1,4 +1,6 @@
 #!/bin/bash
+
+. "$(dirname "$0")/functions.sh"
 tenv=mos
 . /opt/si-tests/.sivenv/bin/activate
 cd $MY_PROJFOLDER/tmp
@@ -63,5 +65,7 @@ else
 fi
 cp ./artifacts/*.xml $MY_PROJFOLDER/reports/${tenv}-func/
 cd $MY_PROJFOLDER/reports/
-tparser -f r_xml -d -r $MY_CLIENTSHORTNAME-${tenv}-openstack-func-full-latest.html $MY_PROJFOLDER/reports/${tenv}-func/
+fname="$MY_CLIENTSHORTNAME-${tenv}-openstack-func-full-$(get_timestamp).html"
+tparser -f r_xml -d -r "${fname}" $MY_PROJFOLDER/reports/${tenv}-func/
+update_latest_report_to "${fname}"
 cd $MY_PROJFOLDER

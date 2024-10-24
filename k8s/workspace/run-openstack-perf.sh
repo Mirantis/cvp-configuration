@@ -1,4 +1,6 @@
 #!/bin/bash
+
+. "$(dirname "$0")/functions.sh"
 function kexec() {
 	kubectl exec -n qa-space --tty --stdin rally -- bash -c "${1}"
 }
@@ -57,7 +59,8 @@ else
 	kexec "rally env use ${uuid}; rally task start ${task_scn}"
 	# generate report
 	echo "# Generating report"
-	fname=$MY_CLIENTSHORTNAME-mos-openstack-perf-latest.html
+	fname="$MY_CLIENTSHORTNAME-mos-openstack-perf-$(get_timestamp).html"
 	kubectl exec -n qa-space --stdin rally -- rally task report $(kubectl exec -n qa-space --stdin rally -- rally task list | grep openstack | cut -d' ' -f2 | tail -1) --html-static --out ${fname}
 	kubectl cp qa-space/rally:/rally/${fname} $MY_PROJFOLDER/reports/${fname}
+	update_latest_report_to "$MY_PROJFOLDER/reports/${fname}"
 fi

@@ -1,4 +1,6 @@
 #!/bin/bash
+
+. "$(dirname "$0")/functions.sh"
 tenv=mcc
 . /opt/si-tests/.sivenv/bin/activate
 cd $MY_PROJFOLDER/tmp
@@ -42,5 +44,7 @@ else
 fi
 cp ./artifacts/*.xml $MY_PROJFOLDER/reports/${tenv}-conformance/
 cd $MY_PROJFOLDER/reports/
-tparser -f r_xml --omit-status SKIP --force-single -d -r $MY_CLIENTSHORTNAME-${tenv}-conformance-latest.html $MY_PROJFOLDER/reports/${tenv}-conformance/
+fname="$MY_CLIENTSHORTNAME-${tenv}-conformance-$(get_timestamp).html"
+tparser -f r_xml --omit-status SKIP --force-single -d -r "${fname}" $MY_PROJFOLDER/reports/${tenv}-conformance/
+update_latest_report_to "${fname}"
 cd $MY_PROJFOLDER

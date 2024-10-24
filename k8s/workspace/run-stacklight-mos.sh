@@ -1,5 +1,6 @@
 #!/bin/bash
 
+. "$(dirname "$0")/functions.sh"
 tenv=mos
 . /opt/si-tests/.sivenv/bin/activate
 cd $MY_PROJFOLDER/tmp
@@ -83,5 +84,7 @@ else
 fi
 cp ./artifacts/*.xml $MY_PROJFOLDER/reports/${tenv}-stacklight/
 cd $MY_PROJFOLDER/reports/
-tparser -f r_xml -d -r $MY_CLIENTSHORTNAME-${tenv}-stacklight-latest.html $MY_PROJFOLDER/reports/${tenv}-stacklight/
+fname="$MY_CLIENTSHORTNAME-${tenv}-stacklight-$(get_timestamp).html"
+tparser -f r_xml -d -r "${fname}" $MY_PROJFOLDER/reports/${tenv}-stacklight/
+update_latest_report_to "$MY_PROJFOLDER/reports/${fname}"
 cd $MY_PROJFOLDER
