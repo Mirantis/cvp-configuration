@@ -10,7 +10,7 @@ spec:
     - infinity
     imagePullPolicy: IfNotPresent
     name: toolset
-    image: registry.mirantis.com/professional-services-qa/toolset:24.2-antelope
+    image: registry.mirantis.com/professional-services-qa/toolset:24.3-antelope
   dnsPolicy: ClusterFirst
   volumes:
   - emptyDir: {}
