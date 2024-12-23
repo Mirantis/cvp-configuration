@@ -14,6 +14,7 @@ import openstack
 openstack.enable_logging(debug=False, path='openstack.log', stream=sys.stdout)
 
 volume_api_version = "3.43"
+manila_api_version = "2.75"
 
 # Connect to cloud
 TEST_CLOUD = os.getenv('OS_TEST_CLOUD', 'os-cloud')
@@ -37,6 +38,12 @@ object_store_present = any(service.type == 'object-store' for service
                            in list(identity.services()))
 if object_store_present:
     object_store = cloud.object_store
+
+# Check if Manila Shared File System is present on the cloud, else skip
+manila_present = any(service.type == 'sharev2' for service
+                           in list(identity.services()))
+if manila_present:
+    shared_file_system = cloud.shared_file_system
 
 mask = "cvp|s_rally|rally_|tempest-|tempest_|spt|fio"
 full_mask = f"^(?!.*(manual|-static-)).*({mask}).*$"
@@ -93,6 +100,45 @@ def _get_volume_groups(all_tenants='true'):
         yield group
 
 
+def _get_shares(all_tenants='true'):
+    ep = shared_file_system.get_endpoint()
+    uri = f"{ep}/shares/detail"
+    headers = {'X-Auth-Token': cloud.session.get_token(),
+               'Accept': 'application/json',
+               'X-Openstack-Manila-Api-Version': f'{manila_api_version}'}
+    params = {'all_tenants': all_tenants}
+    response = cloud.session.request(url=uri, method='GET',
+                                     headers=headers, params=params).json()
+    for share in response['shares']:
+        yield share
+
+
+def _get_share_types(all_tenants='true'):
+    ep = shared_file_system.get_endpoint()
+    uri = f"{ep}/types"
+    headers = {'X-Auth-Token': cloud.session.get_token(),
+               'Accept': 'application/json',
+               'X-Openstack-Manila-Api-Version': f'{manila_api_version}'}
+    params = {'all_tenants': all_tenants}
+    response = cloud.session.request(url=uri, method='GET',
+                                     headers=headers, params=params).json()
+    for share_type in response['volume_types']:
+        yield share_type
+
+
+def _get_share_networks(all_tenants='true'):
+    ep = shared_file_system.get_endpoint()
+    uri = f"{ep}/share-networks/detail"
+    headers = {'X-Auth-Token': cloud.session.get_token(),
+               'Accept': 'application/json',
+               'X-Openstack-Manila-Api-Version': f'{manila_api_version}'}
+    params = {'all_tenants': all_tenants}
+    response = cloud.session.request(url=uri, method='GET',
+                                     headers=headers, params=params).json()
+    for share_network in response['share_networks']:
+        yield share_network
+
+
 def _delete_volume_group(uuid, delete_volumes='false'):
     ep = volume.get_endpoint()
     uri = f"{ep}/groups/{uuid}/action"
@@ -103,6 +149,40 @@ def _delete_volume_group(uuid, delete_volumes='false'):
     body = {"delete": {"delete-volumes": delete_volumes}}
     cloud.session.request(
         url=uri, method='POST', headers=headers, json=body)
+
+
+def _delete_share_type(uuid):
+    ep = shared_file_system.get_endpoint()
+    uri = f"{ep}/types/{uuid}"
+    headers = {'X-Auth-Token': cloud.session.get_token(),
+               'X-Openstack-Manila-Api-Version': f'{manila_api_version}',
+               'Content-Type': 'application/json',
+               'Accept': 'application/json'}
+    cloud.session.request(
+        url=uri, method='DELETE', headers=headers)
+
+
+def _delete_share(uuid, force_delete=True):
+    ep = shared_file_system.get_endpoint()
+    uri = f"{ep}/shares/{uuid}/action"
+    headers = {'X-Auth-Token': cloud.session.get_token(),
+               'X-Openstack-Manila-Api-Version': f'{manila_api_version}',
+               'Content-Type': 'application/json',
+               'Accept': 'application/json'}
+    body = {"force_delete": force_delete}
+    cloud.session.request(
+        url=uri, method='POST', headers=headers, json=body)
+
+
+def _delete_share_network(uuid):
+    ep = shared_file_system.get_endpoint()
+    uri = f"{ep}/share-networks/{uuid}"
+    headers = {'X-Auth-Token': cloud.session.get_token(),
+               'X-Openstack-Manila-Api-Version': f'{manila_api_version}',
+               'Content-Type': 'application/json',
+               'Accept': 'application/json'}
+    cloud.session.request(
+        url=uri, method='DELETE', headers=headers)
 
 
 def _reset_volume_status(uuid, status='available', attach_status='detached',
@@ -246,6 +326,45 @@ def cleanup_servers():
         compute.delete_server(id_)
         srv_obj = compute.get_server(id_)
         compute.wait_for_delete(srv_obj)
+
+
+def cleanup_shares():
+    shares_in_response = _get_shares()
+    shares = items_to_object([g for g in shares_in_response])
+    shares_to_delete = _filter_test_resources(shares, 'name')
+    _log_resources_count(len(shares_to_delete), 'share(s)')
+    if args.dry_run:
+        return
+    for id_ in shares_to_delete:
+        _log_resource_delete(id_, shares_to_delete[id_], 'share')
+        # TODO: uncomment
+        _delete_share(id_)
+        shr_obj = shared_file_system.get_share(id_)
+        shared_file_system.wait_for_delete(shr_obj)
+
+
+def cleanup_share_types():
+    share_types_in_response = _get_share_types()
+    share_types = items_to_object([g for g in share_types_in_response])
+    share_types_to_delete = _filter_test_resources(share_types, 'name')
+    _log_resources_count(len(share_types_to_delete), 'share type(s)')
+    if args.dry_run:
+        return
+    for id_ in share_types_to_delete:
+        _log_resource_delete(id_, share_types_to_delete[id_], 'type')
+        _delete_share_type(id_)
+
+
+def cleanup_share_networks():
+    share_networks_in_response = _get_share_networks()
+    share_networks = items_to_object([g for g in share_networks_in_response])
+    share_networks_to_delete = _filter_test_resources(share_networks, 'name')
+    _log_resources_count(len(share_networks_to_delete), 'share network(s)')
+    if args.dry_run:
+        return
+    for id_ in share_networks_to_delete:
+        _log_resource_delete(id_, share_networks_to_delete[id_], 'type')
+        _delete_share_network(id_)
 
 
 def cleanup_snapshots():
@@ -457,6 +576,12 @@ if __name__ == "__main__":
 
     cleanup_stacks(stacks_alt=args.stacks_alt)
     cleanup_load_balancers()
+
+    if manila_present:
+        cleanup_shares()
+        cleanup_share_types()
+        cleanup_share_networks()
+
     cleanup_servers()
     cleanup_flavors()
     try:  # Skip if cinder-backup service is not enabled
