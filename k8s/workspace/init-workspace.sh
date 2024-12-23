@@ -30,7 +30,7 @@ function get_conformance_image_tag() {
             image_tag="1.24.4-2"
             ;;
         "1.27")
-            image_tag="1.27.9-3"
+            image_tag="1.27.16-4"
             ;;
     esac
     echo "$image_tag"
