@@ -7,7 +7,6 @@ identity:
     disable_ssl_certificate_validation: true
 compute:
     volume_device_name: vdb
-    compute_volume_common_az: nova
 heat_plugin:
     floating_network_name: public_net_name
     network_for_ssh: public_net_name
@@ -19,4 +18,3 @@ network-feature-enabled:
     floating_ips: true
 volume:
     volume_type: volume_type_name
-    volume_type_multiattach: volume_type_name

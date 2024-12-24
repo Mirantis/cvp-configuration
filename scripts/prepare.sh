@@ -10,6 +10,7 @@ filename=${name_prefix}.manifest
 rcfile=${name_prefix}rc
 huge_pages=false
 set_gw_heat_router=false
+raw_disk_format=false
 logfile=prepare.log
 working_folder=$(pwd)
 
@@ -66,10 +67,11 @@ function show_help {
     printf "\t-H\t\tAdds '--property hw:mem_page_size=large' to flavors, i.e. huge_pages for DPDK\n"
     printf "\t-w <path>\tSets working folder (default: ${working_folder})\n"
     printf "\t-g\t\tTo set external_gateway_info to heat-router with the external network (if not set yet)\n"
+    printf "\t-r\t\tTo create the images in RAW disk format instead of the QCOW2\n"
 }
 
 OPTIND=1 # Reset in case getopts has been used previously in the shell.
-while getopts ":gHw:h?"  opt; do
+while getopts ":grHw:h?"  opt; do
     case "$opt" in
     h|\?)
         show_help
@@ -83,6 +85,9 @@ while getopts ":gHw:h?"  opt; do
         ;;
     g)  set_gw_heat_router=true
         printf "# Setting external_gateway_info to heat-router with the external network (if not set yet)\n\n"
+        ;;
+    r)  raw_disk_format=true
+        printf "# Creating the images in RAW disk format instead of the QCOW2\n"
         ;;
     esac
 done
@@ -384,8 +389,15 @@ function create_image() {
         fi
         # check if output is not empty
         if [ ${#r} -eq 0 ]; then
+          if [ "$raw_disk_format" = true ]; then
+            qemu-img convert -f qcow2 -O raw ${!name} ${!name}.raw
+            image_id=$(openstack image create --public --disk-format raw --container-format bare --file ${!name}.raw ${!name} -c id -f value)
+            echo "-> created ${!name} (${image_id})"
+            rm ${!name}.raw
+          else
             image_id=$(openstack image create --public --disk-format qcow2 --container-format bare --file ${!name} ${!name} -c id -f value)
             echo "-> created ${!name} (${image_id})"
+          fi
         else
             printf "\n-> Error detected, creation skipped\n"
         fi

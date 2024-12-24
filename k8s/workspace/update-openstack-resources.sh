@@ -50,6 +50,17 @@ echo "# s/volume_type_name/ -> ${TEMPEST_CUSTOM_VOLUME_TYPE}"
 sed -i "s/volume_type_name/${TEMPEST_CUSTOM_VOLUME_TYPE}/g" $MY_PROJFOLDER/yamls/tempest_custom.yaml
 echo " "
 
+echo "# Checking Neutron global physnet mtu value"
+global_physnet_mtu=""
+global_physnet_mtu=$(kubectl get osdpl -A -o wide -o yaml | grep global_physnet_mtu | tail -n1 | cut -d':' -f2 | tr -d ' ')
+if [ -n "$global_physnet_mtu" ]; then
+    echo "global_physnet_mtu is set to: $global_physnet_mtu"
+    cat <<EOF >> $MY_PROJFOLDER/yamls/tempest_custom.yaml
+neutron_plugin_options:
+    max_mtu: $global_physnet_mtu
+EOF
+fi
+
 echo "# Updating SPT global_config.yaml"
 cp -v /opt/res-files/k8s/yamls/spt_global_config.yaml.clean $MY_PROJFOLDER/yamls/global_config.yaml
 echo "# image_ref_name -> ${ubuntu20_name}"
