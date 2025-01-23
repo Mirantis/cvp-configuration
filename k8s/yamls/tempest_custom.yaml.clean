@@ -7,6 +7,7 @@ identity:
     disable_ssl_certificate_validation: true
 compute:
     volume_device_name: vdb
+    fixed_network_name: cvp.net.1
 heat_plugin:
     floating_network_name: public_net_name
     network_for_ssh: public_net_name
