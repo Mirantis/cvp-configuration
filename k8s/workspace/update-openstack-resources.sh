@@ -55,6 +55,7 @@ global_physnet_mtu=""
 global_physnet_mtu=$(kubectl get osdpl -A -o wide -o yaml | grep global_physnet_mtu | tail -n1 | cut -d':' -f2 | tr -d ' ')
 if [ -n "$global_physnet_mtu" ]; then
     echo "global_physnet_mtu is set to: $global_physnet_mtu"
+    echo "" >> $MY_PROJFOLDER/yamls/tempest_custom.yaml
     cat <<EOF >> $MY_PROJFOLDER/yamls/tempest_custom.yaml
 neutron_plugin_options:
     max_mtu: $global_physnet_mtu
