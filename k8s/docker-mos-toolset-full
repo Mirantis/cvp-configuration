@@ -1,7 +1,7 @@
 FROM ubuntu:20.04 AS download-packages
 RUN mkdir /opt/packages && cd /opt/packages && \
     apt-get update && \
-    apt-get download $(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances iperf3 iperf fio | grep "^\w" | sort -u) || true && \
+    apt-get download $(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances iperf3 iperf fio nfs-utils | grep "^\w" | sort -u) || true && \
     rm -rf /var/lib/apt/lists/*
 
 FROM mirantis.azurecr.io/openstack/heat:antelope-jammy-20240927160001

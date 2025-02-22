@@ -239,6 +239,8 @@ function _sg_all() {
     echo security group rule create --protocol tcp --dst-port 80 ${sg_all} >>${cmds}
     # https
     echo security group rule create --protocol tcp --dst-port 443 ${sg_all} >>${cmds}
+    # fio
+    echo security group rule create --protocol tcp --dst-port 8765 ${sg_all} >>${cmds}
 }
 
 function _sg_icmp() {
