@@ -25,5 +25,5 @@ resources:
   volume:
     type: OS::Cinder::Volume
     properties:
-      image: 'cvp.ubuntu.1604'
+      image: 'cvp.ubuntu.2204'
       size: 20

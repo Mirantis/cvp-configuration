@@ -2,7 +2,7 @@
 
 Network and image must be created prior to run this template
     network: cvp.net.1
-    image: cvp.ubuntu.1604
+    image: cvp.ubuntu.2204
 
 To auto create them, run cvp resource creation script from ../scripts
 Path is relative to this folder: <repo>/autoscale

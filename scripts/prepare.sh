@@ -48,16 +48,16 @@ subnet2=${name_prefix}.subnet.2
 # Router
 router=${name_prefix}.router
 
-# Images: cirros (6.0, 6.2), ubuntu (16.04, 20.04)
+# Images: cirros (6.1, 6.2), ubuntu (20.04, 22.04)
 cirros61=${name_prefix}.cirros.61
 cirros62=${name_prefix}.cirros.62
-ubuntu16=${name_prefix}.ubuntu.1604
 ubuntu20=${name_prefix}.ubuntu.2004
+ubuntu22=${name_prefix}.ubuntu.2204
 
 cirros61_link=https://download.cirros-cloud.net/0.6.1/cirros-0.6.1-x86_64-disk.img
 cirros62_link=https://download.cirros-cloud.net/0.6.2/cirros-0.6.2-x86_64-disk.img
-ubuntu16_link=https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img
 ubuntu20_link=https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img
+ubuntu22_link=https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img
 
 # Volume (2GB)
 volume=${name_prefix}.volume
@@ -167,10 +167,10 @@ function print_manifest() {
     put cirros61_id $(ol1 image ${cirros61})
     put cirros62_name ${cirros62}
     put cirros62_id $(ol1 image ${cirros62})
-    put ubuntu16_name ${ubuntu16}
-    put ubuntu16_id $(ol1 image ${ubuntu16})
     put ubuntu20_name ${ubuntu20}
     put ubuntu20_id $(ol1 image ${ubuntu20})
+    put ubuntu22_name ${ubuntu22}
+    put ubuntu22_id $(ol1 image ${ubuntu22})
 }
 
 # create rc file out of current ENV vars
@@ -455,8 +455,8 @@ create_fixed_nets
 # images
 create_image cirros61
 create_image cirros62
-create_image ubuntu16
 create_image ubuntu20
+create_image ubuntu22
 
 ### Manifest and fall back to original rc
 print_manifest
