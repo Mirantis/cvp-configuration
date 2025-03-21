@@ -4,7 +4,7 @@ RUN mkdir /opt/packages && cd /opt/packages && \
     apt-get download $(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances iperf3 iperf fio nfs-utils | grep "^\w" | sort -u) || true && \
     rm -rf /var/lib/apt/lists/*
 
-FROM mirantis.azurecr.io/openstack/heat:antelope-jammy-20240927160001
+FROM mirantis.azurecr.io/openstack/heat:caracal-jammy-20250314195424
 
 LABEL maintainer="qa-ps@mirantis.com"
 
@@ -14,14 +14,14 @@ WORKDIR /opt
 
 COPY --from=download-packages /opt/packages /opt/packages
 
-RUN apt-get update && \
+RUN apt-get clean && apt-get update && \
     apt-get install -y make gcc g++ git libaio-dev libaio1 zlib1g-dev fio && \
     mkdir /opt/density && \
     rm -rf /var/lib/apt/lists/*
 
 RUN export TZ="America/Chicago" && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
-    apt-get update && \
+    apt-get clean && apt-get update && \
     apt-get install -y python3-pip python3-venv vim git iperf3 iperf mtr htop iputils-ping traceroute tcpdump wget iproute2 curl screen qemu-utils jq && \
     rm -rf /var/lib/apt/lists/*
 
