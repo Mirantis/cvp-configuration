@@ -7,6 +7,27 @@ fi
 # mosrc
 . $MY_PROJFOLDER/envs/mosrc
 
+# local vars
+raw_disk_format=false
+
+function show_help {
+    printf "QA verification: Resources creation script\n\t-h, -?\t\tShow this help\n"
+    printf "\t-r\t\tTo create the images in RAW disk format instead of the QCOW2\n"
+}
+
+OPTIND=1 # Reset in case getopts has been used previously in the shell.
+while getopts "rh?"  opt; do
+    case "$opt" in
+    h|\?)
+        show_help
+        exit 0
+        ;;
+    r)  raw_disk_format=true
+        printf "# Creating the images in RAW disk format instead of the QCOW2\n"
+        ;;
+    esac
+done
+
 ##
 echo "### Checking openstack resources"
 status=$(kubectl -n qa-space get pod | grep toolset | tr -s " " | cut -d' ' -f3)
@@ -22,7 +43,11 @@ else
   echo "# Creating openstack resources"
 	echo " "
 	kubectl exec toolset --stdin -n qa-space -- bash -c "mkdir /artifacts/cmp-check"
-  kubectl exec toolset --tty --stdin -n qa-space -- bash -c "cd /artifacts/cmp-check; export CUSTOM_PUBLIC_NET_NAME="${TEMPEST_CUSTOM_PUBLIC_NET:-}"; bash /opt/cmp-check/prepare.sh -w \$(pwd)"
+	if [ "$raw_disk_format" = true ]; then
+    kubectl exec toolset --tty --stdin -n qa-space -- bash -c "cd /artifacts/cmp-check; export CUSTOM_PUBLIC_NET_NAME="${TEMPEST_CUSTOM_PUBLIC_NET:-}"; bash /opt/cmp-check/prepare.sh -r -w \$(pwd)"
+	else
+   kubectl exec toolset --tty --stdin -n qa-space -- bash -c "cd /artifacts/cmp-check; export CUSTOM_PUBLIC_NET_NAME="${TEMPEST_CUSTOM_PUBLIC_NET:-}"; bash /opt/cmp-check/prepare.sh -w \$(pwd)"
+  fi
 fi
 
 #

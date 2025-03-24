@@ -594,7 +594,6 @@ if __name__ == "__main__":
     cleanup_volume_group_types()
     cleanup_volume_types()
     cleanup_images()
-    cleanup_sec_groups()
     cleanup_keypairs()
     cleanup_users()
     cleanup_roles()
@@ -602,6 +601,7 @@ if __name__ == "__main__":
     cleanup_regions()
     cleanup_routers()
     cleanup_networks()
+    cleanup_sec_groups()
     if object_store_present:
         cleanup_containers()
     cleanup_floating_ips()
