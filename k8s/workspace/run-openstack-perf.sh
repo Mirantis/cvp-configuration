@@ -46,11 +46,14 @@ else
 		scenario=/rally/rally-files/openstack-mos-scn.json.clean
 	fi
 	task_scn=/artifacts/openstack-scenario.json
-        # prepare scenario
-        kexec "cp -v ${scenario} ${task_scn}"
+  # prepare scenario
+  kexec "cp -v ${scenario} ${task_scn}"
+  default_az=$(kubectl exec toolset --stdin -n qa-space -- bash -c "openstack compute service list --service nova-compute  -c Zone -f value | uniq | head -n 1")
 	declare $(kubectl exec toolset --stdin -n qa-space -- bash -c "cat /artifacts/cmp-check/cvp.manifest")
 	echo "# Updating network UUID to ${fixed_net_left_id}"
 	kexec "sed -i \"s/fixed-net-id/${fixed_net_left_id}/g\" ${task_scn}"
+	echo "# Updating AZ name to ${default_az}"
+	kexec "sed -i \"s/default-az-name/${default_az}/g\" ${task_scn}"
 	echo "# Updating concurrency to ${concurrency}"
 	kexec "sed -i \"s/concurrent-threads/${concurrency}/g\" ${task_scn}"
 	echo "# Updating running times to ${run_times}"
