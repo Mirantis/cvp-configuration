@@ -1,16 +1,18 @@
-FROM xrally/xrally-openstack:2.1.0
+FROM mirantis.azurecr.io/openstack/extra/xrally-openstack:2.2.0-20250416084155
 
 LABEL maintainer="qa-ps@mirantis.com"
 
 WORKDIR /rally
 RUN mkdir /rally/rally-files && \
     sudo apt-get update && \
-    sudo apt-get install -y wget curl git
+    sudo apt-get install -y wget curl git && \
+    sudo apt-get install -y --only-upgrade linux-libc-dev
 
 RUN git clone https://github.com/Mirantis/rally-plugins.git && \
     cd rally-plugins/ && \
     pip3 install . && \
     # since rally-plugins use v1beta1 API which is deprecated, downgrade kubernetes
+    # rally-plugins cannot be installed in case of newer kubernetes pip module
     pip3 install kubernetes==21.7.0 && \
     cd /rally && \
     rally plugin list | grep kubernetes
