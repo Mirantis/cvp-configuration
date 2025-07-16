@@ -43,5 +43,5 @@ clouds:
       fio_vol_mountpoint: "/dev/vdc"
       mtu_size: 8000
       hv_suffix: "kaas-kubernetes-XXX"
-      cloud_name: "cloud-lon-XXX"
-      concurrency: 5
+      cloud_name: "cloud-XXX"
+      concurrency: 1

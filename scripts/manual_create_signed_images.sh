@@ -1,6 +1,28 @@
 #!/bin/bash
 
 echo "Preparing certs"
+cat <<EOF > image_crt.cnf
+[ req ]
+default_bits       = 1024
+prompt             = no
+default_md         = sha256
+req_extensions     = req_ext
+distinguished_name = dn
+
+[ dn ]
+C = US
+ST = TestState
+L = TestCity
+O = TestOrg
+OU = TestUnit
+CN = test.example.com
+
+[ req_ext ]
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = test.example.com
+EOF
 openssl genrsa -out image_key.pem 1024
 openssl rsa -pubout -in image_key.pem -out image_key.pem.pub
 openssl req -new -key image_key.pem -out image_req.crt -config image_crt.cnf
@@ -14,10 +36,10 @@ export s_uuid=$(openstack secret list --name cvp.images -c "Secret href" -f valu
 echo "Exported '$s_uuid'"
 ​
 echo "Converting images to Raw"
-qemu-img convert -f qcow2 -O raw -p cvp.ubuntu.2004 /var/tmp/cvp.ubuntu.2004.raw
-qemu-img convert -f qcow2 -O raw -p cvp.ubuntu.2204 /var/tmp/cvp.ubuntu.2204.raw
-qemu-img convert -f qcow2 -O raw -p cvp.cirros.61 /var/tmp/cvp.cirros.61.raw
-qemu-img convert -f qcow2 -O raw -p cvp.cirros.62 /var/tmp/cvp.cirros.62.raw
+qemu-img convert -f qcow2 -O raw -p /artifacts/cmp-check/cvp.ubuntu.2004 /var/tmp/cvp.ubuntu.2004.raw
+qemu-img convert -f qcow2 -O raw -p /artifacts/cmp-check/cvp.ubuntu.2204 /var/tmp/cvp.ubuntu.2204.raw
+qemu-img convert -f qcow2 -O raw -p /artifacts/cmp-check/cvp.cirros.61 /var/tmp/cvp.cirros.61.raw
+qemu-img convert -f qcow2 -O raw -p /artifacts/cmp-check/cvp.cirros.62 /var/tmp/cvp.cirros.62.raw
 ​
 echo "Signing images"
 openssl dgst -sha256 -sign image_key.pem -sigopt rsa_padding_mode:pss -out cvp.cirros.61.raw.signature /var/tmp/cvp.cirros.61.raw

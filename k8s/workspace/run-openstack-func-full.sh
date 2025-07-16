@@ -27,7 +27,7 @@ echo "# Creating schema"
 cat <<'EOF' >artifacts/test_scheme.yaml
 ---
 smoke: false
-concurrency: 8
+concurrency: 4
 blacklist-file: /etc/tempest/test-blacklist
 enabled: true
 fail_on_test: true

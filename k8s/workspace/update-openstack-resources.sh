@@ -93,5 +93,12 @@ echo "# image_ref_name -> ${ubuntu20_name}"
 sed -i "s/image_ref_name/${ubuntu20_name}/g" $MY_PROJFOLDER/yamls/global_config.yaml
 echo "# s/public-network-name/ -> ${TEMPEST_CUSTOM_PUBLIC_NET}"
 sed -i "s/public-network-name/${TEMPEST_CUSTOM_PUBLIC_NET}/g" $MY_PROJFOLDER/yamls/global_config.yaml
-# 
+#
+
+echo "# Copying files"
+kubectl exec toolset --tty --stdin -n qa-space -- bash -c "cp /artifacts/cmp-check/cvp.manifest /opt/cmp-check/cvp.manifest"
+kubectl exec toolset --tty --stdin -n qa-space -- bash -c "cp /artifacts/cmp-check/cvprc /opt/cmp-check/cvprc"
+kubectl exec toolset --tty --stdin -n qa-space -- bash -c "cp /artifacts/cmp-check/cvprc /opt/cvprc"
+kubectl exec toolset --tty --stdin -n qa-space -- bash -c "cp /artifacts/cmp-check/cvp_testkey /opt/cmp-check/cvp_testkey"
+
 echo "# Done!"

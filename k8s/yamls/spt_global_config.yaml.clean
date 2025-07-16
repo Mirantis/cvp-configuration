@@ -4,11 +4,12 @@ IMAGE_SIZE_MB: 9000
 
 # parameters for vm2vm tests
 CMP_HOSTS: []
-image_name: "image_ref_name" # Use Ubuntu 20.04 LTS image
+image_name: "image_ref_name" # Use Ubuntu 20.04 LTS image with hw_vif_multiqueue_enabled='True' property
+add_hw_vif_multiqueue_enabled_to_image: "true"
 flavor_name: "spt-test"
-flavor_ram: 1536
-flavor_vcpus: 1
-flavor_disk: 5
+flavor_ram: 4096
+flavor_vcpus: 10
+flavor_disk: 20
 nova_timeout: 300
 external_network: "public-network-name"
 custom_mtu: 'default' # 'default' or some value like 8950
