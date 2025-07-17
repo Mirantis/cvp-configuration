@@ -1,4 +1,10 @@
-FROM ubuntu:20.04 AS download-packages
+FROM ubuntu:18.04 AS download-packages-1804
+RUN mkdir /opt/packages-1804 && cd /opt/packages-1804 && \
+    apt-get update && \
+    apt-get download $(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances iperf3 iperf fio nfs-utils | grep "^\w" | sort -u) || true && \
+    rm -rf /var/lib/apt/lists/*
+
+FROM ubuntu:20.04 AS download-packages-2004
 RUN mkdir /opt/packages && cd /opt/packages && \
     apt-get update && \
     apt-get download $(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances iperf3 iperf fio nfs-utils | grep "^\w" | sort -u) || true && \
@@ -12,7 +18,8 @@ ADD k8s/src/si-tests.tgz /opt/si-tests/
 ADD k8s/src/mos-checker.tgz /opt/cfg-checker/
 WORKDIR /opt
 
-COPY --from=download-packages /opt/packages /opt/packages
+COPY --from=download-packages-2004 /opt/packages /opt/packages
+COPY --from=download-packages-1804 /opt/packages-1804 /opt/packages-1804
 
 RUN apt-get clean && apt-get update && \
     apt-get install -y make gcc g++ git libaio-dev libaio1 zlib1g-dev fio && \
