@@ -75,5 +75,7 @@ RUN git clone "https://gerrit.mcp.mirantis.com/mcp/mos-spt" /opt/mos-spt && \
 
 RUN printf "LABELS:\n  IMAGE_TAG: k0rdent" > /dockerimage_metadata
 
+WORKDIR /artifacts
+
 ENTRYPOINT ["sleep infinite"]
 
