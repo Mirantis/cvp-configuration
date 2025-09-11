@@ -73,6 +73,8 @@ done
 printf "\n\n# Writing additional options\n"
 ewriteln "export SI_BINARIES_DIR=$(which helm | rev | cut -d'/' -f2- | rev)"
 ewriteln "export HELM_BINARY_PATH=$(which helm)"
+ewriteln "export SONOBUOY_IMAGE_VERSION=v0.57"
+ewriteln "export SONOBUOY_LOGS_IMAGE_VERSION=v0.4"
 
 
 # generate additional files
