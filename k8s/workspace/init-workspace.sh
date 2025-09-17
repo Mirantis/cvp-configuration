@@ -40,8 +40,8 @@ else
 fi
 
 ### Edit the following lines to set the client name, floating network name, IAM writer password
-ewriteln "export MY_CLIENTNAME='ClientName'"
-ewriteln "export MY_CLIENTSHORTNAME='clname'"
+ewriteln "export MY_CLIENTNAME='${MY_CLIENTNAME:-ClientName}'"
+ewriteln "export MY_CLIENTSHORTNAME='${MY_CLIENTSHORTNAME:-clname}'"
 ewriteln "export MY_PROJNAME='K0RDENT_DEPLOY'"
 
 ### Setting the project directory
