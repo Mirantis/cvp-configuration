@@ -36,8 +36,20 @@ def check_cluster_deployment_exists(kcm_manager, namespace, name) -> bool:
     return any(cld.namespace == namespace and cld.name == name for cld in clds)
 
 
+def is_kof_installed(kcm_manager) -> bool:
+    # Checks if 'kof' ns is present at mothership
+    all_ns = kcm_manager.api.namespaces.list()
+    # If yes, checks if there is any *kof* named cld deployed
+    if "kof" in [n.name for n in all_ns]:
+        ready_cld_names = [cluster[1] for cluster in
+                           get_ready_cluster_deployments(kcm_manager)]
+        if any("kof" in name for name in ready_cld_names):
+            return True
+    return False
+
+
 @pytest.mark.sanity
-def test_k0rdent_mgmt_object_readiness(kcm_manager):
+def test_k0rdent_mgmt_object_is_ready(kcm_manager):
     assert kcm_manager.mgmt.ready == True,\
         f"Management 'kcm' object is not ready"
 
@@ -93,11 +105,12 @@ def test_service_templates_are_valid(kcm_manager):
 
 
 @pytest.mark.sanity
-def test_k0rdent_mgmt_pods_readiness(
+def test_k0rdent_mgmt_pods_are_ready(
         kcm_manager, namespaces=None, allowed_phases=None):
-    """Check k0rdent mgmt cluster pods readiness"""
     if namespaces is None:
         namespaces = ["kcm-system", "projectsveltos"]
+    if is_kof_installed(kcm_manager):
+        namespaces.append("kof")
     if allowed_phases is None:
         allowed_phases = ("Running", "Succeeded")
 
@@ -114,8 +127,7 @@ def test_k0rdent_mgmt_pods_readiness(
 
 
 @pytest.mark.sanity
-def test_k0rdent_mgmt_nodes_readiness(kcm_manager):
-    """Check k0rdent mgmt cluster nodes readiness"""
+def test_k0rdent_mgmt_nodes_are_ready(kcm_manager):
     nodes = kcm_manager.api.nodes.list()
     assert nodes, "No nodes found in the cluster"
 
@@ -129,9 +141,58 @@ def test_k0rdent_mgmt_nodes_readiness(kcm_manager):
             f"Node '{node.name}' is not Ready"
 
 
+@pytest.mark.sanity
+def test_certificates_are_ready(kcm_manager):
+    certs = kcm_manager.api.api_custom.list_cluster_custom_object(
+        group="cert-manager.io",
+        version="v1",
+        plural="certificates",
+    ).get("items", [])
+    assert certs, "No certificates found in the cluster"
+
+    not_ready = []
+    for cert in certs:
+        name = cert["metadata"]["name"]
+        namespace = cert["metadata"]["namespace"]
+        conditions = cert.get("status", {}).get("conditions", [])
+        ready_condition = next((c for c in conditions if c["type"] == "Ready"),
+                               None)
+
+        if not ready_condition or ready_condition.get("status") != "True":
+            not_ready.append(f"{namespace}/{name}")
+
+    assert not not_ready, f"Some certificates are not Ready: {not_ready}"
+
+
+@pytest.mark.sanity
+def test_cluster_summaries_features_are_provisioned(kcm_manager):
+    cluster_summaries = kcm_manager.api.api_custom.list_cluster_custom_object(
+        group="config.projectsveltos.io",
+        version="v1beta1",
+        plural="clustersummaries",
+    ).get("items", [])
+
+    not_provisioned = []
+    for summary in cluster_summaries:
+        name = summary["metadata"]["name"]
+        namespace = summary["metadata"].get("namespace", "")
+        summaries = summary.get("status", {}).get("featureSummaries", [])
+
+        for feature in summaries:
+            feature_id = feature.get("featureID")
+            status = feature.get("status")
+            if status != "Provisioned":
+                not_provisioned.append(
+                    f"{namespace}/{name} → {feature_id}: {status}")
+
+    assert not not_provisioned, (
+            "Some ClusterSummaries have non-Provisioned features:\n"
+            + "\n".join(not_provisioned)
+    )
+
+
 @pytest.mark.sanity_targeted
-def test_check_target_child_cluster_readiness(kcm_manager):
-    """Check the target child cluster readiness"""
+def test_target_child_cluster_is_ready(kcm_manager):
     ns = kcm_manager.get_namespace(settings.TARGET_NAMESPACE)
     cld = ns.get_cluster_deployment(settings.TARGET_CLD)
     if not check_cluster_deployment_exists(
@@ -145,7 +206,7 @@ def test_check_target_child_cluster_readiness(kcm_manager):
 
 
 @pytest.mark.sanity
-def test_check_all_child_clusters_readiness(kcm_manager, subtests):
+def test_child_clusters_are_ready(kcm_manager, subtests):
     ready_clds = get_ready_cluster_deployments(kcm_manager)
     assert ready_clds, "No ready child clusters found"
 
