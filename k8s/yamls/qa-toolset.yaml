@@ -1,88 +1,39 @@
 apiVersion: v1
+kind: Namespace
+metadata:
+  name: qa-space
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: qa-pvc
+  namespace: qa-space
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi
+---
+apiVersion: v1
 kind: Pod
 metadata:
   name: toolset
   namespace: qa-space
 spec:
   containers:
-  - command:
-    - /bin/sleep
-    - infinity
+  - name: toolset
+    image: registry.mirantis.com/professional-services-qa/toolset:k0rdent_test_10242025
+    imagePullPolicy: IfNotPresent
+    command: ["/bin/sleep", "infinity"]
     env:
     - name: LANG
       value: C.UTF-8
-    - name: OS_IDENTITY_API_VERSION
-      value: "3"
-    - name: OS_AUTH_URL
-      valueFrom:
-        secretKeyRef:
-          key: OS_AUTH_URL
-          name: keystone-keystone-admin
-    - name: OS_REGION_NAME
-      valueFrom:
-        secretKeyRef:
-          key: OS_REGION_NAME
-          name: keystone-keystone-admin
-    - name: OS_INTERFACE
-      valueFrom:
-        secretKeyRef:
-          key: OS_INTERFACE
-          name: keystone-keystone-admin
-    - name: OS_ENDPOINT_TYPE
-      valueFrom:
-        secretKeyRef:
-          key: OS_INTERFACE
-          name: keystone-keystone-admin
-    - name: OS_PROJECT_DOMAIN_NAME
-      valueFrom:
-        secretKeyRef:
-          key: OS_PROJECT_DOMAIN_NAME
-          name: keystone-keystone-admin
-    - name: OS_PROJECT_NAME
-      valueFrom:
-        secretKeyRef:
-          key: OS_PROJECT_NAME
-          name: keystone-keystone-admin
-    - name: OS_USER_DOMAIN_NAME
-      valueFrom:
-        secretKeyRef:
-          key: OS_USER_DOMAIN_NAME
-          name: keystone-keystone-admin
-    - name: OS_USERNAME
-      valueFrom:
-        secretKeyRef:
-          key: OS_USERNAME
-          name: keystone-keystone-admin
-    - name: OS_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          key: OS_PASSWORD
-          name: keystone-keystone-admin
-    - name: OS_DEFAULT_DOMAIN
-      valueFrom:
-        secretKeyRef:
-          key: OS_DEFAULT_DOMAIN
-          name: keystone-keystone-admin
-    - name: OS_CACERT
-      value: /etc/ssl/certs/openstack-ca-bundle.pem
-    imagePullPolicy: IfNotPresent
-    name: toolset
-    image: registry.mirantis.com/professional-services-qa/toolset:25.1-caracal
     volumeMounts:
-    - mountPath: /artifacts
-      name: qa-pv-a
-    - mountPath: /etc/ssl/certs/openstack-ca-bundle.pem
-      name: ca-cert-bundle
-      readOnly: true
-      subPath: ca_bundle
-  dnsPolicy: ClusterFirst
+      - name: artifacts
+        mountPath: /artifacts
   volumes:
-  - emptyDir: {}
-    name: pod-tmp
-  - name: qa-pv-a
-    persistentVolumeClaim:
-      claimName: qa-pvc-a
-  - name: ca-cert-bundle
-    secret:
-      defaultMode: 420
-      secretName: keystone-ca-bundle
+    - name: artifacts
+      persistentVolumeClaim:
+        claimName: qa-pvc
+  dnsPolicy: ClusterFirst

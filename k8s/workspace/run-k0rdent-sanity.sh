@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ -z "$MY_PROJFOLDER" ]; then
+  echo "The /artifacts/env.sh script is not sourced. Please do 'source env.sh' before running the Sanity tests"
+  exit 1
+fi
+
 . "$(dirname "$0")/functions.sh"
 cd $MY_PROJFOLDER/tmp
 source $MY_PROJFOLDER/env.sh
@@ -42,5 +47,7 @@ fi
 
 cp $sanity_reports_dir/sanity-checks-results.html ${fname}
 update_latest_report_to "${fname}"
+
+echo "The test report can be found at ${fname}"
 
 deactivate

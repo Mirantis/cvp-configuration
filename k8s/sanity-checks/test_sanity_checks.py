@@ -181,9 +181,11 @@ def test_cluster_summaries_features_are_provisioned(kcm_manager):
         for feature in summaries:
             feature_id = feature.get("featureID")
             status = feature.get("status")
+            failureMessage = feature.get("failureMessage")
             if status != "Provisioned":
                 not_provisioned.append(
-                    f"{namespace}/{name} → {feature_id}: {status}")
+                    f"{namespace}/{name} -> {feature_id}: {status}"
+                    f" -> failureMessage: {failureMessage}")
 
     assert not not_provisioned, (
             "Some ClusterSummaries have non-Provisioned features:\n"
@@ -200,9 +202,9 @@ def test_target_child_cluster_is_ready(kcm_manager):
         pytest.skip(f"Target cluster deployment '{cld.name}' is not found in "
                     f"namespace '{settings.TARGET_NAMESPACE}'. Please check "
                     f"TARGET_NAMESPACE and TARGET_CLD env vars.")
-    cld.check.check_cluster_readiness(timeout=600)
-    cld.check.check_k8s_pods()
-    cld.check.check_k8s_nodes()
+    cld.check.check_cluster_readiness(timeout=30)
+    cld.check.check_k8s_pods(timeout=30)
+    cld.check.check_k8s_nodes(timeout=30)
 
 
 @pytest.mark.sanity
@@ -216,6 +218,6 @@ def test_child_clusters_are_ready(kcm_manager, subtests):
             ns = kcm_manager.get_namespace(namespace)
             cld = ns.get_cluster_deployment(cld_name)
 
-            cld.check.check_cluster_readiness(timeout=600)
-            cld.check.check_k8s_pods()
-            cld.check.check_k8s_nodes()
+            cld.check.check_cluster_readiness(timeout=30)
+            cld.check.check_k8s_pods(timeout=30)
+            cld.check.check_k8s_nodes(timeout=30)
