@@ -16,16 +16,9 @@ if [[ $# -lt 1 ]]; then
 fi
 
 CLUSTER_NAME="$1"
-
-echo ""
-echo "Checking if ClusterDeployment '$CLUSTER_NAME' exists..."
-
-if ! kubectl get cld -A -o name | grep -q "/$CLUSTER_NAME$"; then
-  echo -e "Error: ClusterDeployment '$CLUSTER_NAME' not found in any namespace"
-  exit 1
+if ! check_cluster_deployment_exists "$CLUSTER_NAME"; then
+    exit 1
 fi
-
-echo -e "ClusterDeployment '$CLUSTER_NAME' found"
 
 KUBECONFIG_PATH="$MY_PROJFOLDER/envs/kubeconfigs/${CLUSTER_NAME}-kubeconfig.yaml"
 CHECKER_ENV_PATH="$MY_PROJFOLDER/envs/checkers/${CLUSTER_NAME}-checker.env"

@@ -13,7 +13,7 @@ check_cluster_deployment_exists() {
     local cluster_name="$1"
     echo ""
     echo "Checking if ClusterDeployment '$cluster_name' exists..."
-    if ! kubectl get cld -A -o name | grep -q "/$cluster_name$"; then
+    if ! kubectl get cld -A -o name | awk -F'/' '{print $NF}' | grep -qx "$cluster_name"; then
         echo "Error: ClusterDeployment '$cluster_name' not found in any namespace"
         return 1
     fi
