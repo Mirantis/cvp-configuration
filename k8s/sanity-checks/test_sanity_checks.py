@@ -31,6 +31,15 @@ def get_ready_cluster_deployments(kcm_manager):
     return ready_clds
 
 
+def get_all_cluster_deployments(kcm_manager):
+    all_clds = []
+    clds = kcm_manager.list_all_clusterdeployments()
+
+    for cld in clds:
+        all_clds.append((cld.namespace, cld.name))
+    return all_clds
+
+
 def check_cluster_deployment_exists(kcm_manager, namespace, name) -> bool:
     clds = kcm_manager.list_all_clusterdeployments()
     return any(cld.namespace == namespace and cld.name == name for cld in clds)
@@ -209,10 +218,11 @@ def test_target_child_cluster_is_ready(kcm_manager):
 
 @pytest.mark.sanity
 def test_child_clusters_are_ready(kcm_manager, subtests):
-    ready_clds = get_ready_cluster_deployments(kcm_manager)
-    assert ready_clds, "No ready child clusters found"
+    all_clds = get_all_cluster_deployments(kcm_manager)
+    if not all_clds:
+        pytest.skip("No child cluster deployments found.")
 
-    for namespace, cld_name in ready_clds:
+    for namespace, cld_name in all_clds:
         label = f"{cld_name} ({namespace})"
         with subtests.test(cluster=label):
             ns = kcm_manager.get_namespace(namespace)

@@ -87,7 +87,6 @@ mv -v $MY_PROJFOLDER/envs/*.env $MY_PROJFOLDER/envs/checkers
 
 cp -v /opt/res-files/k8s/yamls/qa-rally.yaml $MY_PROJFOLDER/yamls
 cp -v /opt/res-files/k8s/yamls/qa-res.yaml $MY_PROJFOLDER/yamls
-cp -v /opt/res-files/k8s/yamls/qa-toolset-bare.yaml $MY_PROJFOLDER/yamls
 cp -v /opt/res-files/k8s/yamls/qa-toolset.yaml $MY_PROJFOLDER/yamls
 
 # remove duplicate init

@@ -1,9 +1,7 @@
 #!/bin/bash
 
-if [ -z "$MY_PROJFOLDER" ]; then
-  echo "The /artifacts/env.sh script is not sourced. Please do 'source env.sh' before running the Sanity tests"
-  exit 1
-fi
+cd /artifacts
+. env.sh
 
 . "$(dirname "$0")/functions.sh"
 cd $MY_PROJFOLDER/tmp
