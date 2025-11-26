@@ -12,7 +12,7 @@ source /opt/ksi/.ksivenv/bin/activate
 
 if [[ $# -lt 1 ]]; then
   echo -e "\nError: No cluster name provided."
-  echo "Usage: $0 <cluster-name>"
+  echo "Usage: $0 <cluster-name> <cluster-namespace>"
   echo ""
   exit 1
 fi

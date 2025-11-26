@@ -88,5 +88,8 @@ RUN printf "LABELS:\n  IMAGE_TAG: k0rdent" > /dockerimage_metadata
 
 WORKDIR /artifacts
 
+RUN echo '[ -f /artifacts/env.sh ] && . /artifacts/env.sh' >> /root/.bashrc && \
+    echo '[ -f /artifacts/envs/mgmtrc ] && . /artifacts/envs/mgmtrc' >> /root/.bashrc
+
 ENTRYPOINT ["sleep infinite"]
 
