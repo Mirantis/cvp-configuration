@@ -9,11 +9,21 @@ export MY_PROJFOLDER=/artifacts
 echo "# Using folder '$MY_PROJFOLDER'"
 cd $MY_PROJFOLDER
 [ ! -d envs ] && mkdir envs
-[ ! -d envs/checkers ] && mkdir envs/checkers
-[ ! -d envs/kubeconfigs ] && mkdir envs/kubeconfigs
 [ ! -d yamls ] && mkdir yamls
 [ ! -d reports ] && mkdir reports
 [ ! -d tmp ] && mkdir tmp
+
+##
+# re-creating the envs/kubeconfigs in case of update and rerunning the init script
+if [ -f "$MY_PROJFOLDER/envs/kubeconfigs/mgmt-kubeconfig.yaml" ]; then
+    cp "$MY_PROJFOLDER/envs/kubeconfigs/mgmt-kubeconfig.yaml" "$MY_PROJFOLDER/mgmt-kubeconfig.yaml"
+fi
+rm -rf envs/kubeconfigs && mkdir -p envs/kubeconfigs
+# re-creating to collect from scratch and do not keep obsolete configs (clds might have the same names)
+rm -rf envs/checkers && mkdir -p envs/checkers
+# deleting all envs/*rc files to remove all obsolete data
+rm -f envs/*rc
+##
 
 # move mgmt (k0rdent mothership) k8s konfig to default place
 if [ -f $MY_PROJFOLDER/mgmt-kubeconfig.yaml ]; then
@@ -48,7 +58,7 @@ ewriteln "export MY_PROJNAME='K0RDENT_DEPLOY'"
 ewriteln "export MY_PROJFOLDER=/artifacts"
 
 printf "\n\n# Getting ready ClusterDeployments"
-printf "\n# For each ready cld, getting namespace and cluster"
+printf "\n# For each ready cld, getting namespace and cluster\n"
 kubectl get cld -A --no-headers | awk '$3 == "True" {print $1, $2}' | while read -r namespace name; do
     echo "   -> Processing $name in namespace $namespace..."
     kubeconfig_secret="${name}-kubeconfig"
