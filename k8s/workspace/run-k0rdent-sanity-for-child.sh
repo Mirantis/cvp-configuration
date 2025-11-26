@@ -7,7 +7,7 @@ cd /artifacts
 cd $MY_PROJFOLDER/tmp
 source $MY_PROJFOLDER/env.sh
 source $MY_PROJFOLDER/envs/mgmtrc
-source /opt/ksi/.ksivenv/bin/activate
+source /opt/ksi/.venv/bin/activate
 
 
 if [[ $# -lt 1 ]]; then
