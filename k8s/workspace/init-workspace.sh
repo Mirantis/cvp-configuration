@@ -75,6 +75,7 @@ kubectl get cld -A --no-headers | awk '$3 == "True" {print $1, $2}' | while read
 export KUBECONFIG=$MY_PROJFOLDER/envs/kubeconfigs/${name}-kubeconfig.yaml
 export CHILD_CLUSTER_NAME=${name}
 export CHILD_CLUSTER_NS=${namespace}
+source envs/target-child
 EOF
 
     chmod +x "$rc_file"
