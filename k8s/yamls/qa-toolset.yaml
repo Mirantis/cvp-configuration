@@ -67,7 +67,7 @@ spec:
       value: /etc/ssl/certs/openstack-ca-bundle.pem
     imagePullPolicy: IfNotPresent
     name: toolset
-    image: registry.mirantis.com/professional-services-qa/toolset:25.1-caracal
+    image: registry.mirantis.com/professional-services-qa/toolset:25.2-epoxy
     volumeMounts:
     - mountPath: /artifacts
       name: qa-pv-a
@@ -76,6 +76,8 @@ spec:
       readOnly: true
       subPath: ca_bundle
   dnsPolicy: ClusterFirst
+  nodeSelector:
+    openstack-control-plane: enabled
   volumes:
   - emptyDir: {}
     name: pod-tmp

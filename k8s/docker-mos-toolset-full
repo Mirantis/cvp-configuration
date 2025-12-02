@@ -10,7 +10,7 @@ RUN mkdir /opt/packages && cd /opt/packages && \
     apt-get download $(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances iperf3 iperf fio nfs-utils | grep "^\w" | sort -u) || true && \
     rm -rf /var/lib/apt/lists/*
 
-FROM mirantis.azurecr.io/openstack/heat:caracal-jammy-20250314195424
+FROM mirantis.azurecr.io/openstack/heat:epoxy-noble-20251017061956
 
 LABEL maintainer="qa-ps@mirantis.com"
 
@@ -42,7 +42,7 @@ RUN apt-get update && \
 
 RUN pip3 install --no-cache-dir pyghmi tempestparser
 
-RUN git clone https://gerrit.mcp.mirantis.com/mcp/cvp-configuration -b 25.1-caracal /opt/res-files && \
+RUN git clone https://gerrit.mcp.mirantis.com/mcp/cvp-configuration -b 25.2-epoxy /opt/res-files && \
     cd /opt/cfg-checker && \
     python3 -m venv .checkervenv && \
     . .checkervenv/bin/activate && \
@@ -83,7 +83,7 @@ RUN cd /opt/density/openstack-refapp/ && \
     cp /opt/res-files/scripts/prepare-refapp.sh /opt/density/openstack-refapp/ && \
     cp /opt/res-files/scripts/run-refapp-density.sh /opt/density/openstack-refapp/
 
-RUN printf "LABELS:\n  IMAGE_TAG: 25.1-caracal" > /dockerimage_metadata
+RUN printf "LABELS:\n  IMAGE_TAG: 25.2-epoxy" > /dockerimage_metadata
 
 ENTRYPOINT ["sleep infinite"]
 

@@ -76,6 +76,8 @@ spec:
       readOnly: true
       subPath: ca_bundle
   dnsPolicy: ClusterFirst
+  nodeSelector:
+    openstack-control-plane: enabled
   volumes:
   - emptyDir: {}
     name: pod-tmp

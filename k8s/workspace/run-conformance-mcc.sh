@@ -30,6 +30,12 @@ else
   export K8S_CONFORMANCE_IMAGE_URL=${MCC_K8S_CONFORMANCE_IMAGE_URL}
 fi
 
+# Cleaning up
+echo "# Cleaning up '/artifacts/tmp/artifacts/'"
+[ -d "/artifacts/tmp/artifacts/" ] && rm -rf "/artifacts/tmp/artifacts/"
+[ -f "/artifacts/tmp/nosetests.xml" ]  && rm "/artifacts/tmp/nosetests.xml"
+mkdir "/artifacts/tmp/artifacts/"
+
 # Run tests
 pytest /opt/si-tests/si_tests/tests/deployment/test_k8s_conformance.py
 unset TARGET_CLUSTER
