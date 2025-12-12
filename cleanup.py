@@ -45,7 +45,7 @@ manila_present = any(service.type == 'sharev2' for service
 if manila_present:
     shared_file_system = cloud.shared_file_system
 
-mask = "cvp|s_rally|rally_|tempest-|tempest_|spt|fio"
+mask = "cvp|s_rally|rally_|tempest-|tempest_|spt-test|fio"
 full_mask = f"^(?!.*(manual|-static-)).*({mask}).*$"
 mask_pattern = re.compile(full_mask, re.IGNORECASE)
 stack_mask = "api-[0-9]+-[a-z]+"
@@ -83,8 +83,26 @@ def _log_resources_count(count, resource, pattern=mask):
     log.info(f"{count} {resource} containing '{pattern}' are found.")
 
 
+def _log_resources_details_at_dry_run(list_to_delete, resource):
+    if len(list_to_delete) > 0:
+        log.info(f"... {len(list_to_delete)} {resource} would be deleted:")
+        for id_ in list_to_delete:
+            log.info(f"... ... {id_} ({list_to_delete[id_]})")
+
+
 def _log_resource_delete(id_, name, type_):
     log.info(f"... deleting {name} (id={id_}) {type_}")
+
+
+def _skip_tempest_fixed_net(nets_to_delete: dict) -> dict:
+    # the "tempest-fixed-net" comes from MOSK itself and should not be deleted
+    keys_to_remove = [
+        net_id for net_id, name in nets_to_delete.items()
+        if name == "tempest-fixed-net"
+    ]
+    for net_id in keys_to_remove:
+        nets_to_delete.pop(net_id, None)
+    return nets_to_delete
 
 
 def _get_volume_groups(all_tenants='true'):
@@ -204,6 +222,7 @@ def cleanup_users():
     users_to_delete = _filter_test_resources(users, 'name')
     _log_resources_count(len(users_to_delete), 'user(s)')
     if args.dry_run:
+        _log_resources_details_at_dry_run(users_to_delete, 'user(s)')
         return
     for id_ in users_to_delete:
         _log_resource_delete(id_, users_to_delete[id_], 'user')
@@ -215,6 +234,7 @@ def cleanup_roles():
     roles_to_delete = _filter_test_resources(roles, 'name')
     _log_resources_count(len(roles_to_delete), 'role(s)')
     if args.dry_run:
+        _log_resources_details_at_dry_run(roles_to_delete, 'role(s)')
         return
     for id_ in roles_to_delete:
         _log_resource_delete(id_, roles_to_delete[id_], 'role')
@@ -226,6 +246,7 @@ def cleanup_projects():
     projects_to_delete = _filter_test_resources(projects, 'name')
     _log_resources_count(len(projects_to_delete), 'project(s)')
     if args.dry_run:
+        _log_resources_details_at_dry_run(projects_to_delete, 'project(s)')
         return
     for id_ in projects_to_delete:
         _log_resource_delete(id_, projects_to_delete[id_], 'project')
@@ -237,6 +258,7 @@ def cleanup_regions():
     regions_to_delete = _filter_test_resources(regions, 'id')
     _log_resources_count(len(regions_to_delete), 'region(s)')
     if args.dry_run:
+        _log_resources_details_at_dry_run(regions_to_delete, 'region(s)')
         return
     for id_ in regions_to_delete:
         _log_resource_delete(id_, id_, 'region')
@@ -248,6 +270,7 @@ def cleanup_services():
     services_to_delete = _filter_test_resources(services, 'name')
     _log_resources_count(len(services_to_delete), 'service(s)')
     if args.dry_run:
+        _log_resources_details_at_dry_run(services_to_delete, 'service(s)')
         return
     for id_ in services_to_delete:
         _log_resource_delete(id_, services_to_delete[id_], 'service')
@@ -268,6 +291,7 @@ def cleanup_stacks(stacks_alt=False):
         stacks_to_delete.update(stacks_alt_to_delete)
 
     if args.dry_run:
+        _log_resources_details_at_dry_run(stacks_to_delete, 'stack(s)')
         return
 
     for id_ in stacks_to_delete:
@@ -282,6 +306,7 @@ def cleanup_flavors():
     flavors_to_delete = _filter_test_resources(flavors, 'name')
     _log_resources_count(len(flavors_to_delete), 'flavor(s)')
     if args.dry_run:
+        _log_resources_details_at_dry_run(flavors_to_delete, 'flavor(s)')
         return
     for id_ in flavors_to_delete:
         _log_resource_delete(id_, flavors_to_delete[id_], 'flavor')
@@ -293,6 +318,7 @@ def cleanup_images():
     images_to_delete = _filter_test_resources(images, 'name')
     _log_resources_count(len(images_to_delete), 'image(s)')
     if args.dry_run:
+        _log_resources_details_at_dry_run(images_to_delete, 'image(s)')
         return
     for id_ in images_to_delete:
         _log_resource_delete(id_, images_to_delete[id_], 'image')
@@ -304,6 +330,7 @@ def cleanup_keypairs():
     keypairs_to_delete = _filter_test_resources(keypairs, 'name')
     _log_resources_count(len(keypairs_to_delete), 'keypair(s)')
     if args.dry_run:
+        _log_resources_details_at_dry_run(keypairs_to_delete, 'keypair(s)')
         return
     for id_ in keypairs_to_delete:
         _log_resource_delete(id_, keypairs_to_delete[id_], 'keypair')
@@ -315,6 +342,7 @@ def cleanup_servers():
     servers_to_delete = _filter_test_resources(servers, 'name')
     _log_resources_count(len(servers_to_delete), 'server(s)')
     if args.dry_run:
+        _log_resources_details_at_dry_run(servers_to_delete, 'server(s)')
         return
     for id_ in servers_to_delete:
         if args.servers_active:
@@ -334,6 +362,7 @@ def cleanup_shares():
     shares_to_delete = _filter_test_resources(shares, 'name')
     _log_resources_count(len(shares_to_delete), 'share(s)')
     if args.dry_run:
+        _log_resources_details_at_dry_run(shares_to_delete, 'share(s)')
         return
     for id_ in shares_to_delete:
         _log_resource_delete(id_, shares_to_delete[id_], 'share')
@@ -349,6 +378,8 @@ def cleanup_share_types():
     share_types_to_delete = _filter_test_resources(share_types, 'name')
     _log_resources_count(len(share_types_to_delete), 'share type(s)')
     if args.dry_run:
+        _log_resources_details_at_dry_run(share_types_to_delete,
+                                          'share_type(s)')
         return
     for id_ in share_types_to_delete:
         _log_resource_delete(id_, share_types_to_delete[id_], 'type')
@@ -361,6 +392,8 @@ def cleanup_share_networks():
     share_networks_to_delete = _filter_test_resources(share_networks, 'name')
     _log_resources_count(len(share_networks_to_delete), 'share network(s)')
     if args.dry_run:
+        _log_resources_details_at_dry_run(share_networks_to_delete,
+                                          'share_network(s)')
         return
     for id_ in share_networks_to_delete:
         _log_resource_delete(id_, share_networks_to_delete[id_], 'type')
@@ -372,6 +405,7 @@ def cleanup_snapshots():
     snapshots_to_delete = _filter_test_resources(snapshots, 'name')
     _log_resources_count(len(snapshots_to_delete), 'snapshot(s)')
     if args.dry_run:
+        _log_resources_details_at_dry_run(snapshots_to_delete, 'snapshot(s)')
         return
     for id_ in snapshots_to_delete:
         snapshot_obj = volume.get_snapshot(id_)
@@ -386,6 +420,7 @@ def cleanup_volumes():
     volumes_to_delete = _filter_test_resources(volumes, 'name')
     _log_resources_count(len(volumes_to_delete), 'volume(s)')
     if args.dry_run:
+        _log_resources_details_at_dry_run(volumes_to_delete, 'volume(s)')
         return
     for id_ in volumes_to_delete:
         _reset_volume_status(id_, 'available', 'detached', 'None')
@@ -401,6 +436,7 @@ def cleanup_volume_groups():
     groups_to_delete = _filter_test_resources(groups, 'name')
     _log_resources_count(len(groups_to_delete), 'volume group(s)')
     if args.dry_run:
+        _log_resources_details_at_dry_run(groups_to_delete, 'volume group(s)')
         return
     for id_ in groups_to_delete:
         _log_resource_delete(id_, groups_to_delete[id_], 'volume group')
@@ -413,6 +449,8 @@ def cleanup_volume_backups():
     backups_to_delete = _filter_test_resources(backups, 'name')
     _log_resources_count(len(backups_to_delete), 'volume backup(s)')
     if args.dry_run:
+        _log_resources_details_at_dry_run(backups_to_delete,
+                                          'volume backup(s)')
         return
     for id_ in backups_to_delete:
         backup_obj = volume.get_backup(id_)
@@ -426,6 +464,8 @@ def cleanup_volume_group_types():
     group_types_to_delete = _filter_test_resources(group_types, 'name')
     _log_resources_count(len(group_types_to_delete), 'volume group type(s)')
     if args.dry_run:
+        _log_resources_details_at_dry_run(group_types_to_delete,
+                                          'volume group type(s)')
         return
     for id_ in group_types_to_delete:
         _log_resource_delete(
@@ -438,6 +478,8 @@ def cleanup_volume_types():
     volume_types_to_delete = _filter_test_resources(volume_types, 'name')
     _log_resources_count(len(volume_types_to_delete), 'volume type(s)')
     if args.dry_run:
+        _log_resources_details_at_dry_run(volume_types_to_delete,
+                                          'volume type(s)')
         return
     for id_ in volume_types_to_delete:
         _log_resource_delete(id_, volume_types_to_delete[id_], 'volume type')
@@ -449,6 +491,8 @@ def cleanup_sec_groups():
     sec_groups_to_delete = _filter_test_resources(sec_groups, 'name')
     _log_resources_count(len(sec_groups_to_delete), 'security group(s)')
     if args.dry_run:
+        _log_resources_details_at_dry_run(sec_groups_to_delete,
+                                          'security group(s)')
         return
     for id_ in sec_groups_to_delete:
         _log_resource_delete(id_, sec_groups_to_delete[id_], 'security group')
@@ -460,6 +504,7 @@ def cleanup_containers():
     containers_to_delete = _filter_test_resources(containers, 'name')
     _log_resources_count(len(containers_to_delete), 'container(s)')
     if args.dry_run:
+        _log_resources_details_at_dry_run(containers_to_delete, 'container(s)')
         return
     for id_ in containers_to_delete:
         _log_resource_delete(id_, containers_to_delete[id_], 'container')
@@ -471,6 +516,7 @@ def cleanup_routers():
     routers_to_delete = _filter_test_resources(routers, 'name')
     _log_resources_count(len(routers_to_delete), 'router(s)')
     if args.dry_run:
+        _log_resources_details_at_dry_run(routers_to_delete, 'router(s)')
         return
     for id_ in routers_to_delete:
         _log_resource_delete(id_, routers_to_delete[id_], 'router')
@@ -490,8 +536,10 @@ def cleanup_routers():
 def cleanup_networks():
     nets = network.networks()
     nets_to_delete = _filter_test_resources(nets, 'name')
+    _skip_tempest_fixed_net(nets_to_delete)
     _log_resources_count(len(nets_to_delete), 'network(s)')
     if args.dry_run:
+        _log_resources_details_at_dry_run(nets_to_delete, 'network(s)')
         return
     for id_ in nets_to_delete:
         _log_resource_delete(id_, nets_to_delete[id_], 'network')
@@ -515,6 +563,7 @@ def cleanup_load_balancers():
     lbs_to_delete = _filter_test_resources(lbs, 'name')
     _log_resources_count(len(lbs_to_delete), 'load_balancer(s)')
     if args.dry_run:
+        _log_resources_details_at_dry_run(lbs_to_delete, 'load_balancer(s)')
         return
     for id_ in lbs_to_delete:
         _log_resource_delete(id_, lbs_to_delete[id_], 'load_balancer')
@@ -540,6 +589,7 @@ def cleanup_floating_ips():
                 fips_to_delete[ip.id] = ip.floating_ip_address
     _log_resources_count(len(fips_to_delete), 'floating ip(s)')
     if args.dry_run:
+        _log_resources_details_at_dry_run(fips_to_delete, 'floating ip(s)')
         return
     for id_ in fips_to_delete:
         _log_resource_delete(id_, fips_to_delete[id_], 'floating ip')
@@ -609,5 +659,8 @@ if __name__ == "__main__":
     if args.projects:
         cleanup_projects()
 
-    msg = "Cleanup is FINISHED"
+    if args.dry_run:
+        msg = "DRY-RUN mode, no cleanup is done"
+    else:
+        msg = "Cleanup is FINISHED"
     log.info(f"\n{'=' * len(msg)}\n{msg}")

@@ -10,7 +10,10 @@ RUN mkdir /opt/packages && cd /opt/packages && \
     apt-get download $(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances iperf3 iperf fio nfs-utils | grep "^\w" | sort -u) || true && \
     rm -rf /var/lib/apt/lists/*
 
-FROM mirantis.azurecr.io/openstack/heat:epoxy-noble-20251017061956
+# TODO: in future change to tag epoxy-noble-20251017061956
+# but this will lead to possible dependencies issues in some test repos (e.g. cfg-checker, mos-spt)
+# some need some time to test this and move to Noble inside the toolset docker container and k8s pod
+FROM mirantis.azurecr.io/openstack/heat:caracal-jammy-20250314195424
 
 LABEL maintainer="qa-ps@mirantis.com"
 
@@ -22,7 +25,7 @@ COPY --from=download-packages-2004 /opt/packages /opt/packages
 COPY --from=download-packages-1804 /opt/packages-1804 /opt/packages-1804
 
 RUN apt-get clean && apt-get update && \
-    apt-get install -y make gcc g++ git libaio-dev libaio1 zlib1g-dev fio && \
+    apt-get install -y make gcc g++ git libaio-dev zlib1g-dev fio && \
     mkdir /opt/density && \
     rm -rf /var/lib/apt/lists/*
 
@@ -33,11 +36,11 @@ RUN export TZ="America/Chicago" && \
     rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update && \
-    curl https://baltocdn.com/helm/signing.asc | apt-key add - && \
     apt-get install apt-transport-https --yes && \
-    echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list && \
-    apt-get update && \
-    apt-get install -y helm && \
+    curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null && \
+    echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list && \
+    sudo apt-get update && \
+    sudo apt-get install -y helm && \
     rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install --no-cache-dir pyghmi tempestparser

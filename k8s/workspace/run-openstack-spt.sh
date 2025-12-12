@@ -1,5 +1,6 @@
 #!/bin/bash
 tenv=mos
+. /artifacts/env.sh
 . $MY_PROJFOLDER/envs/${tenv}rc
 ##
 echo "### Checking openstack resources"
@@ -30,3 +31,10 @@ echo "# Copying SPT HTML test report"
 mkdir -p /artifacts/reports/mos-spt
 kubectl exec toolset --stdin --tty -n qa-space -- bash -c "mkdir -p /opt/mos-spt/html_reports && cp /opt/mos-spt/*.html /opt/mos-spt/html_reports"
 kubectl cp qa-space/toolset:/opt/mos-spt/html_reports/ /artifacts/reports/mos-spt/
+
+# copy and rename the test report
+latest_file=$(ls /artifacts/reports/mos-spt/ | sort | tail -n1)
+new_name="${MY_CLIENTSHORTNAME}-${latest_file}"
+cp "/artifacts/reports/mos-spt/$latest_file" "/artifacts/reports/$new_name"
+echo ""
+echo "The report is saved to /artifacts/reports/${new_name}"
