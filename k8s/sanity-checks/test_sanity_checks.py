@@ -1,5 +1,9 @@
 import pytest
 
+try:
+    import si_tests.utils.utils
+except ImportError:
+    pass
 from si_tests import settings
 from si_tests.clients import k8s as k8s_client
 from si_tests.fixtures.kubectl import kcm_manager
