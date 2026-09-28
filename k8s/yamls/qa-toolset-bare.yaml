@@ -10,7 +10,7 @@ spec:
     - infinity
     imagePullPolicy: IfNotPresent
     name: toolset
-    image: registry.mirantis.com/professional-services-qa/toolset:25.2-epoxy
+    image: registry.mirantis.com/professional-services-qa/toolset:26.2-gazpacho
   dnsPolicy: ClusterFirst
   volumes:
   - emptyDir: {}
