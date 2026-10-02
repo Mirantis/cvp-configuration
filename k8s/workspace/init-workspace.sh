@@ -75,6 +75,10 @@ else
 fi
 
 ### Edit the following lines to set the client name, floating network name, IAM writer password
+#ewriteln "export MCC_CLUSTER_NAME_TO_TEST='kaas-mgmt'" # Set specific name of the MCC cluster if it differs
+# TODO: later implement the changes in case MCC cluster name has a custom name
+# for MCC we will also need to include export CLUSTER_NAME=mcc-mgmt, export ENV_NAME=mcc-mgmt
+MOS_CLUSTER_NAME_TO_TEST="" # Set specific MOS child cluster name if you have several child clusters deployed
 ewriteln "export MY_CLIENTNAME='ClientName'"
 ewriteln "export MY_CLIENTSHORTNAME='clname'"
 ewriteln "export MY_PROJNAME='MOS_DEPLOY'"
@@ -86,8 +90,15 @@ ewriteln "export MY_PROJFOLDER=/artifacts"
 
 # NS & CLUSTER
 printf "\n\n# Getting namespace and cluster"
-nn=( $(kubectl get cluster -A --no-headers -o=custom-columns=NAME:.metadata.name,NAMESPACE:.metadata.namespace | grep -v default) )
+nn=( $(kubectl get cluster -A --no-headers -o=custom-columns=NAME:.metadata.name,NAMESPACE:.metadata.namespace | grep -v default | awk -v c="${MOS_CLUSTER_NAME_TO_TEST}" 'c == "" || $1 == c') )
 echo "# Extracted data: '${nn[@]}'"
+if [ ${#nn[@]} -ne 2 ]; then
+	echo "ERROR: Expected exactly one MOS cluster, but got: '${nn[@]}'"
+	echo "Available clusters:"
+	kubectl get cluster -A --no-headers -o=custom-columns=NAME:.metadata.name,NAMESPACE:.metadata.namespace | grep -v default
+	echo "Set the correct cluster name in MOS_CLUSTER_NAME_TO_TEST and re-run the script"
+	exit 1
+fi
 vNS="${nn[1]}"
 vCLUSTER="${nn[0]}"
 ewriteln "export MOS_NS=${vNS}"

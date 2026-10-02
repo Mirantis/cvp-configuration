@@ -31,18 +31,25 @@ done
 ##
 echo "### Checking openstack resources"
 status=$(kubectl -n qa-space get pod | grep toolset | tr -s " " | cut -d' ' -f3)
-if [ ${status} != "Running" ]; then
+if [ "${status}" != "Running" ]; then
 	echo "# 'toolset' container is not Running"
 	exit 1
 fi
-if [ ! -z $(kubectl exec toolset --stdin -n qa-space -- bash -c "openstack user show cvp.admin -c id -f value") ]; then
-        echo "# Resources already created"
+admin_id=$(kubectl exec toolset --stdin -n qa-space -- bash -c "openstack user show cvp.admin -c id -f value 2>/dev/null")
+manifest_exists=$(kubectl exec toolset --stdin -n qa-space -- bash -c "test -s /artifacts/cmp-check/cvp.manifest && echo yes")
+if [ -n "${admin_id}" ] && [ "${manifest_exists}" = "yes" ]; then
+	echo "# Resources already created"
 	echo " "
 	kubectl exec toolset --stdin -n qa-space -- bash -c "cat /artifacts/cmp-check/cvp.manifest"
+elif [ -n "${admin_id}" ]; then
+	echo "# ERROR: OpenStack resources exist (cvp.admin), but /artifacts/cmp-check/cvp.manifest is missing in 'toolset' pod"
+	echo "#        Most likely the pod or PVC was recreated. The private key cvp_testkey cannot be restored."
+	echo "#        Clean up the resources inside the 'toolset' pod with 'python cleanup.py -P' and re-run this script."
+	exit 1
 else
-  echo "# Creating openstack resources"
+	echo "# Creating openstack resources"
 	echo " "
-	kubectl exec toolset --stdin -n qa-space -- bash -c "mkdir /artifacts/cmp-check"
+	kubectl exec toolset --stdin -n qa-space -- bash -c "mkdir -p /artifacts/cmp-check"
 	if [ "$raw_disk_format" = true ]; then
     kubectl exec toolset --tty --stdin -n qa-space -- bash -c "cd /artifacts/cmp-check; export CUSTOM_PUBLIC_NET_NAME="${TEMPEST_CUSTOM_PUBLIC_NET:-}"; bash /opt/cmp-check/prepare.sh -r -w \$(pwd)"
 	else
@@ -55,7 +62,12 @@ echo " "
 echo "# Filling tempest_custom.yaml"
 # TODO: set the correct availability_zone in case nova is not used (now nova is default option)
 cp -v /opt/res-files/k8s/yamls/tempest_custom.yaml.clean $MY_PROJFOLDER/yamls/tempest_custom.yaml
-declare $(kubectl exec toolset --stdin -n qa-space -- bash -c "cat /artifacts/cmp-check/cvp.manifest")
+manifest=$(kubectl exec toolset --stdin -n qa-space -- bash -c "cat /artifacts/cmp-check/cvp.manifest")
+if [ -z "${manifest}" ]; then
+	echo "# ERROR: /artifacts/cmp-check/cvp.manifest is empty or missing in 'toolset' pod, cannot continue"
+	exit 1
+fi
+declare ${manifest}
 echo "# Getting network details"
 netid=$(kubectl exec toolset --stdin -n qa-space -- openstack network show ${TEMPEST_CUSTOM_PUBLIC_NET} -c id -f value)
 subnetid=$(kubectl exec toolset --stdin -n qa-space -- openstack subnet list -f value | grep ${netid} | cut -d' ' -f1)
